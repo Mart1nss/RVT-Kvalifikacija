@@ -1,0 +1,376 @@
+.container {
+  display: flex;
+  padding: 10px;
+  max-width: 1350px;
+  margin: 0 auto;
+  @media (max-width: 769px) {
+    padding: 0 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+}
+
+.error-div {
+  display: flex;
+  max-width: 1350px;
+  margin: 0 auto;
+  @media (max-width: 769px) {
+    padding: 0 10px;
+    flex-wrap: wrap;
+  }
+}
+
+.pdf-viewer-container {
+  position: relative; 
+  max-width: 900px;
+}
+
+.pdf-viewer {
+  height: 800px; 
+  overflow: auto;
+  overflow-y: auto; 
+  width: 55%; 
+  margin: auto 0;   
+  border: 1px solid #ddd;
+  @media (max-width: 769px) {
+    width: 100%;
+    height: 800px;
+  }
+}
+
+.textLayer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  line-height: 1;
+}
+
+.pdf-viewer canvas {
+  width: 100%; 
+}
+
+.toolbar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px; 
+}
+
+.toolbar button {
+  padding: 8px 12px;
+  margin: 0 5px;
+  border: 1px solid #ccc;
+  background-color: #f0f0f0;
+  cursor: pointer;
+}
+
+.notes-div {
+  background-color: rgb(26, 25, 25);
+  width: 60%;
+  margin-left: 20px;
+  border: none;
+  border-radius: 10px;
+  @media (max-width: 769px) {
+    width: 100%;
+    margin-top: 20px;
+    margin-left: 0px;
+  }
+}
+
+.notes-name {
+  background-color: rgb(37, 37, 37);
+  height: 55px;
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+  @media (max-width: 769px) {
+    height: 46px;
+  }
+}
+
+.notes-p {
+display: flex;
+padding-left: 20px;
+padding-top: 15px;
+color: white;
+font-family: sans-serif;
+font-weight: 800;
+font-size: 16px;
+text-transform: uppercase;
+@media (max-width: 769px) {
+    padding-top: 10px;
+  }
+}
+
+#note-area {
+color: white;
+padding: 20px;
+font-family: sans-serif;
+font-weight: 800;
+font-size: 14px;
+text-transform: uppercase;
+height: 93%;
+width: 100%;
+border: none;
+background-color: rgb(26, 25, 25);
+resize: none; 
+outline: none;
+@media (max-width: 769px) {
+    height: 400px;
+  }
+}
+
+@media screen and (max-width: 400px) {
+button {
+  line-height: 12px;
+}
+
+}
+
+.container-under-pdf-view {
+  padding: 10px;
+  max-width: 1350px;
+  margin: 0 auto;
+  position: relative;
+  @media (max-width: 769px) {
+    padding: 0 10px;
+  }
+}
+
+.under-pdf {
+  display: flex;
+  @media (max-width: 769px) {
+    padding: 0 0px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+}
+
+.metadata {
+  display: flex;
+  width: 100%;
+  margin-bottom: 20px;
+  height: max-content;
+  
+}
+
+.metadata h2 {
+  font-weight: 800;
+  color: white;
+  font-family: sans-serif;
+}
+
+.favorite-form {
+  display: inline-block;
+  margin-left: auto;
+}
+
+.metadata button {
+  display: inline-block;
+  border: none;
+  background-color: rgb(37, 37, 37);
+  color: white;
+  border-radius: 20px;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 30px;
+  font-weight: 800;
+  font-family: sans-serif;
+  height: 38px;
+  font-size: 12px;
+  margin-left: auto;
+  cursor: pointer;
+}
+
+.metadata button:hover {
+  background-color: rgb(56, 56, 56);
+}
+
+.reviews-div {
+  background-color: rgb(37, 37, 37);
+  width: 100%;
+  color: white;
+  position: relative;
+  height: min-content;
+  border-radius: 20px;
+  padding: 10px;
+  overflow: hidden;
+  margin-bottom: 50px;
+  @media (max-width: 769px) {
+    padding: 10 10px;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+}
+
+.reviews-header {
+  font-size: 26px;
+  font-family: sans-serif;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+
+/* Star Rating Styles */
+.rating-container {
+  display: block;
+}
+
+.star-rating {
+  display: inline-flex;
+  align-items: center;
+}
+
+.rating-container .star-rating { 
+  direction: rtl;
+}
+
+.rating-container .star-rating > * { 
+  direction: rtr;
+}
+
+.star {
+  font-size: 24px;
+  color: #ccc; 
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.filled {
+  color: gold;
+}
+
+.star:hover,
+.star:hover ~ .star,
+input:checked ~ .star {
+  color: gold; 
+}
+
+.review-card .star:hover,
+.review-card .star:hover ~ .star {
+  color: #ccc;
+  cursor:default;
+}
+
+.review-card {
+background-color: #1c1a1a;
+padding: 20px;
+border-radius: 20px;
+margin-top: 10px;
+}
+
+.review-form {
+display: block;
+align-items: center;
+margin: 10px 0px;
+height: min-content;
+padding-bottom: 10px;
+}
+
+.review-input-button {
+  display: flex;
+}
+
+.review-form > * {
+margin-right: 10px; 
+}
+
+.review-counter {
+border: white 1px solid;
+border-radius: 20px;
+background-color:#1c1a1a; 
+color: white;
+font-weight: 800;
+font-family: sans-serif;
+font-size: 18px;
+padding: 5px 10px;
+appearance: none;
+flex: 0 0 auto;
+cursor: pointer;
+}
+
+.review-textbox {
+width: 80%;
+padding: 10px;
+border: none;
+border-radius: 20px;
+font-size: 12px;
+margin-right: 16px;
+outline: transparent;
+background-color:#1c1a1a;
+color: white;
+text-transform: uppercase;
+font-family: sans-serif;
+font-weight: 800;
+align-items: center;
+resize:inherit;
+flex: 1 1 auto; 
+height: 40px;
+overflow-y:auto;
+}
+
+.reviewed-by {
+  font-size: 16px;
+  font-weight: 700;
+  font-family: sans-serif;
+  text-transform: uppercase;
+}
+
+.button-review {
+background-color: rgb(255, 255, 255);
+border: none;
+color: rgb(0, 0, 0);
+padding: 10px;
+border-radius: 20px;
+text-decoration: none; 
+font-size: 14px; 
+font-family: sans-serif; 
+text-transform: uppercase; 
+font-weight: 800;
+cursor: pointer;
+flex: 0 0 auto;
+}
+
+.button-delete {
+  background-color: #ff4d4d; /* Red background */
+  color: white;
+  border: none;
+  height: 40px;
+  padding: 5px 10px;
+  margin-top: 10px;
+  cursor: pointer;
+  border-radius: 20px; 
+  text-decoration: none; 
+  font-size: 14px; 
+  font-family: sans-serif; 
+  text-transform: uppercase; 
+  font-weight: 800;
+}
+
+.button-filter {
+  background-color: #1a1a1a;
+  border: 1px solid white;
+  color: #ffffff;
+  padding: 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-family: sans-serif;
+  text-transform: uppercase;
+  font-weight: 800;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.button-filter.active {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.review-label {
+color: white;
+font-weight: 800;
+font-family: sans-serif;
+font-size: 18px;
+text-transform: uppercase;
+}
