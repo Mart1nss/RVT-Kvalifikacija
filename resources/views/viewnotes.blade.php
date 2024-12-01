@@ -1,4 +1,3 @@
-
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -13,7 +12,6 @@
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <style>
 
-
   .btn-primary {
     margin-top: 20px;
     border: 1px solid white;
@@ -25,7 +23,6 @@
     cursor: pointer;
     font-size: 12px;
     text-transform: uppercase;
-    transition: all 0.15;
   }
   
   .login-btn {
@@ -40,7 +37,6 @@
     margin-left: 20px;
     font-size: 12px;
     text-transform: uppercase;
-    transition: all 0.15;
   }
 
   
@@ -84,107 +80,191 @@
 
   .item-container {
     background-color: rgb(37, 37, 37);
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-    display: grid;
-    grid-gap: 16px;
-    padding: 16px;
-}
-
-.item-card {
-      background-color: #1c1a1a;
-      color: white;
-      padding: 10px;
-      border-radius: 10px;
-      border: white 1px solid;
-      border-radius: 10px;
-      height: min-content;
-      position: relative;
-      width: 100%;
-      vertical-align: middle;
-
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 10px;
   }
 
-  .note-content {
-    background-color: rgb(37, 37, 37); 
-    border: 1px solid white;    
-    border-top: none;           
-    border-bottom-left-radius: 8px;  
-    border-bottom-right-radius: 8px; 
-    padding: 10px;          
-    top: 100%;                  
-    left: 0;                    
-    width: 100%;               
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); 
-    z-index: -1; 
+  .item-card {
+    position: relative;
+    margin-bottom: 10px;
+    z-index: 1;
+  }
+
+  .item-card-header {
+    background-color: #1c1a1a;
+    color: white;
+    padding: 10px;
+    margin: 0px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 2;
   }
 
   .div-control {
+    cursor: pointer;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 10px;
+    width: 100%;
+  }
+
+  .note-header {
+    flex-grow: 1;
     cursor: pointer;
   }
 
-  #dropdown-btn {
-    float: right;
-    height: 40px;
-    width: 40px;
-    background: white;
-    text-align: center;
+  .note-btn {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-left: auto;
+    justify-content: flex-end;
+    min-width: max-content;
+  }
+
+  .note-btn i,
+  .goto-note-btn i {
+    font-size: 20px;
     color: black;
-    line-height: 40px;
+    background: white;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 20px;
-    margin-left: 20px;
+    padding: 0;
   }
 
-  @media (max-width: 769px) {
-    #dropdown-btn {
-      margin-left: 10px;
-    }
+  .goto-note-btn {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
   }
 
-.note-header { cursor: pointer; } 
+  .note-content {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #1c1a1a;
+    color: white;
+    margin: 0px 20px; 
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    display: none;
+  }
 
-.last-updated em { 
+  .last-updated em { 
     color: gray;   
     font-style: italic; 
-}
+  }
 
-.badge {
-  background-color: red;
-  border-radius: 20px;
-  width: 20px;
-  position: absolute;
-  top: 15;
-}
+  .div-control[aria-expanded="true"] .bxs-down-arrow-alt {
+    transform: rotate(180deg);
+  }
 
-.note-btn {
-  width: 40%;
-}
+  .badge {
+    background-color: red;
+    border-radius: 20px;
+    width: 20px;
+    position: absolute;
+    top: 15;
+  }
 
-.goto-note-btn {
-    float: right;
-    height: 40px;
-    width: 40px;
-    background: white;
-    text-align: center;
-    color: black;
-    font-size: 20px;
-    border-radius: 50%;
+  #dropdown-4 {
+    background-color: rgb(56, 56, 56);
+  }
+
+  .text-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
+    padding: 10px;
+  }
+
+  .text-container h1 {
+    color: white;
+    text-transform: uppercase;
+    font-family: sans-serif;
+    font-weight: 800;
+    margin: 0;
+    padding-left: 6px;
+  }
+
+  .sort-dropdown {
+    position: relative;
+    display: inline-block;
+    padding-right: 6px;
+  }
+
+  .sort-button {
+    background-color: #1c1a1a;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
     cursor: pointer;
-}
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
 
-.goto-note-btn i {
-  padding-top: 8px;
-}
+  .sort-button i {
+    font-size: 20px;
+  }
 
-#dropdown-4 {
-  background-color: rgb(56, 56, 56);
-}
+  .sort-options {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #1c1a1a;
+    min-width: 160px;
+    border: 1px solid white;
+    border-radius: 10px;
+    z-index: 1000;
+    margin-top: 5px;
+  }
 
-</style>
+  .sort-options a {
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    cursor: pointer;
+  }
+
+  .sort-options a:hover {
+    background-color: #2a2a2a;
+  }
+
+  .sort-options a.active {
+    background-color: #2a2a2a;
+  }
+
+  .sort-options a:first-child {
+    border-radius: 10px 10px 0 0;
+  }
+
+  .sort-options a:last-child {
+    border-radius: 0 0 10px 10px;
+  }
+
+  .main-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  </style>
 
 </head>
 <body>
@@ -209,36 +289,42 @@
     </div>
 @endif
 
-    <div class="text-container">
-      <h1 style="color: white; text-transform:uppercase; font-family: sans-serif; font-weight: 800;">Notes</h1>
-    </div>
-
+    @if($notes->count() > 0)
     <div class="item-container">
-
-      @if($notes->count() > 0)
+      <div class="text-container">
+        <h1>Notes</h1>
+        <div class="sort-dropdown">
+          <button class="sort-button">
+            Sort by <i class='bx bx-sort-alt-2'></i>
+          </button>
+          <div class="sort-options">
+            <a href="#" data-sort="newest" class="active">Newest First</a>
+            <a href="#" data-sort="oldest">Oldest First</a>
+          </div>
+        </div>
+      </div>
 
       @foreach ($notes as $note)
 
       <div class="item-card">
- 
-        <div class="div-control">
-            <div class="note-header" data-note-id="{{ $note->id }}">
-                <b style="font-size:18px">Book: {{ $note->product->title }}</b> by <b style="font-size:18px">{{$note->product->author}} </b><br>
-                <span class="last-updated" data-timestamp="{{ $note->updated_at->timestamp }}">
-                  {{-- dynamic text  --}}
-              </span>
-            </div>
+        <div class="item-card-header">
+          <div class="div-control" data-note-id="{{ $note->id }}">
+              <div class="note-header">
+                  <b style="font-size:18px">Book: {{ $note->product->title }}</b> by <b style="font-size:18px">{{$note->product->author}} </b><br>
+                  <span class="last-updated" data-timestamp="{{ $note->updated_at->timestamp }}">
+                    {{-- dynamic text  --}}
+                </span>
+              </div>
 
-            <div class="note-btn">
-              
-              <i id="dropdown-btn" class='bx bxs-down-arrow-alt'></i>
-
-              <a href="{{ route('view', ['id' => $note->product_id]) }}" class="goto-note-btn">
-                <i class='bx bxs-arrow-to-right'></i>
-              </a>
-            </div>
+              <div class="note-btn">
+                <i class='bx bxs-down-arrow-alt' alt="Expand note"></i>
+                <a href="{{ route('view', ['id' => $note->product_id]) }}" class="goto-note-btn" alt="Go to note"	>
+                  <i class='bx bxs-arrow-to-right'></i>
+                </a>
+              </div>
+          </div>
         </div>
-        <div class="note-content" style="display: none;">
+        <div class="note-content">
             {{ $note->note_text }}
         </div>
 
@@ -246,8 +332,22 @@
 
     @endforeach
   @else
-      <p style="font-family: sans-serif; font-size: 14px; font-weight: 800; text-transform: uppercase; color: white;">You don't have any notes yet.</p>
-  @endif
+      <div class="item-container">
+        <div class="text-container">
+          <h1>Notes</h1>
+          <div class="sort-dropdown">
+            <button class="sort-button">
+              Sort by <i class='bx bx-sort-alt-2'></i>
+            </button>
+            <div class="sort-options">
+              <a href="#" data-sort="newest" class="active">Newest First</a>
+              <a href="#" data-sort="oldest">Oldest First</a>
+            </div>
+          </div>
+        </div>
+        <p style="font-family: sans-serif; font-size: 14px; font-weight: 800; text-transform: uppercase; color: white;">You don't have any notes yet.</p>
+      </div>
+    @endif
 
 
     </div>
@@ -258,22 +358,85 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('.div-control').click(function() {
-                let noteId = $(this).data('note-id');
-                $(this).next('.note-content').slideToggle();
+            $('.div-control').click(function(e) {
+                // Prevent click from triggering if clicking the goto button
+                if ($(e.target).closest('.goto-note-btn').length) {
+                    return;
+                }
+                
+                const $control = $(this);
+                const $content = $control.closest('.item-card').find('.note-content');
+                const $card = $control.closest('.item-card');
+                
+                // Toggle aria-expanded attribute
+                $control.attr('aria-expanded', 
+                    $control.attr('aria-expanded') === 'true' ? 'false' : 'true'
+                );
+                
+                // Simple toggle
+                if ($content.is(':visible')) {
+                    $content.hide();
+                    $card.css('margin-bottom', '10px');
+                } else {
+                    $content.show();
+                    $card.css('margin-bottom', $content.outerHeight() + 20 + 'px');
+                }
             });
 
-function updateTimeDisplays() {
-    $('.last-updated').each(function() {
-        const timestamp = $(this).data('timestamp') * 1000;
-        const timeAgoText = moment(timestamp).fromNow(); 
-        $(this).html('Last updated <em>' + timeAgoText + '</em>');
-    });
-}
+            // Sort dropdown toggle
+            $('.sort-button').click(function(e) {
+                e.stopPropagation();
+                $('.sort-options').toggle();
+            });
 
-      updateTimeDisplays();
+            // Close dropdown when clicking outside
+            $(document).click(function() {
+                $('.sort-options').hide();
+            });
 
-      setInterval(updateTimeDisplays, 60000); 
+            // Sort functionality
+            $('.sort-options a').click(function(e) {
+                e.preventDefault();
+                const sortType = $(this).data('sort');
+                
+                // Update active state
+                $('.sort-options a').removeClass('active');
+                $(this).addClass('active');
+
+                // Get all note items
+                const $container = $('.item-container');
+                const $items = $container.children('.item-card').get();
+
+                // Sort items
+                $items.sort(function(a, b) {
+                    const timeA = $(a).find('.last-updated').data('timestamp');
+                    const timeB = $(b).find('.last-updated').data('timestamp');
+                    
+                    return sortType === 'newest' 
+                        ? timeB - timeA  // Newest first
+                        : timeA - timeB; // Oldest first
+                });
+
+                // Re-append sorted items
+                $.each($items, function(index, item) {
+                    $container.append(item);
+                });
+
+                // Hide dropdown
+                $('.sort-options').hide();
+            });
+
+            function updateTimeDisplays() {
+                $('.last-updated').each(function() {
+                    const timestamp = $(this).data('timestamp') * 1000;
+                    const timeAgoText = moment(timestamp).fromNow(); 
+                    $(this).html('Last updated <em>' + timeAgoText + '</em>');
+                });
+            }
+
+            updateTimeDisplays();
+
+            setInterval(updateTimeDisplays, 60000); 
           });
     </script>
   
