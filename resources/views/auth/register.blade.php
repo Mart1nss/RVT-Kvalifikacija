@@ -72,6 +72,55 @@
             cursor: pointer;
         }
 
+        .alert-danger {
+            background-color: rgba(220, 38, 38, 0.2);
+            color: #ff0000;
+            padding: 16px 20px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            font-family: sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            width: 100%;
+            box-sizing: border-box;
+            white-space: normal;
+            word-wrap: break-word;
+            line-height: 1.4;
+            height: 46px;
+            list-style-type: none;
+            display: block;
+        }
+
+        .validation-errors {
+            margin-bottom: 20px;
+            width: 100%;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .validation-errors ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 5px;
+        }
+
+        .validation-errors li {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .form-group {
+            width: 100%;
+        }
+
+        .form-control {
+            width: 100%;
+            box-sizing: border-box;
+        }
       </style>
 
     <div class="back-btn-div">
@@ -84,14 +133,15 @@
 
     <h1 class="logo" style="color: white; font-weight: 800">REGISTER</h1>
 
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
+    <div class="validation-errors">
         <x-input-error :messages="$errors->get('name')" class="alert-danger" />
         <x-input-error :messages="$errors->get('email')" class="alert-danger" />
         <x-input-error :messages="$errors->get('password')" class="alert-danger" />
         <x-input-error :messages="$errors->get('password_confirmation')" class="alert-danger" />
+    </div>
 
-
+    <form method="POST" action="{{ route('register') }}">
+        @csrf
         <!-- Name -->
         <div class="form-group">
             <x-text-input id="name" style="height: 42px;" class="form-control" placeholder="NAME" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />

@@ -48,6 +48,12 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
+        // Delete all related reviews first
+        $user->reviews()->delete();
+        
+        // Delete all related notes
+        $user->notes()->delete();
+
         Auth::logout();
 
         $user->delete();

@@ -16,8 +16,39 @@ class ProfileUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
+            'name' => [
+                'required',
+                'string',
+                'min:3',
+                'max:10',
+                'regex:/^[a-zA-Z0-9]+$/',
+            ],
+            'email' => [
+                'required',
+                'string',
+                'lowercase',
+                'email',
+                'max:255',
+                'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',
+                Rule::unique(User::class)->ignore($this->user()->id)
+            ],
+        ];
+    }
+
+    /**
+     * Get custom validation messages.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'name.min' => 'NAME MUST BE AT LEAST 3 CHARACTERS',
+            'name.max' => 'NAME CANNOT BE MORE THAN 10 CHARACTERS',
+            'name.regex' => 'NAME CAN ONLY CONTAIN LETTERS AND NUMBERS (NO SPACES OR SYMBOLS)',
+            'email.email' => 'PLEASE ENTER A VALID EMAIL ADDRESS',
+            'email.regex' => 'PLEASE ENTER A VALID EMAIL WITH PROPER DOMAIN',
+            'email.unique' => 'THIS EMAIL IS ALREADY TAKEN',
         ];
     }
 }
