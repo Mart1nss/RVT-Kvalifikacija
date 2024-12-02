@@ -49,12 +49,10 @@
   }
 }
 
-
 .fade-out {
     opacity: 0;
     transition: opacity 0.5s ease-in-out; 
 }
-
 
 #pdf-toolbar {
   display: flex;
@@ -159,15 +157,6 @@ span {
   </div>
 
   <div class="container">
-    
-
-     <!-- <div id="pdfViewer" class="pdf-viewer"></div>
-
-     <div id="pdfContainer">
-      <iframe id="pdfFrame" src="/assets/{{ $data->file }}#toolbar=0" width="60%" height="750px"></iframe>    
-    </div> -->
-
-
 
     <div id="pdf-container"></div>
 
@@ -175,7 +164,7 @@ span {
     <script src="{{ asset('js/pdfViewer.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const pdfUrl = "/assets/{{ $data->file }}"; // Ensure this path is correct
+            const pdfUrl = "/assets/{{ $data->file }}";
             initPDFViewer(pdfUrl);
         });
     </script>

@@ -1,4 +1,3 @@
-
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -54,7 +53,7 @@
             <div class="info-container">
               <h5 class="info-title">{{ $favorite->product->title }}</h5> 
               <h5 class="info-author">{{ $favorite->product->author }}</h5>
-              <h5 class="info-category">{{ $favorite->product->category }}</h5>
+              <h5 class="info-category">{{ $favorite->product->category->name ?? '' }}</h5>
               <div class="button-container">
                 <a class="view-btn" href="{{route('view', $favorite->product->id)}}">View</a>
               </div>
