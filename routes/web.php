@@ -8,7 +8,18 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FavoritesController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\CategoryController;
 
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
 
 Route::get('/', function () {
     return view('welcome');
@@ -39,7 +50,7 @@ Route::get('/bookpage', [HomeController::class, 'bookpage'])
     ->middleware(['auth']);
 
 Route::get('/get-genres', function () {
-    $genres = DB::table('products')->distinct()->pluck('category');
+    $genres = App\Models\Category::pluck('name');
     return response()->json($genres);
 });
 
@@ -57,7 +68,7 @@ Route::get('/uploadpage', [HomeController::class, 'show'])->middleware(['auth', 
 // Show edit form
 Route::get('/edit/{id}', [HomeController::class, 'edit'])->middleware(['auth', 'admin'])->name('edit');
 // Handle edit request
-Route::post('/update/{id}', [HomeController::class, 'update'])->middleware(['auth', 'admin'])->name('update');
+Route::match(['post', 'put'], '/update/{id}', [HomeController::class, 'update'])->middleware(['auth', 'admin'])->name('update');
 
 
 //User Manage Routes
@@ -118,6 +129,12 @@ Route::middleware('auth')->group(function () {
 
 });
 
-
+// Category Management Routes
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+    Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+    Route::put('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
+    Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+});
 
 require __DIR__ . '/auth.php';

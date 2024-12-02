@@ -1,4 +1,3 @@
-
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -243,129 +242,142 @@
       top: 0;
       width: 100%;
       height: 100%;
-      overflow: auto;
-      background-color: rgb(0,0,0);
-      background-color: rgba(0,0,0,0.4);
-      padding-top: 60px;
+      background-color: rgba(0,0,0,0.7);
     }
 
     .modal-content {
-        background-color: rgb(28, 26, 26);
-        margin: 5% auto;
+        background-color: rgb(37, 37, 37);
+        margin: 15% auto;
         padding: 20px;
-        border: 1px solid #ffffff;
-        border-radius: 10px;
+        border: 1px solid #4a4a4a;
+        border-radius: 5px;
         width: 80%;
-        max-width: 600px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        z-index: 1001;
+        max-width: 500px;
+        color: white;
     }
 
     .close-btn {
-      color: #ffffff;
-      float: right;
-      font-size: 28px;
-      font-weight: bold;
-    }
-
-    .close-btn:hover,
-    .close-btn:focus {
-      opacity: 0.7;
-      color: rgb(255, 255, 255);
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    .modal label {
-        display: block;
-        margin: 10px 0 5px;
-        color: white;
-        font-family: sans-serif;
-        text-transform: uppercase;
-        font-weight: 700;
-    }
-
-    .modal input[type="text"] {
-        width: calc(100% - 22px);
-        padding: 10px;
-        margin: 5px 0 20px;
-        background-color: rgb(37, 37, 37);
-        color: white;
-        border: none;
-        border-radius: 10px;
-        box-sizing: border-box;
-    }
-
-    .modal button {
-      border: 1px solid rgb(0, 0, 0);
-      background-color: rgb(255, 255, 255);
-      color: rgb(0, 0, 0);
-      padding: 10px;
-      border-radius: 20px;
-      font-weight: 800;
-      font-size: 12px;
-      text-transform: uppercase;
-      text-decoration: none;
-    }
-
-    .modal button:hover {
-        opacity: 0.7;
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
         cursor: pointer;
     }
 
-    .edit-btn {
-      color: white;
-      background-color: #1a1a1a;
-      text-decoration: none;
-      border: white 1px solid;
-      border-radius: 20px;
-      padding: 10px;
-      font-family: sans-serif;
-      font-weight: 800;
-      font-size: 12px;
-      text-transform: uppercase;
-      cursor: pointer;
+    .close-btn:hover {
+        color: white;
     }
 
-    .edit-btn:hover {
-      opacity: 0.7;
+    #editForm label {
+        display: block;
+        margin-top: 10px;
+        margin-bottom: 5px;
     }
 
-    .fade-out {
-      opacity: 0;
-      transition: opacity 0.5s ease-in-out; 
-}
+    #editForm input,
+    #editForm select {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 15px;
+        border-radius: 4px;
+        border: 1px solid #4a4a4a;
+        background-color: rgb(56, 56, 56);
+        color: white;
+    }
 
-#trash-icon {
-  font-size: 16px;
-}
+    #editForm button {
+        background-color: #4a4a4a;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
 
-#download-icon {
-  font-size: 16px;
-}
+    #editForm button:hover {
+        background-color: #5a5a5a;
+    }
 
-.remove-btn2 {
-    display: inline-flex;
-    background-color: #1a1a1a;
-    color: rgb(255, 0, 0);
-    border: red 1px solid;
-    padding: 5px;
-    width: 40px;
-    height: 40px;
-    margin-left: 5px;
-    justify-content: center;
-    align-items: center;
-    border-radius: 20px;
-    font-weight: 800;
-    font-size: 16px;
-    text-transform: uppercase;
-    transition: all 0.15;
-  }
-  .remove-btn2:hover {
-    opacity: 0.7;
-    cursor: pointer;
-  }
+    .remove-btn2 {
+        display: inline-flex;
+        background-color: #1a1a1a;
+        color: rgb(255, 0, 0);
+        border: red 1px solid;
+        padding: 5px;
+        width: 40px;
+        height: 40px;
+        margin-left: 5px;
+        justify-content: center;
+        align-items: center;
+        border-radius: 20px;
+        font-weight: 800;
+        font-size: 16px;
+        text-transform: uppercase;
+        transition: all 0.15;
+      }
+      .remove-btn2:hover {
+        opacity: 0.7;
+        cursor: pointer;
+      }
 
+      .edit-btn {
+        color: white;
+        background-color: #1a1a1a;
+        text-decoration: none;
+        border: white 1px solid;
+        border-radius: 20px;
+        padding: 10px;
+        font-family: sans-serif;
+        font-weight: 800;
+        font-size: 12px;
+        text-transform: uppercase;
+        cursor: pointer;
+      }
+
+      .edit-btn:hover {
+        opacity: 0.7;
+      }
+
+      .fade-out {
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out; 
+    }
+
+    #trash-icon {
+      font-size: 16px;
+    }
+
+    #download-icon {
+      font-size: 16px;
+    }
+
+    .dropdown-content {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+      }
+      
+      .dropdown-content li {
+        padding: 8px 12px;
+        cursor: pointer;
+      }
+      
+      .dropdown-content li:hover {
+        background-color: #f5f5f5;
+      }
+      
+      .dropdown-content label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        color: #333;
+      }
+      
+      .dropdown-content input[type="checkbox"] {
+        margin: 0;
+      }
   </style>
 </head>
 
@@ -399,8 +411,10 @@
 
     
     <div class="text-container">
-      <h1 style="color: white; text-transform:uppercase; font-family: sans-serif; font-weight: 800;">Upload Book</h1>
-      
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h1 style="color: white; text-transform:uppercase; font-family: sans-serif; font-weight: 800;">Upload Book</h1>
+        <a href="{{ route('categories.index') }}" class="btn-primary" style="width: auto; padding: 0 20px; background-color: #1c1a1a; color: white;">Manage Categories</a>
+      </div>
     </div>
     <div class="item-container3">
 
@@ -416,15 +430,11 @@
           <input class="form-control" style="height: 42px;" type="text" name="author" placeholder="Author">
         </div>
         <div class="form-group" style="margin-bottom: 18px;">
-          <select class="form-control" name="category" style="height: 42px; color:gray;">
-              <option  value="">Select Category</option>
-              <option  value="Business/Career">Business/Career</option>
-              <option  value="Money/Investments">Money/Investments</option>
-              <option  value="Sales/Negotiation">Sales/Negotiation</option>
-              <option  value="Happieness">Happieness</option>
-              <option  value="Productivity">Productivity</option>
-              <option  value="Health">Health</option>
-              <option  value="Psychology">Psychology</option>
+          <select class="form-control" name="category_id" style="height: 42px; color:gray;">
+              <option value="">Select Category</option>
+              @foreach($categories as $category)
+                  <option value="{{ $category->id }}">{{ $category->name }}</option>
+              @endforeach
           </select>
       </div>
 
@@ -450,7 +460,7 @@
             <div class="genre-dropdown">
                 <button class="dropdown-btn">Filter by Genres</button>
                 <ul class="dropdown-content">
-                    <!-- zanri -->
+                    <!-- genres will be populated by JavaScript -->
                 </ul>
             </div>
         </div>
@@ -460,12 +470,12 @@
     <div style="margin-bottom: 20px;" class="item-container">
 
       @foreach ($data as $data)
-        <div class="pdf-item" data-genre="{{ $data->category }}">
-          <div class="thumbnail" data-pdfpath="/assets/{{ $data->file }}" ></div>
+        <div class="pdf-item" data-genre="{{ $data->category->name ?? '' }}">
+          <div class="thumbnail" data-pdfpath="/assets/{{ $data->file }}"></div>
           <div class="info-container"> 
-          <h5 style="margin-bottom: 10px; font-size: 20px;  color: rgb(255, 255, 255);">{{$data->title ?? ''}}</h5>
-          <h5 style="margin-bottom: 10px; font-size: 16px;  color: rgb(255, 255, 255);">{{$data->author ?? ''}}</h5>
-          <h5 style="margin-bottom: 10px; font-size: 14px;  color: rgb(255, 255, 255);"> {{$data->category ?? ''}}</h5>
+          <h5 class="info-title" style="margin-bottom: 10px; font-size: 20px; color: rgb(255, 255, 255);">{{$data->title ?? ''}}</h5>
+          <h5 class="info-author" style="margin-bottom: 10px; font-size: 16px; color: rgb(255, 255, 255);">{{$data->author ?? ''}}</h5>
+          <h5 class="info-category" style="margin-bottom: 10px; font-size: 14px; color: rgb(255, 255, 255);">{{$data->category->name ?? ''}}</h5>
           <div class="button-container" style="display: flex; justify-content: space-between;">
             <a class="view-btn" href="{{route('view', $data->id)}}">View</a>
             <button style="margin-left: 5px;" class="edit-btn" onclick="openEditModal({{ $data->id }})">EDIT</button>
@@ -496,16 +506,22 @@
           <span class="close-btn" onclick="closeEditModal()">&times;</span>
           <form id="editForm" method="POST">
               @csrf
+              <input type="hidden" name="_method" value="PUT">
               <label for="title">Title:</label>
               <input type="text" id="title" name="title" required>
               <label for="author">Author:</label>
               <input type="text" id="author" name="author" required>
-              <label for="category">Category:</label>
-              <input type="text" id="category" name="category" required>
+              <label for="category_id">Category:</label>
+              <select id="category_id" name="category_id" class="form-control" required>
+                  <option value="">Select Category</option>
+                  @foreach($categories as $category)
+                      <option value="{{ $category->id }}">{{ $category->name }}</option>
+                  @endforeach
+              </select>
               <button type="submit">Save</button>
           </form>
       </div>
-  </div>
+    </div>
 
 
 
@@ -538,14 +554,28 @@
             .then(data => {
                 document.getElementById('title').value = data.title;
                 document.getElementById('author').value = data.author;
-                document.getElementById('category').value = data.category;
+                document.getElementById('category_id').value = data.category_id || '';
+                
+                // Update the form action
                 document.getElementById('editForm').action = `/update/${id}`;
                 document.getElementById('editModal').style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while loading the book details');
             });
     }
 
     function closeEditModal() {
         document.getElementById('editModal').style.display = 'none';
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('editModal');
+        if (event.target == modal) {
+            closeEditModal();
+        }
     }
 </script>
 
@@ -624,59 +654,34 @@
   
       const books = document.querySelectorAll('.pdf-item');
       books.forEach(book => {
-          if (selectedGenres.length === 0 || selectedGenres.includes(book.dataset.genre)) {
-              book.style.display = 'block';
+          const genre = book.dataset.genre;
+          if (selectedGenres.length === 0 || selectedGenres.includes(genre)) {
+              book.style.display = '';
           } else {
               book.style.display = 'none';
           }
       });
-      
-  }
-  
-const dropdownContent = document.querySelector('.dropdown-content');
-dropdownContent.addEventListener('click', (event) => {
-  const clickedElement = event.target;
-  let checkbox;
-
-  // Logic to get checkbox
-  if (clickedElement.classList.contains('filter-list') || clickedElement.classList.contains('filter-label')) {
-    // If clicked element is  either the list or label, find the checkbox inside
-    checkbox = clickedElement.closest('.filter-list').querySelector('input[type="checkbox"]');
-  } else if (clickedElement.type === 'checkbox') { 
-    // If the clicked element is directly the checkbox
-    checkbox = clickedElement; 
   }
 
-  // If we found a checkbox, toggle and filter
-  if (checkbox) { 
-    checkbox.checked = !checkbox.checked;
-    filterBooks();
-  }
-});
-  
+  // Fetch and populate genres
   fetch('/get-genres')
       .then(response => response.json())
       .then(genres => {
           const dropdownContent = document.querySelector('.dropdown-content');
           genres.forEach(genre => {
-              const listItem = document.createElement('a');
-              listItem.className = 'filter-list'; 
-              const checkbox = document.createElement('input');
-              checkbox.type = 'checkbox';
-              checkbox.value = genre;
-              checkbox.id = `genre-${genre}`; 
-  
-              const label = document.createElement('label');
-              label.htmlFor = `genre-${genre}`; 
-              label.textContent = genre;
-              label.className = 'filter-label'; 
-  
-              listItem.appendChild(checkbox);
-              listItem.appendChild(label);
-              dropdownContent.appendChild(listItem);
+              if (genre) {  // Only add non-null genres
+                  const li = document.createElement('li');
+                  li.innerHTML = `
+                      <label>
+                          <input type="checkbox" value="${genre}" onchange="filterBooks()">
+                          ${genre}
+                      </label>
+                  `;
+                  dropdownContent.appendChild(li);
+              }
           });
       });
-  </script>
+</script>
   
 </body>
 </html>

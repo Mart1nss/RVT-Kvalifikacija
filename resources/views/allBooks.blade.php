@@ -1,4 +1,3 @@
-
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -9,6 +8,35 @@
   <link rel="stylesheet" href="{{ asset('css/allbooks-style.css') }}">
   <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.mjs"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf_viewer.min.css" integrity="sha512-kQO2X6Ls8Fs1i/pPQaRWkT40U/SELsldCgg4njL8zT0q4AfABNuS+xuy+69PFT21dow9T6OiJF43jan67GX+Kw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <style>
+    .dropdown-content {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .dropdown-content li {
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+    
+    .dropdown-content li:hover {
+      background-color: #f5f5f5;
+    }
+    
+    .dropdown-content label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      color: #333;
+    }
+    
+    .dropdown-content input[type="checkbox"] {
+      margin: 0;
+    }
+  </style>
 
 </head>
 
@@ -49,12 +77,12 @@
   <div class="item-container" >
 
     @foreach ($data as $data)
-      <div class="pdf-item" data-genre="{{ $data->category }}">
+      <div class="pdf-item" data-genre="{{ $data->category->name ?? '' }}">
         <div class="thumbnail" data-pdfpath="/assets/{{ $data->file }}" ></div>
         <div class="info-container"> 
           <h5 class="info-title" >{{$data->title ?? ''}}</h5>
           <h5 class="info-author" >{{$data->author ?? ''}}</h5>
-          <h5 class="info-category" >{{$data->category ?? ''}}</h5>
+          <h5 class="info-category">{{$data->category->name ?? ''}}</h5>
           <div class="button-container">
             <a class="view-btn" href="{{route('view', $data->id)}}">View</a>
             <a class="download-btn" href="{{route('download', $data->file)}}">Download</a>
@@ -142,62 +170,37 @@
               selectedGenres.push(checkbox.value);
           }
       });
-  
+
       const books = document.querySelectorAll('.pdf-item');
       books.forEach(book => {
-          if (selectedGenres.length === 0 || selectedGenres.includes(book.dataset.genre)) {
-              book.style.display = 'block';
+          const genre = book.dataset.genre;
+          if (selectedGenres.length === 0 || selectedGenres.includes(genre)) {
+              book.style.display = '';
           } else {
               book.style.display = 'none';
           }
       });
   }
-  
-  // Add event listener to dropdown content
-const dropdownContent = document.querySelector('.dropdown-content');
-dropdownContent.addEventListener('click', (event) => {
-  const clickedElement = event.target;
-  let checkbox;
 
-  // Logic to get checkbox
-  if (clickedElement.classList.contains('filter-list') || clickedElement.classList.contains('filter-label')) {
-    // If clicked element is  either the list or label, find the checkbox inside
-    checkbox = clickedElement.closest('.filter-list').querySelector('input[type="checkbox"]');
-  } else if (clickedElement.type === 'checkbox') { 
-    // If the clicked element is directly the checkbox
-    checkbox = clickedElement; 
-  }
-
-  // If we found a checkbox, toggle and filter
-  if (checkbox) { 
-    checkbox.checked = !checkbox.checked;
-    filterBooks();
-  }
-});
-  
+  // Fetch and populate genres
   fetch('/get-genres')
       .then(response => response.json())
       .then(genres => {
           const dropdownContent = document.querySelector('.dropdown-content');
           genres.forEach(genre => {
-              const listItem = document.createElement('a');
-              listItem.className = 'filter-list'; 
-              const checkbox = document.createElement('input');
-              checkbox.type = 'checkbox';
-              checkbox.value = genre;
-              checkbox.id = `genre-${genre}`; 
-  
-              const label = document.createElement('label');
-              label.htmlFor = `genre-${genre}`; 
-              label.textContent = genre;
-              label.className = 'filter-label'; 
-  
-              listItem.appendChild(checkbox);
-              listItem.appendChild(label);
-              dropdownContent.appendChild(listItem);
+              if (genre) {  // Only add non-null genres
+                  const li = document.createElement('li');
+                  li.innerHTML = `
+                      <label>
+                          <input type="checkbox" value="${genre}" onchange="filterBooks()">
+                          ${genre}
+                      </label>
+                  `;
+                  dropdownContent.appendChild(li);
+              }
           });
       });
-  </script>
+</script>
 
   
 </body>

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Category;
 use App\Models\Favorite;
 use App\Models\Review;
 
@@ -11,6 +12,15 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'title',
+        'author',
+        'category',
+        'category_id',
+        'cover_image',
+        'file'
+    ];
 
     public function reviews()
     {
@@ -22,6 +32,11 @@ class Product extends Model
         return $this->hasMany(Favorite::class);
     }
 
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
     public function isFavoritedBy($user = null)
     {
         if (!$user) {
@@ -30,7 +45,4 @@ class Product extends Model
 
         return $this->favorites()->where('user_id', $user->id)->exists();
     }
-
-
-
 }

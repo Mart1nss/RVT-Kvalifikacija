@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Review;
 use App\Models\Product;
 use App\Models\Notification;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -66,34 +67,28 @@ class HomeController extends Controller
 
     public function store(Request $request)
     {
-        $data = new product();
+        $product = new Product;
 
-
-        $request->validate([
-            'file' => 'required|file|mimes:pdf|max:10240'
-        ]);
-
-        $file = $request->file;
-
-
-        $uniqueFilename = md5_file($file->getRealPath()) . '.' . $file->getClientOriginalExtension();
-
-
-        if (Product::where('file', $uniqueFilename)->exists()) {
-            return redirect()->back()->withErrors(['error' => 'Book is already uploaded!']);
+        $product->title = $request->title;
+        $product->author = $request->author;
+        $product->category_id = $request->category_id;
+        
+        // Get category name for backward compatibility
+        if ($request->category_id) {
+            $category = Category::find($request->category_id);
         }
 
+        $file = $request->file;
+        if($file)
+        {
+            $filename = md5($file->getClientOriginalName()).'.'.$file->getClientOriginalExtension();
+            $file->move('assets', $filename);
+            $product->file = $filename;
+        }
 
-        $file->move('assets', $uniqueFilename);
+        $product->save();
 
-        $data->file = $uniqueFilename;
-        $data->title = $request->title;
-        $data->author = $request->author;
-        $data->category = $request->category;
-        $data->save();
-
-        return redirect()->back()->with('success', 'Book uploaded successfully!');
-
+        return redirect()->back()->with('message', 'Book Added Successfully');
     }
 
     public function show(Request $request)
@@ -127,26 +122,26 @@ class HomeController extends Controller
 
     public function edit($id)
     {
-        $data = product::findOrFail($id);
-        return view('edit', compact('data'));
+        $product = Product::findOrFail($id);
+        return response()->json($product);
     }
 
     public function update(Request $request, $id)
     {
-        $data = product::findOrFail($id);
-
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'author' => 'required|string|max:255',
-            'category' => 'required|string|max:255',
-        ]);
-
-        $data->title = $request->title;
-        $data->author = $request->author;
-        $data->category = $request->category;
-        $data->save();
-
-        return redirect()->route('uploadpage')->with('success', 'Book details updated successfully!');
+        $product = Product::findOrFail($id);
+        
+        $product->title = $request->title;
+        $product->author = $request->author;
+        $product->category_id = $request->category_id;
+        
+        // Update category name for backward compatibility
+        if ($request->category_id) {
+            $category = Category::find($request->category_id);
+        }
+        
+        $product->save();
+        
+        return redirect()->back()->with('success', 'Book updated successfully');
     }
 
     public function carousel(Request $request)
