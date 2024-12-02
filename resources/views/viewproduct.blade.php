@@ -1,4 +1,3 @@
-
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -151,9 +150,12 @@ span {
 
 
     <div id="pdf-toolbar">
-      <span>Page: <span id="page-num">1</span> / <span id="page-count"></span></span>
       <button id="zoom-in"><i class='bx bx-plus'></i></button>
       <button id="zoom-out"><i class='bx bx-minus' ></i></button>
+      <span>Page: <span id="page-num">1</span> / <span id="page-count"></span></span>
+      <button id="bookmark-btn" class="btn btn-primary">
+        <i class="fas fa-bookmark"></i> Bookmark Page
+    </button>
   </div>
 
   <div class="container">

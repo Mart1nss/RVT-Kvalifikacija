@@ -373,3 +373,19 @@ font-family: sans-serif;
 font-size: 18px;
 text-transform: uppercase;
 }
+
+#bookmark-btn {
+    margin-left: 15px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#bookmark-btn.active {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#bookmark-btn:hover {
+    opacity: 0.8;
+}
