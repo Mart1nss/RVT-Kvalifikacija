@@ -50,7 +50,16 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   };
 
+  const cleanupLocalStorage = () => {
+    const keys = Object.keys(localStorage);
+    const bookKeys = keys.filter(key => key.startsWith('book_'));
+    if (bookKeys.length > 100) { 
+        localStorage.removeItem(bookKeys[0]); 
+    }
+};
+
   const handleScroll = () => {
+    cleanupLocalStorage();
       const pages = document.querySelectorAll('.pdf-page');
       let currentPage = 1;
       const containerScrollTop = pdfContainer.scrollTop;

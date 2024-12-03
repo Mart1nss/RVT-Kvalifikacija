@@ -9,122 +9,6 @@
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <link rel="stylesheet" href="{{ asset('pdfjs-express/lib/ui/style.css') }}"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
-  
-
-  <style>
-.fab {
-    position: fixed;
-    bottom: 20px; 
-    right: 20px;
-    background-color: #1d1d1d; 
-    color: white;
-    border: none;
-    border-radius: 50%;
-    padding: 15px;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
-    z-index: 10; 
-}
-
-#toggle-button {
-  display: none;
-}
-
-@media (max-width: 768px) {
-  #toggle-button {
-      display: block;
-      font-size: 20px;
-      position: fixed;
-      bottom: 20px; 
-      right: 20px;
-      background-color: #1d1d1d; 
-      color: white;
-      border: none;
-      border-radius: 50%;
-      padding: 15px;
-      cursor: pointer;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
-      z-index: 10; 
-  }
-}
-
-.fade-out {
-    opacity: 0;
-    transition: opacity 0.5s ease-in-out; 
-}
-
-#pdf-toolbar {
-  display: flex;
-  padding: 0 8px;
-  max-width: 1350px;
-  margin: 0 auto;
-  top: 0;   
-  z-index: 1;    
-  @media (max-width: 769px) {
-    padding: 0 10px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-  }
-}
-
-#pdf-toolbar button {
-  margin: 0 5px;
-  background-color: rgb(37, 37, 37);
-  color: white;
-  border: none;
-  padding: 5px;
-  height: 30px;
-  width: 30px;
-  border-radius: 20px;
-  font-weight: 800;
-  margin-left: 20px;
-  font-size: 20px;
-  text-transform: uppercase;
-  transition: all 0.15;
-  cursor: pointer;
-}
-
-#pdf-container {
-  background-color: rgb(37, 37, 37);
-  border-radius: 10px;
-    width: 100%;
-    height: 80vh;
-    overflow-y: scroll;
-    position: relative;
-}
-
-#pdf-container::-webkit-scrollbar {
-  width: 8px;
-}
-
-#pdf-container::-webkit-scrollbar-track {
-  background-color: transparent;
-}
-
-#pdf-container::-webkit-scrollbar-thumb {
-  background-color: #888;
-  border-radius: 2px;
-}
-
-#pdf-container canvas {
-    display: block;
-    margin: 5px auto;
-    max-width: 100%;
-    height: auto;
-}
-
-span {
-    color: white;
-    text-transform: uppercase;
-    font-weight: 800;
-}
-
-.last-updated em { 
-    color: gray;   
-    font-style: italic; 
-}
-
-  </style>
 
 </head>
 
@@ -146,32 +30,105 @@ span {
 @endif
     </div>
 
-
-
-
-    <div id="pdf-toolbar">
-      <button id="zoom-in"><i class='bx bx-plus'></i></button>
-      <button id="zoom-out"><i class='bx bx-minus' ></i></button>
-      <span>Page: <span id="page-num">1</span> / <span id="page-count"></span></span>
-      <button id="bookmark-btn" class="btn btn-primary">
-        <i class="fas fa-bookmark"></i> Bookmark Page
-    </button>
-  </div>
+    <div class="container" style="margin-bottom: 10px;">
+      <div class="pdf-viewer-wrapper">
+        <div id="pdf-toolbar">
+          <button id="zoom-in"><i class='bx bx-zoom-in'></i></button>
+          <button id="zoom-out"><i class='bx bx-zoom-out' ></i></button>
+          <span>Page: <span id="page-num">1</span> / <span id="page-count"></span></span>
+          <form id="bookmark-form" action="{{ $product->isFavoritedBy(auth()->user()) ? route('favorites.delete', $product->id) : route('favorites.add', $product->id) }}" method="POST" style="display: inline;">
+            @csrf
+            @if($product->isFavoritedBy(auth()->user()))
+                @method('DELETE') 
+            @endif
+            <button id="bookmark-btn" class="btn {{ $product->isFavoritedBy(auth()->user()) ? '' : 'btn-primary' }}" type="submit" data-bookmarked="{{ $product->isFavoritedBy(auth()->user()) ? 'true' : 'false' }}">
+              <i class='bx {{ $product->isFavoritedBy(auth()->user()) ? "bxs-bookmark" : "bx-bookmark" }}'></i>
+            </button>
+            <span id="bookmark-page" style="display: inline-block; margin-left: 4px; font-size: 0.8em;"></span>
+          </form>
+        </div>
 
   <div class="container">
 
-    <div id="pdf-container"></div>
+        <div id="pdf-container"></div>
+      </div>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js"></script>
     <script src="{{ asset('js/pdfViewer.js') }}"></script>
     <script>
+      //BOOKMARK FUNCTIONALITY
         document.addEventListener('DOMContentLoaded', function () {
             const pdfUrl = "/assets/{{ $data->file }}";
             initPDFViewer(pdfUrl);
+
+            // Bookmark form functionality
+            const bookmarkForm = document.getElementById('bookmark-form');
+            const bookmarkBtn = document.getElementById('bookmark-btn');
+            const bookmarkPageSpan = document.getElementById('bookmark-page');
+            
+            // Function to update bookmark page display
+            function updateBookmarkPageDisplay(pageNumber = null) {
+                if (pageNumber) {
+                    bookmarkPageSpan.textContent = `P${pageNumber}`;
+                } else {
+                    bookmarkPageSpan.textContent = '';
+                }
+            }
+
+            // Load initial bookmark state
+            fetch(`/bookmarks/{{ $product->id }}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.id) {
+                        updateBookmarkPageDisplay(data.page_number);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            
+            bookmarkForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const currentPage = document.getElementById('page-num').textContent;
+                
+                fetch(this.action, {
+                    method: this.method,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                    },
+                    body: new FormData(this)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        const isBookmarked = bookmarkBtn.getAttribute('data-bookmarked') === 'true';
+                        const bookmarkIcon = bookmarkBtn.querySelector('i');
+                        
+                        if (isBookmarked) {
+                            bookmarkIcon.className = 'bx bx-bookmark';
+                            bookmarkBtn.setAttribute('data-bookmarked', 'false');
+                            bookmarkBtn.classList.add('btn-primary');
+                            bookmarkForm.action = '{{ route('favorites.add', $product->id) }}';
+                            bookmarkForm.querySelector('input[name="_method"]')?.remove();
+                            updateBookmarkPageDisplay(null);
+                        } else {
+                            bookmarkIcon.className = 'bx bxs-bookmark';
+                            bookmarkBtn.setAttribute('data-bookmarked', 'true');
+                            bookmarkBtn.classList.remove('btn-primary');
+                            bookmarkForm.action = '{{ route('favorites.delete', $product->id) }}';
+                            updateBookmarkPageDisplay(currentPage);
+                            if (!bookmarkForm.querySelector('input[name="_method"]')) {
+                                const methodInput = document.createElement('input');
+                                methodInput.type = 'hidden';
+                                methodInput.name = '_method';
+                                methodInput.value = 'DELETE';
+                                bookmarkForm.appendChild(methodInput);
+                            }
+                        }
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
         });
     </script>
-
-
 
       <button id="toggle-button" class="fab">
         <i class="toggle-icon bx bx-notepad"></i>  
@@ -196,7 +153,7 @@ span {
         @if($product->isFavoritedBy(auth()->user()))
             @method('DELETE') 
         @endif
-        <button class="favorite-btn" type="submit">
+        <button class="favorite-btn" style="padding: 5px 30px; margin-left: 10px;" type="submit">
             <i class='bx bx-star @if($product->isFavoritedBy(auth()->user())) bx bxs-star @endif'></i> FAVORITE
         </button>
     </form>
@@ -204,7 +161,6 @@ span {
     </div>
 
     <div class="under-pdf">
-
 
       <div id="reviews-div" class="reviews-div">
         <h1 class="reviews-header">REVIEWS</h1>
