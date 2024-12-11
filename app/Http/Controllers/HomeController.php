@@ -187,22 +187,5 @@ class HomeController extends Controller
     }
 
 
-    public function sendNotification(Request $request)
-    {
-        $request->validate(['message' => 'required']);
-
-
-        $users = User::all();
-        foreach ($users as $user) {
-            Notification::create([
-                'user_id' => $user->id,
-                'message' => $request->message
-            ]);
-        }
-
-        return back()->with('success', 'Notification sent!');
-    }
-
-
 
 }

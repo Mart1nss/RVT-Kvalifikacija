@@ -9,35 +9,6 @@
   <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.mjs"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf_viewer.min.css" integrity="sha512-kQO2X6Ls8Fs1i/pPQaRWkT40U/SELsldCgg4njL8zT0q4AfABNuS+xuy+69PFT21dow9T6OiJF43jan67GX+Kw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-  <style>
-    .dropdown-content {
-      list-style-type: none;
-      padding: 0;
-      margin: 0;
-    }
-    
-    .dropdown-content li {
-      padding: 8px 12px;
-      cursor: pointer;
-    }
-    
-    .dropdown-content li:hover {
-      background-color: #f5f5f5;
-    }
-    
-    .dropdown-content label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      color: #333;
-    }
-    
-    .dropdown-content input[type="checkbox"] {
-      margin: 0;
-    }
-  </style>
-
 </head>
 
 <body>
@@ -202,6 +173,5 @@
       });
 </script>
 
-  
 </body>
 </html>

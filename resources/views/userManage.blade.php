@@ -1,188 +1,21 @@
 
-<html lang="en">
+<html lang="en" >
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Management</title>
     <link rel="stylesheet" href="{{ asset('css/navbar-style.css') }}">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="{{ asset('css/usermanage-style.css') }}">
 </head>
 <body>
-  <style>
 
-.upload-text {
-  font-family: sans-serif;
-  font-weight: 800;
-  color: white;
-  text-transform: uppercase;
-  margin-bottom: 20px;
- 
-}
-
-table {
-  border-radius: 10px;
-  border: white 1px solid;
-  width: 100%;
-  min-width: 600px;
-}
-
-th {
-  color: white;
-  font-family: sans-serif;
-  font-weight: 800;
-  text-transform: uppercase;
-  text-align: left;
-  padding: 10px 2vw;
-  background-color: rgb(37, 37, 37);
-}
-
-td {
-  color: white;
-  text-align: left;
-  padding: 10px 2vw;
-}
-
-tbody {
-  background-color: #1c1a1a;
-}
-
-.filter-div {
-  display: grid; 
-  grid-template-columns: 1fr auto;
-
-  @media (max-width: 768px) {
-    display: block;
-    margin-bottom: 10px;
-    margin-left: 0px;
-  }
-}
-
-#myInput {
-  width: 100%;
-  font-size: 16px;
-  padding: 12px 20px 12px 40px;
-  border: none;
-  border-radius: 20px;
-  font-size: 12px;
-  outline: transparent;
-  background-color:#1c1a1a;
-  margin-bottom: 12px;
-  color: white;
-  text-transform: uppercase;
-  font-family: sans-serif;
-  font-weight: 800;
-  align-items: center;
-}
-
-#sortButton {
-  display: flex;
-  width: 150px;
-  padding: 10px;
-  color: white;
-  border: white 1px solid;
-  font-family: sans-serif;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 12px;
-  border-radius: 20px;
-  background-color: #1c1a1a;
-  cursor: pointer;
-  text-transform: uppercase;
-  margin-top: 0;
-  height: 40px;
-  margin-left: 10px; 
-  @media (max-width: 768px) {
-    margin-left: 0px;
-  }
-}
-
-div[style*="overflow-x:auto"] { 
-  overflow-x: auto;  
-  -webkit-overflow-scrolling: touch; 
-}
-
-.item-container {
-    background-color: rgb(37, 37, 37);
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px;
-    padding: 16px;
-}
-
-.remove-btn {
-  color: rgb(255, 0, 0);
-  text-decoration: none;
-  border: rgb(255, 0, 0) 1px solid;
-  border-radius: 20px;
-  padding: 10px;
-  font-family: sans-serif;
-  font-weight: 800;
-  font-size: 12px;
-  text-transform: uppercase;
-  background-color: #1a1a1a;
-  cursor: pointer;
-}
-
-.download-btn {
-  color: white;
-  text-decoration: none;
-  border: white 1px solid;
-  border-radius: 20px;
-  padding: 10px;
-  font-family: sans-serif;
-  font-weight: 800;
-  font-size: 12px;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.notif-input {
-  width: 100%;
-  font-size: 16px;
-  padding: 12px 10px 0px 40px;
-  border: none;
-  border-radius: 20px;
-  font-size: 12px;
-  outline: transparent;
-  background-color:#1c1a1a;
-  margin-bottom: 12px;
-  color: white;
-  text-transform: uppercase;
-  font-family: sans-serif;
-  font-weight: 800;
-  align-items: center;
-  resize: none;
-}
-
-.send-btn {
-  display: flex;
-  width: 150px;
-  padding: 10px;
-  color: rgb(0, 0, 0);
-  border: white 1px solid;
-  font-family: sans-serif;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 12px;
-  border-radius: 20px;
-  background-color: #ffffff;
-  cursor: pointer;
-  text-transform: uppercase;
-  margin-top: 0;
-  height: 40px;
-  margin-left: 10px; 
-  @media (max-width: 768px) {
-    margin-left: 0px;
-  }
-}
-
-
-</style>
 
 @include('navbar')
 
 
 
-  <div class="main-container">
+  <div class="main-container" >
 
     <div class="text-container">
       <h1 style="color: white; text-transform:uppercase; font-family: sans-serif; font-weight: 800;">User Management</h1>

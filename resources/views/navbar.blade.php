@@ -8,7 +8,7 @@
 
 <div class="navbar">
 
-  <h1 class="logo" style="font-family: sans-serif; color: white; cursor: pointer; font-weight: 800">LOGO</h1>
+  <h1 class="logo" style="font-family: sans-serif; color: white; cursor: pointer; font-weight: 800 font-size: 18px">ELEVATE READS</h1>
 
   <div class="back-btn-div">
     <span id="back-btn" class='bx bxs-left-arrow-alt'></span>

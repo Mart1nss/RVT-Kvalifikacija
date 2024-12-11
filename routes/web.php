@@ -30,15 +30,14 @@ Route::get('/', function () {
 // Redirect to the 'dashboard' method instead of 'index'
 Route::get('/home', [HomeController::class, 'dashboard'])->middleware('auth')->name('home');
 
-
+Route::get('/testpage', function () {
+    return view('testpage');
+});
 
 
 Route::get('/', [HomeController::class, 'carousel']);
 
 
-Route::get('/csstest', function () {
-    return view('csstest');
-});
 
 
 //nez vai vajag
@@ -96,7 +95,7 @@ Route::delete('/favorites/{id}', [FavoritesController::class, 'delete'])->name('
 
 
 //Notification Routes
-Route::post('/managepage', [HomeController::class, 'sendNotification'])->name('admin.send.notification');
+Route::post('/managepage', [NotificationController::class, 'sendNotification'])->name('admin.send.notification');
 Route::post('/notifications/{notification}/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.markRead');
 
 

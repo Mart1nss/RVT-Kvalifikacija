@@ -42,7 +42,6 @@
         </div>
 
         <div class="item-container">
-
             
             <a class="btn-dashboard" href="{{'/bookpage'}}"><i id="dashboardIcon" class='bx bx-book'></i> View All Books</a>
 
