@@ -22,6 +22,10 @@ class NotificationController extends Controller
             ]);
         }
 
+        if ($request->ajax()) {
+            return response()->json(['success' => true]);
+        }
+
         return back()->with('success', 'Notification sent!');
     }
 
@@ -34,4 +38,3 @@ class NotificationController extends Controller
         return response()->json(['success' => true]);
     }
 }
-

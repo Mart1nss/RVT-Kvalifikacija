@@ -5,28 +5,20 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>All Books</title>
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet" href="{{ asset('css/navbar-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/allbooks-style.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/notifications-style.css') }}">
   <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.mjs"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf_viewer.min.css" integrity="sha512-kQO2X6Ls8Fs1i/pPQaRWkT40U/SELsldCgg4njL8zT0q4AfABNuS+xuy+69PFT21dow9T6OiJF43jan67GX+Kw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 </head>
 
 <body>
+  @include('components.alert')
   @include('navbar')
 
   <div class="main-container">
 
-@if(session('error'))
-    <div class="alert-danger">
-        {{ session('error') }}
-    </div>
-@endif
-
-@if(session('success'))
-    <div class="alert-success">
-        {{ session('success') }}
-    </div>
-@endif
 
 <div class="text-container">
   <h1 style="color: white; text-transform:uppercase; font-family: sans-serif; font-weight: 800;">All Books</h1>

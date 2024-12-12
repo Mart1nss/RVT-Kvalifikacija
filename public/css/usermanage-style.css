@@ -31,23 +31,34 @@
   }
   
   tbody {
-    background-color: #1c1a1a;
+    background-color: #1c1c1a;
+  }
+
+
+  .button-container {
+    display: flex;
   }
   
   .filter-div {
-    display: grid; 
-    grid-template-columns: 1fr auto;
+    display: flex; /* Use flexbox for inline alignment */
+    align-items: center; /* Align items vertically */
+    gap: 10px; /* Add spacing between elements */
+    margin-bottom: 12px;
+  }
   
-    @media (max-width: 768px) {
-      display: block;
-      margin-bottom: 10px;
-      margin-left: 0px;
+  @media (max-width: 768px) {
+    .filter-div {
+      flex-direction: column; /* Stack elements vertically on smaller screens */
+      align-items: stretch; /* Make elements span the full width */
+    }
+  
+    .filter-div > * {
+      width: 100%; /* Ensure child elements take full width in mobile */
     }
   }
   
   #myInput {
     width: 100%;
-    font-size: 16px;
     padding: 12px 20px 12px 40px;
     border: none;
     border-radius: 20px;
@@ -62,25 +73,41 @@
     align-items: center;
   }
   
-  #sortButton {
-    display: flex;
-    width: 150px;
+  .sort-dropdown {
     padding: 10px;
     color: white;
     border: white 1px solid;
     font-family: sans-serif;
-    justify-content: center;
     font-weight: 800;
     font-size: 12px;
     border-radius: 20px;
     background-color: #1c1a1a;
     cursor: pointer;
     text-transform: uppercase;
-    margin-top: 0;
+    margin-left: 10px;
+    margin-bottom: 12px;
     height: 40px;
-    margin-left: 10px; 
-    @media (max-width: 768px) {
+    width: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .sort-dropdown option {
+    background-color: #1c1a1a;
+    color: white;
+    padding: 20px;
+    font-size: 14px;
+    height: 40px;
+    line-height: 40px;
+  }
+
+  @media (max-width: 768px) {
+    .sort-dropdown {
       margin-left: 0px;
+      margin-top: 10px;
+      display: flex;
     }
   }
   
@@ -122,43 +149,85 @@
     text-transform: uppercase;
     cursor: pointer;
   }
-  
-  .notif-input {
-    width: 100%;
-    font-size: 16px;
-    padding: 12px 10px 0px 40px;
-    border: none;
-    border-radius: 20px;
-    font-size: 12px;
-    outline: transparent;
-    background-color:#1c1a1a;
-    margin-bottom: 12px;
-    color: white;
-    text-transform: uppercase;
-    font-family: sans-serif;
-    font-weight: 800;
-    align-items: center;
-    resize: none;
+
+  .dropdown {
+    position: relative;
+    display: inline-block;
+    margin-right: 10px;
   }
-  
-  .send-btn {
-    display: flex;
-    width: 150px;
-    padding: 10px;
-    color: rgb(0, 0, 0);
-    border: white 1px solid;
+
+  .dropdown:last-child {
+    margin-right: 0;
+  }
+
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #1c1a1a;
+    min-width: 200px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 10px;
+    margin-top: 5px;
+    border: 1px solid white;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .show {
+    display: block;
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .sort-dropdown:hover {
+    background-color: #1c1a1a;
+  }
+
+  .dropdown-content a {
+    color: white;
+    padding: 16px;
+    text-decoration: none;
+    display: block;
     font-family: sans-serif;
-    justify-content: center;
     font-weight: 800;
-    font-size: 12px;
-    border-radius: 20px;
-    background-color: #ffffff;
-    cursor: pointer;
+    font-size: 14px;
     text-transform: uppercase;
-    margin-top: 0;
-    height: 40px;
-    margin-left: 10px; 
-    @media (max-width: 768px) {
+    transition: background-color 0.2s ease;
+  }
+
+  .dropdown-content a.active {
+    background-color: #2c2c2c;
+    border-radius: 10px;
+  }
+
+  .dropdown-content a:hover {
+    background-color: #2c2c2c;
+    border-radius: 10px;
+  }
+
+  @media (max-width: 768px) {
+    .sort-dropdown {
       margin-left: 0px;
+      margin-top: 10px;
+    }
+    .dropdown-content {
+      width: 100%;
     }
   }
+
+
+  #filterButton, #sortButton {
+    margin: 0; /* Remove default margins */
+  }
+  
+  @media (max-width: 768px) {
+    #filterButton, #sortButton {
+      margin-top: 0; /* Ensure no top margin on mobile */
+    }
+  }
+
+
+
+

@@ -14,10 +14,10 @@
     background-color: #1c1a1a;
     color: white;
     border-radius: 10px;
-    border: white 1px solid;
+    border: none;
     overflow: hidden;
     position: relative;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     transition: 0.15s;
 }
 

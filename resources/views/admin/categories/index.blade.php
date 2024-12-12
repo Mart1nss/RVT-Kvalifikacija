@@ -1,22 +1,15 @@
+@include('components.alert')
 @include('navbar')
 
 <link rel="stylesheet" href="{{ asset('css/categorymanage-style.css') }}">
+<link rel="stylesheet" href="{{ asset('css/notifications-style.css') }}">
+
+
+
 
 <div class="main-container">
 <div class="category-container">
     <h1 style="margin-bottom: 20px; font-family: sans-serif; font-weight: 800; text-transform: uppercase; font-size: 32px;">Manage Categories</h1>
-
-    @if(session('success'))
-        <div class="alert alert-success" id="success-alert">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="alert alert-error" id="error-alert">
-            {{ session('error') }}
-        </div>
-    @endif
 
     <div class="category-form">
         <h2>Add New Category</h2>
@@ -25,7 +18,7 @@
             <div>
                 <input type="text" name="name" placeholder="Category Name" required>
             </div>
-            <button type="submit" class="btn-category">Add Category</button>
+            <button type="submit" class="btn-category-primary">Add Category</button>
         </form>
     </div>
 
@@ -49,11 +42,11 @@
                     <h3>{{ $category->name }}</h3>
                 </div>
                 <div>
-                    <button class="btn-category" onclick="toggleEdit({{ $category->id }})">Edit</button>
+                    <button class="btn-category-primary" onclick="toggleEdit({{ $category->id }})">Edit</button>
                     <form action="{{ route('categories.destroy', $category) }}" method="POST" style="display: inline;">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn-category btn-delete">Delete</button>
+                        <button type="submit" class="btn-category-primary btn-delete">Delete</button>
                     </form>
                 </div>
             </div>
@@ -65,8 +58,8 @@
                     <div>
                         <input type="text" name="name" value="{{ $category->name }}" required>
                     </div>
-                    <button type="submit" class="btn-category">Update</button>
-                    <button type="button" class="btn-category" onclick="toggleEdit({{ $category->id }})">Cancel</button>
+                    <button type="submit" class="btn-category-primary">Update</button>
+                    <button type="button" class="btn-category-secondary" onclick="toggleEdit({{ $category->id }})">Cancel</button>
                 </form>
             </div>
         @endforeach
@@ -80,18 +73,8 @@ function toggleEdit(categoryId) {
     editForm.style.display = editForm.style.display === 'none' ? 'block' : 'none';
 }
 
-// Auto-hide alerts after 3 seconds
+
 document.addEventListener('DOMContentLoaded', function() {
-    const alerts = document.querySelectorAll('.alert');
-    
-    alerts.forEach(alert => {
-        setTimeout(() => {
-            alert.classList.add('fade-out');
-            setTimeout(() => {
-                alert.style.display = 'none';
-            }, 500);
-        }, 3000);
-    });
 
     // Category search functionality
     const searchInput = document.getElementById('categorySearch');

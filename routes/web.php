@@ -26,18 +26,24 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// stats
+
 // Redirect to the 'dashboard' method instead of 'index'
 Route::get('/home', [HomeController::class, 'dashboard'])->middleware('auth')->name('home');
+
+
+
 
 Route::get('/testpage', function () {
     return view('testpage');
 });
 
+Route::get('/myprogress', function () {
+    return view('myprogress');
+});
+
+
 
 Route::get('/', [HomeController::class, 'carousel']);
-
-
 
 
 //nez vai vajag
@@ -95,7 +101,10 @@ Route::delete('/favorites/{id}', [FavoritesController::class, 'delete'])->name('
 
 
 //Notification Routes
-Route::post('/managepage', [NotificationController::class, 'sendNotification'])->name('admin.send.notification');
+Route::get('/notifications', function () {
+    return view('notifications');
+})->name('notifications')->middleware(['auth', 'admin']);
+Route::post('/notifications/send', [NotificationController::class, 'sendNotification'])->name('admin.send.notification');
 Route::post('/notifications/{notification}/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.markRead');
 
 

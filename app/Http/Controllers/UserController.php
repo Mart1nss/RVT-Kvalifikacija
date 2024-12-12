@@ -10,7 +10,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::all();
+        $users = User::orderBy('last_online', 'desc')->get();
         return view('userManage', compact('users'));
     }
 
@@ -47,4 +47,3 @@ class UserController extends Controller
         return redirect()->route('user.manage')->with('success', 'User deleted successfully.');
     }
 }
-

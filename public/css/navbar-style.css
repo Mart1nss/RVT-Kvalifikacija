@@ -135,9 +135,126 @@ body {
   cursor: pointer;
 }
 
+#notification-btn {
+  background-color: rgb(37, 37, 37);
+  color: white;
+  border: none;
+  padding: 10px;
+  height: 40px;
+  width: 40px;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 16px;
+  transition: all 0.15s;
+  position: relative;
+  cursor: pointer;
+}
 
+#notification-btn:hover {
+  background-color: rgb(56, 56, 56);
+}
 
+.badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #ff4444;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: bold;
+}
 
+#notifications-dropdown {
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  margin-right: 140px;
+  top: 70px;
+  background-color: rgb(37, 37, 37);
+  min-width: 300px;
+  max-width: 400px;
+  border-radius: 10px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.notification-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background-color 0.2s;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.notification-content {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.notification-text {
+  color: white;
+  font-size: 14px;
+  margin-bottom: 5px;
+  line-height: 1.4;
+}
+
+.notification-time {
+  color: #888;
+  font-size: 12px;
+  font-style: italic;
+}
+
+.mark-read {
+  background: none;
+  border: none;
+  color: #4CAF50;
+  cursor: pointer;
+  padding: 5px;
+  font-size: 18px;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.mark-read:hover {
+  opacity: 1;
+}
+
+.no-notifications {
+  color: #888;
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+}
+
+#notifications-dropdown::-webkit-scrollbar {
+  width: 8px;
+}
+
+#notifications-dropdown::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+#notifications-dropdown::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+#notifications-dropdown::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
 
 .main-container {
   background-color: #1c1a1a;
@@ -197,90 +314,6 @@ body {
   text-transform: uppercase;
 }
 
-#notification-btn {
-  background-color: rgb(37, 37, 37);
-  color: white;
-  border: none;
-  padding: 5px;
-  height: 40px;
-  width: 40px;
-  border-radius: 20px;
-  font-weight: 800;
-  margin-left: 20px;
-  font-size: 20px;
-  text-transform: uppercase;
-  transition: all 0.15;
-}
-
-
-#notification-btn:hover {
-  background-color: rgb(56, 56, 56);
-  cursor: pointer;
-}
-
-#notifications-dropdown {
-    display: none;              
-    position: absolute;
-    top: 60px;                  
-    color: white;
-    background-color: rgb(37, 37, 37);
-    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-    min-width: 250px;
-    max-width: 250px;
-    padding: 10px;
-    font-family: sans-serif;
-    text-transform: uppercase;
-    font-size: 14px;
-    font-weight: 700;
-    word-wrap: break-word;
-    z-index: 1;
-}
-
-.notification-item {
-    border-bottom: 1px solid #f0f0f0;
-    padding: 8px 0;
-    background-color: rgb(37, 37, 37);
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    justify-content: space-between;
-    word-wrap: break-word;
-}
-
-.notification-text {
-  flex: 1; 
-  white-space: normal; 
-  overflow: hidden; 
-  text-overflow: ellipsis; 
-}
-
-.notification-item.read {
-    background-color: rgb(37, 37, 37); 
-}
-
-.notification-item:last-child {
-    border-bottom: none; 
-}
-
-.mark-read {
-    background-color: #ffffff; 
-    color: rgb(0, 0, 0);
-    border: none;
-    padding: 8px 8px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 20px; 
-    margin-left: 10px;
-}
-
-.no-notifications {
-  text-align: center;
-  padding: 10px;
-  color: gray; 
-} 
-
-
 .btn-kkas {
   background-color: rgb(255, 255, 255);
   border: none;
@@ -313,14 +346,4 @@ body {
 #dashboardIcon {
   font-size: 20px;
   margin-right: 10px;
-}
-
-.badge {
-  background-color: red;
-  border-radius: 20px;
-  width: 24px;
-  height: 24px;
-  font-size: 16px;
-  position: absolute;
-  top: 10;
 }
