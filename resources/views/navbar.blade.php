@@ -8,7 +8,7 @@
 
 <div class="navbar">
 
-  <h1 class="logo" style="font-family: sans-serif; color: white; cursor: pointer; font-weight: 800; font-size: 24px; white-space: nowrap;">ELEVATE READS</h1>
+  <h1 class="logo" style="font-family: sans-serif; color: white; cursor: pointer; font-weight: 800; white-space: nowrap;">ELEVATE READS</h1>
 
   <div class="back-btn-div">
     <span id="back-btn" class='bx bxs-left-arrow-alt'></span>
@@ -26,7 +26,7 @@
 
     <div id="notifications-dropdown" style="display: none;">
       @if($unreadNotifications->isEmpty())
-        <p class="no-notifications">You have no notifications</p> 
+        <p class="no-notifications">No Notifications</p> 
       @else
         @foreach($unreadNotifications as $notification)
           <div class="notification-item">

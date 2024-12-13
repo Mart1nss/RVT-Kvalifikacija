@@ -34,7 +34,7 @@
   height: 38px;
   background-color: rgb(37, 37, 37);
   border: none;
-  border-radius: 20px;
+  border-radius: 8px;
   font-size: 12px;
   outline: transparent;
   text-align: center;
@@ -47,7 +47,7 @@
   background-color: white;
   height: 38px;
   width: 100%;
-  border-radius: 20px;
+  border-radius: 8px;
   font-weight: 800;
   cursor: pointer;
   font-size: 12px;
@@ -62,7 +62,7 @@
   padding: 10px;
   height: 40px;
   width: 120px;
-  border-radius: 20px;
+  border-radius: 8px;
   font-weight: 800;
   margin-left: 20px;
   font-size: 12px;
@@ -101,7 +101,7 @@
   background-color: rgb(255, 255, 255);
   color: rgb(0, 0, 0);
   padding: 10px;
-  border-radius: 20px;
+  border-radius: 8px;
   font-weight: 800;
   font-size: 12px;
   text-transform: uppercase;
@@ -110,8 +110,8 @@
 
 .item-container {
   background-color: rgb(37, 37, 37);
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   grid-gap: 20px;
@@ -128,8 +128,8 @@
 
 .item-container3 {
   background-color: rgb(37, 37, 37);
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
   display: flex;
   grid-gap: 20px;
   justify-content: start;
@@ -139,7 +139,7 @@
 .item-card {
   background-color: #1c1a1a;
   color: white;
-  border-radius: 10px;
+  border-radius: 8px;
   border: white 1px solid;
   overflow: hidden;
   position: relative;
@@ -150,8 +150,8 @@
 .pdf-item {
   background-color: #1c1a1a;
   color: white;
-  border-radius: 10px;
-  border: white 1px solid;
+  border-radius: 8px;
+  border: none;
   overflow: hidden;
   position: relative;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -189,7 +189,7 @@
   cursor: pointer;
 }
 
-/* Page specific styles */
+
 .manage-books-title {
   color: white;
   text-transform: uppercase;
@@ -207,225 +207,6 @@
 
 .highlight-text {
   color: rgb(255, 230, 0);
-}
-
-.upload-div {
-  display: block;
-  width: 400px;
-  @media (max-width: 769px) {
-  width: 100%;
-}
-}
-
-
-.upload-text {
-  color: white;
-  text-transform: uppercase;
-  font-weight: 800;
-  margin-bottom: 20px;
-}
-.upload-book-form {
-  border: rgb(255, 255, 255) 1px solid;
-  background-color: #1c1a1a;
-  padding: 15px;
-  border-radius: 8px;
-  display: block;
-  color: white;
-}
-.form-group {
-margin-bottom: 10px;
-}
-
-.form-control {
-width: 100%;
-height: 38px;
-background-color: rgb(37, 37, 37);
-border: none;
-border-radius: 20px;
-font-size: 12px;
-outline: transparent;
-text-align: center;
-color: white;
-}
-
-.btn-primary {
-margin-top: 20px;
-border: 1px solid white;
-background-color: white;
-height: 38px;
-width: 100%;
-border-radius: 20px;
-font-weight: 800;
-cursor: pointer;
-font-size: 12px;
-text-transform: uppercase;
-transition: all 0.15;
-}
-
-.login-btn {
-border: 1px solid white;
-background-color: black;
-color: white;
-padding: 10px;
-height: 40px;
-width: 120px;
-border-radius: 20px;
-font-weight: 800;
-margin-left: 20px;
-font-size: 12px;
-text-transform: uppercase;
-transition: all 0.15;
-}
-
-.remove-btn {
-color: rgb(255, 0, 0);
-text-decoration: none;
-border: rgb(255, 0, 0) 1px solid;
-border-radius: 20px;
-padding: 10px;
-font-family: sans-serif;
-font-weight: 800;
-font-size: 12px;
-text-transform: uppercase;
-background-color: #1a1a1a;
-cursor: pointer;
-}
-
-.download-btn {
-color: white;
-text-decoration: none;
-border: white 1px solid;
-border-radius: 20px;
-padding: 10px;
-font-family: sans-serif;
-font-weight: 800;
-font-size: 12px;
-text-transform: uppercase;
-}
-
-.view-btn {
-border: 1px solid rgb(0, 0, 0);
-background-color: rgb(255, 255, 255);
-color: rgb(0, 0, 0);
-padding: 10px;
-border-radius: 20px;
-font-weight: 800;
-font-size: 12px;
-text-transform: uppercase;
-text-decoration: none;
-}
-
-.item-container {
-    background-color: rgb(37, 37, 37);
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
-    grid-gap: 20px; 
-    justify-content: start; 
-    padding: 20px; 
-    transition: height 0.3s ease-in-out;
-}
-
-@media (max-width: 600px) {
-.item-container {
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-}
-}
-
-.item-container3 {
-    background-color: rgb(37, 37, 37);
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-    display: flex;
-    grid-gap: 20px; 
-    justify-content: start; 
-    padding: 20px; 
-}
-
-.item-card {
-background-color: #1c1a1a;
-    color: white;
-    border-radius: 10px;
-    border: white 1px solid;
-    overflow: hidden;
-    position: relative;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: 0.15s;
-}
-
-.pdf-item {
-    background-color: #1c1a1a;
-    color: white;
-    border-radius: 10px;
-    border: white 1px solid;
-    overflow: hidden;
-    position: relative;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: 0.15s;
-}
-
-.pdf-item:hover {
-  transform: scale(1.02); 
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); 
-}
-
-.favorite-btn {
-    display: none;
-    position: absolute;
-    background-color: rgb(37, 37, 37);
-    color: white;
-    border: none;
-    top: 0;
-    right: 0;
-    margin-right: 10px;
-    margin-top: 10px;
-    padding: 5px;
-    height: 40px;
-    width: 40px;
-    border-radius: 20px;
-    font-weight: 800;
-    margin-left: 20px;
-    font-size: 16px;
-    text-transform: uppercase;
-    transition: all 0.15;
-  }
-
-  .favorite-btn:hover {
-    background-color: rgb(56, 56, 56);
-    cursor: pointer;
-  }
-
-  .button-container {
-    display: flex;
-    bottom: 0;
-    left: 0;
-    margin-bottom: 10px;
-}
-
-.thumbnail img {
-max-width: 100%; 
-height: auto;  
-width: 100%; 
-}
-
-.info-container {
-display: none; 
-position: absolute;
-bottom: 0;
-left: 0;
-width: 100%;
-padding: 10px;
-background-color: rgba(0, 0, 0, 0.8); 
-border-radius: 0 0 10px 10px; 
-}
-
-.pdf-item:hover .info-container {
-display: block; 
-}
-
-.pdf-item:hover .favorite-btn {
-display: block; 
 }
 
 .modal {
@@ -495,9 +276,9 @@ display: block;
 
   .remove-btn2 {
       display: inline-flex;
-      background-color: #1a1a1a;
-      color: rgb(255, 0, 0);
-      border: red 1px solid;
+      background-color: rgb(126, 6, 6);
+      color: white;
+      border: none;
       padding: 5px;
       width: 40px;
       height: 40px;
@@ -508,10 +289,10 @@ display: block;
       font-weight: 800;
       font-size: 16px;
       text-transform: uppercase;
-      transition: all 0.15;
+      transition: all 0.15s;
     }
     .remove-btn2:hover {
-      opacity: 0.7;
+      background-color: rgb(56, 56, 56);
       cursor: pointer;
     }
 
@@ -520,7 +301,7 @@ display: block;
       background-color: #1a1a1a;
       text-decoration: none;
       border: white 1px solid;
-      border-radius: 20px;
+      border-radius: 8px;
       padding: 10px;
       font-family: sans-serif;
       font-weight: 800;

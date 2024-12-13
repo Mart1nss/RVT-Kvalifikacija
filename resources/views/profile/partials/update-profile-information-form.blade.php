@@ -123,19 +123,18 @@
     .validation-errors li {
         margin-bottom: 5px;
     }
-</style>
 
+    .error-message {
+        color: red;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+</style>
 
 <section>
     <header>
-
-        <h2 class="h2-profile">
-            {{ __('Profile Information') }}
-        </h2>
-
-        <p class="mt-1 text-sm text-gray-600">
-            {{ __("Update your account's profile information and email address.") }}
-        </p>
+        <h2>Profile Information</h2>
+        <p>Update your account's profile information and email address.</p>
     </header>
 
     <form id="send-verification" method="post" action="{{ route('verification.send') }}">
@@ -146,44 +145,41 @@
         @csrf
         @method('patch')
 
-        <div>
-            <x-input-label id="input-label"  for="name" :value="__('Name')" />
-            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
+        <div class="form-group">
+            <label id="input-label" for="name">Name</label>
+            <input id="name" name="name" type="text" class="mt-1 block w-full" value="{{ old('name', $user->name) }}" required autofocus autocomplete="name" />
             @error('name')
-                <div class="validation-errors">
-                    <ul>
-                        <li>{{ $message }}</li>
-                    </ul>
-                </div>
+                <div class="error-message">{{ $message }}</div>
             @enderror
         </div>
 
-        <div>
-            <x-input-label id="input-label" for="email" :value="__('Email')" />
-            <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
+        <div class="form-group">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px;">
+                <label id="input-label" for="email">Email</label>
+                @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && $user->hasVerifiedEmail())
+                    <div style="background-color: rgba(75, 181, 67, 0.1); padding: 4px 12px; border-radius: 20px; display: flex; align-items: center; gap: 4px;">
+                        <i class='bx bxs-check-circle' style="color: #4BB543;"></i>
+                        <span style="color: #4BB543; font-size: 12px;">Verified</span>
+                    </div>
+                @endif
+            </div>
+
+            <input id="email" name="email" type="email" class="mt-1 block w-full" value="{{ old('email', $user->email) }}" required autocomplete="username" />
             @error('email')
-                <div class="validation-errors">
-                    <ul>
-                        <li>{{ $message }}</li>
-                    </ul>
-                </div>
+                <div class="error-message">{{ $message }}</div>
             @enderror
         </div>
 
-        <div class="flex items-center gap-4">
-            <x-primary-button class="save-btn">{{ __('Save') }}</x-primary-button>
-
-            @if (session('status') === 'profile-updated')
-            <p
-                x-data="{ show: true }"
-                x-show="show"
-                x-transition
-                x-init="setTimeout(() => show = false, 2000)"
-                class="saved-text"
-            >{{ __('Saved.') }}</p>
-        @endif
-
-            
+        <div class="flex items-center gap-4" style="margin-top: 20px;">
+            <button type="submit" class="save-btn">Save</button>
         </div>
     </form>
+
+    @if (session('status') === 'profile-updated')
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                window.showAlert('Profile updated successfully!', 'success');
+            });
+        </script>
+    @endif
 </section>

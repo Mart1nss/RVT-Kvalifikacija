@@ -29,6 +29,11 @@ body {
   display: none;
   justify-content: center;
   align-items: center;
+  font-size: 24px; 
+
+  @media (max-width: 769px) {
+    font-size: 18px;
+  }
 }
 
 .back-btn-div {
@@ -61,11 +66,12 @@ body {
   margin-left: 20px;
   font-size: 12px;
   text-transform: uppercase;
-  transition: all 0.15;
+  transition: all 0.15s;
 }
 
 .user-btn:hover {
   background-color: rgb(56, 56, 56);
+  cursor: pointer;
 }
 
 .nav-btn{
@@ -82,6 +88,14 @@ body {
 
 #dropdown-toggle {
   cursor: pointer;
+}
+
+.h1-text {
+  color: white;
+  text-transform:uppercase;
+  font-family: sans-serif;
+  font-weight: 800;
+  font-size: 32px;
 }
 
 .dropdown-menu {
@@ -235,7 +249,8 @@ body {
   color: #888;
   text-align: center;
   padding: 20px;
-  font-style: italic;
+  font-style: sans-serif;
+  font-weight: 700;
 }
 
 #notifications-dropdown::-webkit-scrollbar {
@@ -279,47 +294,12 @@ body {
   border-top-right-radius: 10px;
 }
 
-.alert-danger {
-  color: red;
-  font-size: 14px;
-  margin-top: 5px;
-  width: 100%;
-  background-color: #2b0909;
-  height: 46px;
-  border-radius: 20px;
-  padding-left: 20px;
-  padding-top: 12px;
-  margin-bottom: 10px;
-  font-family: sans-serif;
-  font-weight: 800;
-  font-size: 14px;
-  text-transform: uppercase;
-}
-
-.alert-success {
-  color: green;
-  font-size: 14px;
-  margin-top: 5px;
-  width: 100%;
-  background-color: #072907;
-  height: 46px;
-  border-radius: 20px;
-  padding-left: 20px;
-  display: flex;
-  padding-top: 12px;
-  margin-bottom: 10px;
-  font-family: sans-serif;
-  font-weight: 800;
-  font-size: 14px;
-  text-transform: uppercase;
-}
-
 .btn-kkas {
   background-color: rgb(255, 255, 255);
   border: none;
   color: rgb(0, 0, 0);
   padding: 10px;
-  border-radius: 20px;
+  border-radius: 8px;
   margin-top: 20px;
   text-decoration: none; 
   font-size: 14px; 
@@ -335,12 +315,18 @@ body {
   width: 200px;
   color: rgb(0, 0, 0);
   padding: 10px;
-  border-radius: 20px;
+  border-radius: 8px;
   text-decoration: none; 
   font-size: 14px; 
   font-family: sans-serif; 
   text-transform: uppercase; 
   font-weight: 800;
+  transition: all 0.15s;
+}
+
+.btn-dashboard:hover {
+  opacity: 0.5;
+  cursor: pointer;
 }
 
 #dashboardIcon {

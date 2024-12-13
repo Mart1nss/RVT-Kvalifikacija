@@ -31,8 +31,6 @@ Route::get('/', function () {
 Route::get('/home', [HomeController::class, 'dashboard'])->middleware('auth')->name('home');
 
 
-
-
 Route::get('/testpage', function () {
     return view('testpage');
 });
@@ -40,7 +38,6 @@ Route::get('/testpage', function () {
 Route::get('/myprogress', function () {
     return view('myprogress');
 });
-
 
 
 Route::get('/', [HomeController::class, 'carousel']);

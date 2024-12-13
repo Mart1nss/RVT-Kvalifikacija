@@ -6,12 +6,14 @@
   <title>User Management</title>
   <link rel="stylesheet" href="{{ asset('css/navbar-style.css') }}">
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet" href="{{ asset('css/notifications-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/usermanage-style.css') }}">
 </head>
 
 <body>
 
 
+  @include('components.alert')
   @include('navbar')
 
 
@@ -89,7 +91,7 @@
           <form action="{{ route('users.updateUserType', $user) }}" method="POST">
             @csrf
             @method('PUT')
-            <select name="usertype" onchange="this.form.submit()">
+            <select name="usertype" onchange="this.form.submit()" class="usertype-select">
             <option value="user" {{ $user->usertype == 'user' ? 'selected' : '' }}>User</option>
             <option value="admin" {{ $user->usertype == 'admin' ? 'selected' : '' }}>Admin</option>
             </select>
