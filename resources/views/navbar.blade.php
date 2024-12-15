@@ -50,6 +50,7 @@
             <a id="dropdown-3" class="dropdown-item" onclick="window.location.href='{{'/favorites'}}'">{{ __('Favorites') }}</a> 
             <a id="dropdown-4" class="dropdown-item" onclick="window.location.href='{{'/viewnotes'}}'">{{ __('Notes') }}</a> 
             <a id="dropdown-2" class="dropdown-item" onclick="window.location.href='{{'/profile'}}'">{{ __('Profile') }}</a> 
+            <a id="dropdown-5" class="dropdown-item" onclick="window.location.href='{{'/tickets'}}'">{{ __('Support') }}</a>
 
             <a class="dropdown-item-logout" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;"> 
