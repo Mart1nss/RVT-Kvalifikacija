@@ -3,8 +3,9 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <link rel="stylesheet" href="{{ asset('css/navbar-style.css') }}">
-<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<link rel="stylesheet" href="{{ asset('css/notifications-style.css') }}">
 
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
 <div class="navbar">
 
@@ -25,21 +26,31 @@
     </button>
 
     <div id="notifications-dropdown" style="display: none;">
+      <h1 style="color: white; text-transform:uppercase; font-family: sans-serif; font-weight: 800; font-size: 14px; padding: 10px;">NOTIFICATIONS</h1>
+
+      
       @if($unreadNotifications->isEmpty())
         <p class="no-notifications">No Notifications</p> 
       @else
         @foreach($unreadNotifications as $notification)
-          <div class="notification-item">
+          <div class="notification-item" id="notification-{{ $notification->id }}">
             <div class="notification-content">
               <div class="notification-text">{{ $notification->message }}</div>
+              @if($notification->link)
+                <a href="{{ $notification->link }}" class="goto-link">Go to</a>
+              @endif
               <div class="notification-time">{{ $notification->created_at->diffForHumans() }}</div>
             </div>
-            <button class="mark-read" data-id="{{ $notification->id }}" onclick="markAsRead(this)" title="Mark as read">
-              <i class='bx bx-check'></i>
-            </button>
+            <div class="notification-actions">
+              <button type="button" class="mark-read" onclick="markAsRead({{ $notification->id }})" title="Mark as read">
+                <i class='bx bx-check'></i>
+              </button>
+            </div>
           </div>
         @endforeach
       @endif
+
+      <button class="notif-clear-btn" onclick="clearAllNotifications()"><i style="font-size: 20px;" class='bx bx-x'></i> CLEAR ALL</button>
     </div>
 
         <button class="user-btn" id="dropdown-toggle">
@@ -64,13 +75,60 @@
 
 </div>
 
+<style>
+.notification-dropdown {
+  padding: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.notification-header {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  color: #333;
+}
+
+.no-notifications {
+  color: #666;
+  text-align: center;
+  padding: 1rem;
+}
+
+.notification-item {
+  padding: 0.75rem;
+  border-bottom: 1px solid #eee;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.notification-time {
+  color: #666;
+  font-size: 0.8rem;
+}
+
+.notification-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+</style>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
   // User dropdown toggle
   $('#dropdown-toggle').click(function (e) {
     e.stopPropagation();
     // Close notifications dropdown if open
-    document.getElementById('notifications-dropdown').style.display = 'none';
+    document.querySelector('#notifications-dropdown').style.display = 'none';
     // Toggle user dropdown
     $(this).next('.dropdown-menu').toggle();
   });
@@ -81,7 +139,7 @@
     // Close user dropdown if open
     $('.dropdown-menu').hide();
     // Toggle notifications dropdown
-    let dropdown = document.getElementById('notifications-dropdown');
+    let dropdown = document.querySelector('#notifications-dropdown');
     if (dropdown.style.display === 'none') {
       dropdown.style.display = 'block';
     } else {
@@ -93,13 +151,13 @@
   document.addEventListener('click', function(e) {
     if (!e.target.closest('#notification-btn') && !e.target.closest('#notifications-dropdown') && 
         !e.target.closest('#dropdown-toggle') && !e.target.closest('.dropdown-menu')) {
-      document.getElementById('notifications-dropdown').style.display = 'none';
+      document.querySelector('#notifications-dropdown').style.display = 'none';
       $('.dropdown-menu').hide();
     }
   });
 
   // Prevent dropdown from closing when clicking inside notifications
-  document.getElementById('notifications-dropdown').addEventListener('click', function(event) {
+  document.querySelector('#notifications-dropdown').addEventListener('click', function(event) {
     event.stopPropagation();
   });
 
@@ -108,46 +166,43 @@
     event.stopPropagation();
   });
 
-  function markAsRead(buttonElement) {
-      let notificationId = buttonElement.dataset.id;
-      let notificationItem = buttonElement.closest('.notification-item');
-      let notificationsDropdown = document.getElementById('notifications-dropdown');
+  function markAsRead(notificationId) {
+    $.ajax({
+        url: '/notifications/' + notificationId + '/mark-read',
+        type: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(response) {
+            $('#notification-' + notificationId).fadeOut();
+            updateNotificationCount();
+        }
+    });
+}
 
-      fetch('/notifications/' + notificationId + '/mark-read', {
-          method: 'POST',
-          headers: {
-              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-              'Content-Type': 'application/json'
-          }
-      })
-      .then(response => response.json())
-      .then(data => {
-          if (data.success) {
-              // Remove the notification item
-              notificationItem.remove();
+function clearAllNotifications() {
+    $.ajax({
+        url: '/notifications/mark-all-read',
+        type: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(response) {
+            $('.notification-item').fadeOut();
+            updateNotificationCount();
+        }
+    });
+}
 
-              // Update badge count
-              let badge = document.querySelector('.badge');
-              if (badge) {
-                  let currentCount = parseInt(badge.textContent);
-                  let newCount = currentCount - 1;
-                  if (newCount === 0) {
-                      badge.remove();
-                      // Check if there are any notifications left
-                      let remainingNotifications = notificationsDropdown.querySelectorAll('.notification-item');
-                      if (remainingNotifications.length === 0) {
-                          // Show the "no notifications" message
-                          notificationsDropdown.innerHTML = '<p class="no-notifications">You have no notifications</p>';
-                      }
-                  } else {
-                      badge.textContent = newCount;
-                  }
-              }
-          }
-      })
-      .catch(error => {
-          console.error('Error:', error);
-      });
+function updateNotificationCount() {
+    $.get('/notifications/count', function(response) {
+        if (response.count > 0) {
+            $('.badge').text(response.count);
+        } else {
+            $('.badge').remove();
+            $('#notifications-dropdown').html('<p class="no-notifications">No Notifications</p>');
+        }
+    });
 }
 
   document.getElementById('back-btn').addEventListener('click', function() {

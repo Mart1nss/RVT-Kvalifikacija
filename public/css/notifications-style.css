@@ -9,13 +9,12 @@
   width: 100%;
   padding: 12px 20px 12px 40px;
   border: none;
-  border-radius: 20px;
+  border-radius: 8px;
   font-size: 12px;
   outline: transparent;
   background-color: #1c1a1a;
   margin-bottom: 12px;
   color: white;
-  text-transform: uppercase;
   font-family: sans-serif;
   font-weight: 800;
   align-items: center;
@@ -32,7 +31,7 @@
   justify-content: center;
   font-weight: 800;
   font-size: 12px;
-  border-radius: 20px;
+  border-radius: 8px;
   background-color: #ffffff;
   cursor: pointer;
   text-transform: uppercase;

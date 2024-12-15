@@ -27,10 +27,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-
 // Redirect to the 'dashboard' method instead of 'index'
 Route::get('/home', [HomeController::class, 'dashboard'])->middleware('auth')->name('home');
-
 
 Route::get('/testpage', function () {
     return view('testpage');
@@ -40,13 +38,10 @@ Route::get('/myprogress', function () {
     return view('myprogress');
 });
 
-
 Route::get('/', [HomeController::class, 'carousel']);
-
 
 //nez vai vajag
 Route::get('/testings', [HomeController::class, 'uploadpage'])->middleware(['auth', 'admin'])->name('uploadpage');
-
 
 //See Books
 Route::get('/bookpage', [HomeController::class, 'bookpage'])
@@ -74,13 +69,10 @@ Route::get('/edit/{id}', [HomeController::class, 'edit'])->middleware(['auth', '
 // Handle edit request
 Route::match(['post', 'put'], '/update/{id}', [HomeController::class, 'update'])->middleware(['auth', 'admin'])->name('update');
 
-
 //User Manage Routes
 Route::get('/managepage', [UserController::class, 'index'])->name('user.manage')->middleware(['auth', 'admin']);
 Route::put('/users/{user}', [UserController::class, 'updateUserType'])->name('users.updateUserType');
 Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
-
-
 
 // File Routes
 Route::get('/view/{id}', [HomeController::class, 'view'])->name('view')->middleware(['auth']);
@@ -89,31 +81,31 @@ Route::get('/download/{file}', [HomeController::class, 'download'])->name('downl
 Route::delete('/delete/{id}', [HomeController::class, 'destroy'])->name('delete');
 Route::get('/redirect-back', [HomeController::class, 'redirectAfterBack'])->name('redirect.back');
 
-
-
 //Favorites Routes
 Route::get('/favorites', [FavoritesController::class, 'favorites'])->name('favorites');
 Route::post('/favorites/{id}', [FavoritesController::class, 'add'])->name('favorites.add');
 Route::delete('/favorites/{id}', [FavoritesController::class, 'delete'])->name('favorites.delete');
 
-
-
 //Notification Routes
-Route::get('/notifications', function () {
-    return view('notifications');
-})->name('notifications')->middleware(['auth', 'admin']);
-Route::post('/notifications/send', [NotificationController::class, 'sendNotification'])->name('admin.send.notification');
-Route::post('/notifications/{notification}/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.markRead');
-
-
+Route::middleware(['auth'])->group(function () {
+    Route::get('/notifications', function () {
+        return view('notifications');
+    })->name('notifications')->middleware(['auth', 'admin']);
+    
+    Route::post('/notifications/send', [NotificationController::class, 'sendNotification'])
+        ->name('admin.send.notification');
+        
+    Route::post('/notifications/{notification}/mark-read', [NotificationController::class, 'markAsRead'])
+        ->name('notifications.mark-read');
+        Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
+        Route::get('/notifications/count', [NotificationController::class, 'getCount'])->name('notifications.count');
+});
 
 // Notes Routes
 Route::post('/notes', [NoteController::class, 'store']);
 Route::get('/notes/{productId}', [NoteController::class, 'show']);
 Route::put('/notes/{productId}', [NoteController::class, 'store']);
 Route::get('/viewnotes', [NoteController::class, 'index'])->name('viewnotes')->middleware('auth');
-
-
 
 // Reviews Routes
 Route::resource('products.reviews', ReviewController::class)->only(['store', 'destroy']);
@@ -122,10 +114,6 @@ Route::resource('products.reviews', ReviewController::class)->only(['store', 'de
 Route::get('/home', [HomeController::class, 'index'])->middleware('auth')->name('home');
 Route::get('post', [HomeController::class, 'post'])->middleware(['auth', 'admin']);
 
-
-
-
-
 //Profile Routes
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -133,7 +121,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::view('notes', 'notes')->name('notes');
-
 });
 
 // Bookmark Routes
@@ -159,6 +146,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/tickets/{ticket}', [TicketController::class, 'show'])->name('tickets.show');
     Route::patch('/tickets/{ticket}/status', [TicketController::class, 'updateStatus'])->name('tickets.update-status');
     Route::post('/tickets/{ticket}/respond', [TicketController::class, 'addResponse'])->name('tickets.respond');
+    Route::post('/tickets/{ticket}/assign', [TicketController::class, 'assignTicket'])->middleware('admin')->name('tickets.assign');
 });
 
 require __DIR__ . '/auth.php';
