@@ -5,6 +5,8 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Favorite;
 use App\Models\Review;
+use App\Models\Ticket;
+use App\Models\Notification;
 use App\Notifications\ResetPasswordNotification;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
@@ -64,9 +66,19 @@ class User extends Authenticatable
         return $this->hasMany(Review::class);
     }
 
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class);
+    }
+
     public function isAdmin()
     {
-        return $this->usertype === 'admin'; // Replace 'usertype' with your actual column name storing user type.
+        return $this->usertype === 'admin';
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
     }
 
     public function sendPasswordResetNotification($token)

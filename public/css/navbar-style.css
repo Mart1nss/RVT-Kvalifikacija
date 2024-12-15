@@ -199,9 +199,11 @@ body {
 .notification-item {
   display: flex;
   align-items: flex-start;
+  justify-content: space-between;
   padding: 15px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   transition: background-color 0.2s;
+  color: white;
 }
 
 .notification-item:last-child {
@@ -225,24 +227,45 @@ body {
 }
 
 .notification-time {
-  color: #888;
   font-size: 12px;
-  font-style: italic;
+  color: #888;
+}
+
+.notification-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.goto-link {
+  background-color: #ffffff;
+  color: rgb(0, 0, 0);
+  padding: 5px 10px;
+  border-radius: 8px;
+  text-decoration: none;
+  width: max-content;
+  font-size: 12px;
+  transition: all 0.15s;
+}
+
+.goto-link:hover {
+  opacity: 0.5;
 }
 
 .mark-read {
   background: none;
   border: none;
-  color: #4CAF50;
+  color: #28a745;
   cursor: pointer;
   padding: 5px;
+  display: flex;
+  align-items: center;
   font-size: 18px;
-  opacity: 0.7;
-  transition: opacity 0.2s;
+  transition: color 0.2s;
 }
 
 .mark-read:hover {
-  opacity: 1;
+  color: #218838;
 }
 
 .no-notifications {
@@ -332,4 +355,25 @@ body {
 #dashboardIcon {
   font-size: 20px;
   margin-right: 10px;
+}
+
+.notif-clear-btn {
+  display: flex;
+  background-color: white;
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  font-weight: 800;
+  cursor: pointer;
+  height: 40px;
+  justify-content: center;
+  align-items: center;
+  font-family: sans-serif;
+  font-size: 12px;
+  text-transform: uppercase;
+  transition: all 0.15s;
+}
+
+.notif-clear-btn:hover {
+  opacity: 0.5;
 }

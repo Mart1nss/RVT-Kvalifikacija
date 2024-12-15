@@ -15,7 +15,7 @@ body {
 
 .main-container {
     background-color: #1c1a1a;
-    padding: 0 50px;
+    padding: 0 10px;
     display: flex;
     flex-direction: column;
     width: 100%;

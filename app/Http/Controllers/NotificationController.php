@@ -32,9 +32,45 @@ class NotificationController extends Controller
 
     public function markAsRead(Request $request, Notification $notification)
     {
-        $notification->is_read = true;
-        $notification->save();
+        // Ensure user can only mark their own notifications as read
+        if ($notification->user_id !== auth()->id()) {
+            abort(403);
+        }
 
-        return response()->json(['success' => true]);
+        $notification->update(['is_read' => true]);
+
+        if ($request->ajax()) {
+            return response()->json(['success' => true]);
+        }
+
+        return back();
+    }
+
+    public function markAllAsRead(Request $request)
+    {
+        try {
+            auth()->user()->notifications()->where('is_read', false)->update(['is_read' => true]);
+
+            if ($request->ajax()) {
+                return response()->json(['success' => true]);
+            }
+
+            return back();
+        } catch (\Exception $e) {
+            if ($request->ajax()) {
+                return response()->json(['error' => $e->getMessage()], 500);
+            }
+            return back()->with('error', 'Failed to mark notifications as read.');
+        }
+    }
+
+    public function getCount()
+    {
+        try {
+            $count = auth()->user()->notifications()->where('is_read', false)->count();
+            return response()->json(['count' => $count]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }

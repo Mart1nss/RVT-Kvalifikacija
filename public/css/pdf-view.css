@@ -71,7 +71,7 @@
   width: 40%;
   margin-left: 20px;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   @media (max-width: 769px) {
     width: 100%;
@@ -171,7 +171,7 @@ button {
   border: none;
   background-color: rgb(37, 37, 37);
   color: white;
-  border-radius: 20px;
+  border-radius: 8px;
   justify-content: center;
   align-items: center;
   padding: 10px 30px;
@@ -193,7 +193,7 @@ button {
   color: white;
   position: relative;
   height: min-content;
-  border-radius: 20px;
+  border-radius: 8px;
   padding: 10px;
   overflow: hidden;
   margin-bottom: 50px;
@@ -203,6 +203,8 @@ button {
     width: 100%;
   }
 }
+
+
 
 .reviews-header {
   font-size: 26px;
@@ -256,7 +258,7 @@ input:checked ~ .star {
 .review-card {
 background-color: #1c1a1a;
 padding: 20px;
-border-radius: 20px;
+border-radius: 8px;
 margin-top: 10px;
 }
 
@@ -278,7 +280,7 @@ margin-right: 10px;
 
 .review-counter {
 border: white 1px solid;
-border-radius: 20px;
+border-radius: 8px;
 background-color:#1c1a1a; 
 color: white;
 font-weight: 800;
@@ -294,7 +296,7 @@ cursor: pointer;
 width: 80%;
 padding: 10px;
 border: none;
-border-radius: 20px;
+border-radius: 8px;
 font-size: 12px;
 margin-right: 16px;
 outline: transparent;
@@ -322,7 +324,7 @@ background-color: rgb(255, 255, 255);
 border: none;
 color: rgb(0, 0, 0);
 padding: 10px;
-border-radius: 20px;
+border-radius: 8px;
 text-decoration: none; 
 font-size: 14px; 
 font-family: sans-serif; 
@@ -333,19 +335,24 @@ flex: 0 0 auto;
 }
 
 .button-delete {
-  background-color: #ff4d4d; /* Red background */
+  background-color: rgb(126, 6, 6);
   color: white;
   border: none;
   height: 40px;
   padding: 5px 10px;
   margin-top: 10px;
-  cursor: pointer;
-  border-radius: 20px; 
+  border-radius: 8px; 
   text-decoration: none; 
   font-size: 14px; 
   font-family: sans-serif; 
   text-transform: uppercase; 
   font-weight: 800;
+  transition: all 0.15s;
+}
+
+.button-delete:hover {
+  background-color: rgb(80, 80, 80);
+  cursor: pointer;
 }
 
 .button-filter {
@@ -353,7 +360,7 @@ flex: 0 0 auto;
   border: 1px solid white;
   color: #ffffff;
   padding: 10px;
-  border-radius: 20px;
+  border-radius: 8px;
   font-size: 14px;
   font-family: sans-serif;
   text-transform: uppercase;
@@ -450,13 +457,13 @@ gap: 10px;
 #pdf-toolbar {
 display: flex;
 width: 100%;
-padding: 10px 5px;
-background-color: rgb(26, 25, 25);
+padding: 13px 5px;
+background-color: #252525;
 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 align-items: center;
 justify-content: center;
 gap: 15px;
-border-radius: 10px;
+border-radius: 8px;
 margin-bottom: -5px;
 }
 
