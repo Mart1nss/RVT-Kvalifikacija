@@ -33,8 +33,13 @@
                 @csrf
                 <div class="form-group">
                     <label for="title">Title</label>
-                    <input type="text" id="title" name="title" required 
-                           placeholder="Brief description of your issue">
+                    <div class="input-container">
+                        <input type="text" id="title" name="title" required 
+                               maxlength="50"
+                               placeholder="Brief description of your issue"
+                               oninput="updateCharCount('title', 'titleCount', 50)">
+                        <div class="char-count" id="titleCount">0 / 50</div>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -51,8 +56,13 @@
 
                 <div class="form-group">
                     <label for="description">Description</label>
-                    <textarea id="description" name="description" rows="6" required
-                              placeholder="Please provide detailed information about your issue..."></textarea>
+                    <div class="input-container">
+                        <textarea id="description" name="description" rows="6" required
+                                maxlength="5000"
+                                placeholder="Please provide detailed information about your issue..."
+                                oninput="updateCharCount('description', 'descriptionCount', 5000)"></textarea>
+                        <div class="char-count" id="descriptionCount">0 / 5000</div>
+                    </div>
                 </div>
 
                 <div class="form-actions">
@@ -122,11 +132,32 @@
         font-size: 0.9rem;
     }
 
+    .input-container {
+        position: relative;
+        width: 100%;
+    }
+
+    .char-count {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        background-color: #1c1a1a;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        color: #aaa;
+    }
+
+    textarea + .char-count {
+        top: 10px;
+    }
+
     .form-group input,
     .form-group select,
     .form-group textarea {
         width: 100%;
         padding: 0.75rem;
+        padding-right: 80px;
         background-color: #1c1a1a;
         border: 1px solid #3d3d3d;
         border-radius: 4px;
@@ -210,5 +241,26 @@
         color: #6c757d;
     }
     </style>
+
+    <script>
+    function updateCharCount(inputId, counterId, limit) {
+        const input = document.getElementById(inputId);
+        const counter = document.getElementById(counterId);
+        const currentLength = input.value.length;
+        counter.textContent = `${currentLength} / ${limit}`;
+        
+        if (currentLength >= limit) {
+            counter.style.color = '#dc3545';
+        } else {
+            counter.style.color = '#aaa';
+        }
+    }
+
+    // Initialize counters
+    document.addEventListener('DOMContentLoaded', function() {
+        updateCharCount('title', 'titleCount', 50);
+        updateCharCount('description', 'descriptionCount', 5000);
+    });
+    </script>
 </body>
 </html>

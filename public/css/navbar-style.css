@@ -100,19 +100,134 @@ body {
 
 .dropdown-menu {
   position: absolute;
-  justify-content: center;
-  align-items: center;
+  margin-right: 0px;
+  margin-top: 10px;
+  top: 60px;
   background-color: rgb(37, 37, 37);
-  min-width: 200px;
-  margin-top: 40px;
   border-radius: 10px;
-  font-family: sans-serif;
-  text-transform: uppercase;
-  font-size: 14px;
-  font-weight: 700;
+  width: 400px;
+  padding: 15px;
   display: none;
-  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-  z-index: 9999;
+  z-index: 1000;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.menu-header {
+  color: white;
+  font-size: 16px;
+  font-weight: 800;
+  margin-bottom: 15px;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.menu-item {
+  background-color: #363636;
+  border-radius: 8px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  text-decoration: none;
+}
+
+.menu-item:hover {
+  background-color: #404040;
+}
+
+.menu-item.active, .menu-section.active {
+  background-color: #404040;
+  border: 1px solid #505050;
+}
+
+.menu-item i {
+  font-size: 24px;
+  color: white;
+  margin-bottom: 8px;
+}
+
+.menu-item span {
+  color: white;
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 800;
+}
+
+.menu-section {
+  padding: 8px;
+  margin: 5px 0;
+  background-color: #363636;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.menu-section:hover {
+  background-color: #404040;
+}
+
+.section-header {
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  display: block;
+  text-decoration: none;
+  width: 100%;
+  height: 100%;
+}
+
+.menu-footer {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #363636;
+}
+
+.support-btn {
+  flex: 1;
+  background-color: #ffffff;
+  padding: 10px;
+  color: black;
+  border-radius: 8px;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-weight: 800;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+.logout-btn {
+  flex: 1;
+  background-color: #dc3545;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 800;
+
+  transition: all 0.2s;
+}
+
+.support-btn:hover {
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.logout-btn:hover {
+  background-color: rgb(80, 80, 80);
+  cursor: pointer;
 }
 
 .dropdown-menu a {

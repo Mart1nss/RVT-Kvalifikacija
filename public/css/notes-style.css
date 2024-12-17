@@ -66,7 +66,7 @@
 
   .item-container {
     background-color: rgb(37, 37, 37);
-    border-radius: 10px;
+    border-radius: 8px;
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -175,7 +175,6 @@
     justify-content: space-between;
     align-items: center;
     margin: 0;
-    padding: 10px;
   }
 
   .text-container h1 {

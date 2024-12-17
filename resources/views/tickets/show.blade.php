@@ -188,30 +188,33 @@
     .info-group {
         display: flex;
         margin-bottom: 1rem;
+        word-break: break-word;
     }
 
     .info-group label {
         font-weight: bold;
-        width: 120px;
+        min-width: 120px;
         color: #aaa;
+        flex-shrink: 0;
     }
 
-    .ticket-description, .ticket-responses {
+    .info-group span {
+        flex: 1;
+        padding-right: 20px;
+    }
+
+    .ticket-description {
         margin-bottom: 2rem;
-    }
-
-    .ticket-description h2, .ticket-responses h2, .response-form h2 {
-        color: white;
-        text-transform: uppercase;
-        font-weight: 800;
-        margin-bottom: 1rem;
-    }
-
-    .description-content {
         background-color: #2d2d2d;
         padding: 1.5rem;
         border-radius: 8px;
+    }
+
+    .description-content {
+        white-space: pre-wrap;
+        word-break: break-word;
         line-height: 1.6;
+        margin-top: 1rem;
     }
 
     .response {
@@ -219,6 +222,32 @@
         padding: 1.5rem;
         border-radius: 8px;
         margin-bottom: 1rem;
+    }
+
+    .response-content {
+        white-space: pre-wrap;
+        word-break: break-word;
+        line-height: 1.6;
+        margin-top: 0.5rem;
+    }
+
+    textarea {
+        width: 100%;
+        background-color: #2d2d2d;
+        border: 1px solid #3d3d3d;
+        color: white;
+        padding: 1rem;
+        border-radius: 8px;
+        resize: vertical;
+        min-height: 100px;
+        max-height: 400px;
+        margin-bottom: 1rem;
+        line-height: 1.6;
+    }
+
+    textarea:focus {
+        outline: none;
+        border-color: #4d4d4d;
     }
 
     .admin-response {
@@ -256,17 +285,15 @@
     }
 
     .response-form textarea:focus {
-        outline: white 1px solid;
-        background-color: rgb(36, 36, 36);
-        border-color: white;
+        outline: none;
+        border-color: #4d4d4d;
     }
 
     .form-group input:focus,
     .form-group select:focus,
     .form-group textarea:focus {
-        outline: white 1px solid;
-        background-color: rgb(36, 36, 36);
-        border-color: white;
+        outline: none;
+        border-color: #4d4d4d;
     }
     </style>
 </body>

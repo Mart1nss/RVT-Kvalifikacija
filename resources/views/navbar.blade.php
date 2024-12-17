@@ -26,7 +26,7 @@
     </button>
 
     <div id="notifications-dropdown" style="display: none;">
-      <h1 style="color: white; text-transform:uppercase; font-family: sans-serif; font-weight: 800; font-size: 14px; padding: 10px;">NOTIFICATIONS</h1>
+      <h1 style="color: white; text-transform:uppercase; font-family: sans-serif; font-weight: 800; font-size: 16px; padding: 10px;">NOTIFICATIONS</h1>
 
       
       @if($unreadNotifications->isEmpty())
@@ -57,15 +57,46 @@
             {{ Auth::user()->name }}
         </button>
         <div class="dropdown-menu">
-            <a id="dropdown-1" class="dropdown-item" onclick="window.location.href='{{'/home'}}'">{{ __('Dashboard') }}</a> 
-            <a id="dropdown-3" class="dropdown-item" onclick="window.location.href='{{'/favorites'}}'">{{ __('Favorites') }}</a> 
-            <a id="dropdown-4" class="dropdown-item" onclick="window.location.href='{{'/viewnotes'}}'">{{ __('Notes') }}</a> 
-            <a id="dropdown-2" class="dropdown-item" onclick="window.location.href='{{'/profile'}}'">{{ __('Profile') }}</a> 
-            <a id="dropdown-5" class="dropdown-item" onclick="window.location.href='{{'/tickets'}}'">{{ __('Support') }}</a>
-
-            <a class="dropdown-item-logout" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;"> 
-                @csrf 
+            <div class="menu-header">MENU</div>
+            <div class="menu-grid">
+                <a href="{{ route('home') }}" class="menu-item {{ Request::is('home') ? 'active' : '' }}">
+                    <i class='bx bxs-dashboard'></i>
+                    <span>DASHBOARD</span>
+                </a>
+                <a href="{{ route('bookpage') }}" class="menu-item {{ Request::is('bookpage') ? 'active' : '' }}">
+                    <i class='bx bx-book'></i>
+                    <span>LIBRARY</span>
+                </a>
+                <div class="menu-item">
+                  <i class='bx bx-conversation'></i>
+                    <span>FORUMS</span>
+                </div>
+                <div class="menu-item">
+                    <i class='bx bx-ghost'></i>
+                    <span>Placeholder 4</span>
+                </div>
+            </div>
+            
+            <div class="menu-section {{ Request::is('viewnotes') ? 'active' : '' }}" onclick="window.location.href='{{'/viewnotes'}}'">
+                <a href="{{'/viewnotes'}}" class="section-header">NOTES</a>
+            </div>
+            
+            <div class="menu-section {{ Request::is('favorites') ? 'active' : '' }}" onclick="window.location.href='{{'/favorites'}}'">
+                <a href="{{'/favorites'}}" class="section-header">FAVORITES</a>
+            </div>
+            
+            <div class="menu-section {{ Request::is('profile') ? 'active' : '' }}" onclick="window.location.href='{{'/profile'}}'">
+                <a href="{{'/profile'}}" class="section-header">SETTINGS</a>
+            </div>
+            
+            <div class="menu-footer">
+                <a href="/tickets" class="support-btn" style="color: black;">Support</a>
+                <a class="logout-btn" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    Logout
+                </a>
+            </div>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                @csrf
             </form>
         </div>
       </nav>
