@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>404</title>
+    <title>401</title>
 
     <style>
         * {
@@ -65,6 +65,7 @@
             opacity: 0.5;
             cursor: pointer;
         }
+
     </style>
     <meta name="robots" content="noindex, follow">
 </head>
@@ -72,10 +73,10 @@
 <body>
     <div class="main-container">
         <div class="item-container">
-            <h3>Oops! Page not found</h3>
-            <h1 style="font-size: 100px; margin: 10px;">404</h1>
-            <h2>we are sorry, but the page you requested was not found</h2>
-            <a class="back-btn" href="/">back to homepage</a>
+            <h3>Oops! You are not authorized</h3>
+            <h1 style="font-size: 100px; margin: 10px;">401</h1>
+            <h2>You are not authorized to access this page</h2>
+            <a class="back-btn" href="/">Back to homepage</a>
         </div>
     </div>
 </body>

@@ -34,7 +34,12 @@ class Handler extends ExceptionHandler
             if ($exception->getStatusCode() == 404) {
                 return response()->view('errors.404', [], 404);
             }
+            if ($exception->getStatusCode() == 401) {
+                return response()->view('errors.401', [], 404);
+            }
         }
         return parent::render($request, $exception);
     	}
+
+        
 }

@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="{{ asset('css/notifications-style.css') }}">
+<title>Settings</title>
 
 @include('components.alert')
 @include('navbar')

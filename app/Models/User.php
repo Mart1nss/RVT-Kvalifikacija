@@ -7,7 +7,7 @@ use App\Models\Favorite;
 use App\Models\Review;
 use App\Models\Ticket;
 use App\Models\Notification;
-use App\Notifications\ResetPasswordNotification;
+use App\Notifications\CustomResetPassword;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -83,6 +83,6 @@ class User extends Authenticatable
 
     public function sendPasswordResetNotification($token)
     {
-        $this->notify(new ResetPasswordNotification($token));
+        $this->notify(new CustomResetPassword($token));
     }
 }

@@ -3,7 +3,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>All Books</title>
+  <title>Library</title>
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <link rel="stylesheet" href="{{ asset('css/navbar-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/allbooks-style.css') }}">
@@ -21,7 +21,7 @@
 
 
 <div class="text-container">
-  <h1 style="color: white; text-transform:uppercase; font-family: sans-serif; font-weight: 800;">All Books</h1>
+  <h1 style="color: white; text-transform:uppercase; font-family: sans-serif; font-weight: 800;">Library</h1>
   <div class="search-filter-container">
     <div class="search-container">
         <input type="text" id="search-input" placeholder="Search books...">

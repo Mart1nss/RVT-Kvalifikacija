@@ -10,6 +10,8 @@
 @include('components.alert')
 @include('navbar')
 
+
+
     <style>
 
         .item-container {
@@ -34,6 +36,7 @@
         .logo {
             display: flex;
         }
+
     </style>
 
 
@@ -44,6 +47,8 @@
         </div>
 
         <div class="item-container">
+
+        <h1 style="margin-bottom: 20px; color: white; font-family: sans-serif; font-weight: 800; font-size: 18px;">Welcome, {{ auth()->user()->name }}!</h1>
             
             <a class="btn-dashboard" href="{{'/bookpage'}}"><i id="dashboardIcon" class='bx bx-book'></i> View All Books</a>
 
@@ -51,6 +56,3 @@
         
     </div>
 </div>
-
-
-

@@ -26,31 +26,36 @@
     </button>
 
     <div id="notifications-dropdown" style="display: none;">
-      <h1 style="color: white; text-transform:uppercase; font-family: sans-serif; font-weight: 800; font-size: 16px; padding: 10px;">NOTIFICATIONS</h1>
+      <div class="notifications-header">
+        <h1 style="color: white; text-transform:uppercase; font-family: sans-serif; font-weight: 800; font-size: 16px;">NOTIFICATIONS</h1>
+      </div>
 
-      
-      @if($unreadNotifications->isEmpty())
-        <p class="no-notifications">No Notifications</p> 
-      @else
-        @foreach($unreadNotifications as $notification)
-          <div class="notification-item" id="notification-{{ $notification->id }}">
-            <div class="notification-content">
-              <div class="notification-text">{{ $notification->message }}</div>
-              @if($notification->link)
-                <a href="{{ $notification->link }}" class="goto-link">Go to</a>
-              @endif
-              <div class="notification-time">{{ $notification->created_at->diffForHumans() }}</div>
+      <div class="notifications-content">
+        @if($unreadNotifications->isEmpty())
+          <p class="no-notifications">No Notifications</p> 
+        @else
+          @foreach($unreadNotifications as $notification)
+            <div class="notification-item" id="notification-{{ $notification->id }}">
+              <div class="notification-content">
+                <div class="notification-text">{{ $notification->message }}</div>
+                @if($notification->link)
+                  <a href="{{ $notification->link }}" class="goto-link">Go to</a>
+                @endif
+                <div class="notification-time">{{ $notification->created_at->diffForHumans() }}</div>
+              </div>
+              <div class="notification-actions">
+                <button type="button" class="mark-read" onclick="markAsRead({{ $notification->id }})" title="Mark as read">
+                  <i class='bx bx-check'></i>
+                </button>
+              </div>
             </div>
-            <div class="notification-actions">
-              <button type="button" class="mark-read" onclick="markAsRead({{ $notification->id }})" title="Mark as read">
-                <i class='bx bx-check'></i>
-              </button>
-            </div>
-          </div>
-        @endforeach
-      @endif
+          @endforeach
+        @endif
+      </div>
 
-      <button class="notif-clear-btn" onclick="clearAllNotifications()"><i style="font-size: 20px;" class='bx bx-x'></i> CLEAR ALL</button>
+      <div class="notifications-footer">
+        <button class="notif-clear-btn" onclick="clearAllNotifications()"><i style="font-size: 20px;" class='bx bx-x'></i> CLEAR ALL</button>
+      </div>
     </div>
 
         <button class="user-btn" id="dropdown-toggle">
@@ -72,8 +77,8 @@
                     <span>FORUMS</span>
                 </div>
                 <div class="menu-item">
-                    <i class='bx bx-ghost'></i>
-                    <span>Placeholder 4</span>
+                <i class='bx bxs-traffic-barrier'></i>
+                    <span>Placeholder</span>
                 </div>
             </div>
             
@@ -90,7 +95,7 @@
             </div>
             
             <div class="menu-footer">
-                <a href="/tickets" class="support-btn" style="color: black;">Support</a>
+                <a href="/tickets" class="support-btn" style="color: black; height: 48px;">Support</a>
                 <a class="logout-btn" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                     Logout
                 </a>
@@ -107,6 +112,24 @@
 </div>
 
 <style>
+
+
+.notifications-content {
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 0px;
+}
+
+.notifications-footer {
+  background-color: #252525;
+  color: #fff;
+  padding: 10px;
+  border-top: 1px solid #444;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  text-align: center;
+}
+
 .notification-dropdown {
   padding: 1rem;
   max-height: 400px;
@@ -237,25 +260,25 @@ function updateNotificationCount() {
 }
 
   document.getElementById('back-btn').addEventListener('click', function() {
-      const previousURL = localStorage.getItem('previousURL');
-      const currentURL = window.location.href;
-
-      if (previousURL && previousURL !== currentURL) {
-          window.location.href = previousURL;
-      } else {
-          window.location.href = '{{ route('home') }}';
-      }
+    window.history.back();
   });
 
-  // Get the current and previous URL from localStorage
-  const currentURL = window.location.href;
-  const lastVisitedURL = localStorage.getItem('currentURL');
+  // Close both dropdowns when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('#notification-btn') && !e.target.closest('#notifications-dropdown') && 
+        !e.target.closest('#dropdown-toggle') && !e.target.closest('.dropdown-menu')) {
+      document.querySelector('#notifications-dropdown').style.display = 'none';
+      $('.dropdown-menu').hide();
+    }
+  });
 
-  // Only update previousURL if the current URL is different from the last visited URL
-  if (lastVisitedURL && lastVisitedURL !== currentURL) {
-      localStorage.setItem('previousURL', lastVisitedURL);
-  }
+  // Prevent dropdown from closing when clicking inside notifications
+  document.querySelector('#notifications-dropdown').addEventListener('click', function(event) {
+    event.stopPropagation();
+  });
 
-  // Update currentURL to the current URL
-  localStorage.setItem('currentURL', currentURL);
+  // Prevent dropdown from closing when clicking inside user menu
+  $('.dropdown-menu').click(function(event) {
+    event.stopPropagation();
+  });
 </script>

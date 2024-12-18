@@ -80,7 +80,7 @@
         <button class="register-btn">Get Started</button><br>
 
 
-        <div class="item-container">
+        <div class="item-container" style="margin: 0 150px;">
             <div class="text-container">
                 <h1>INSIDE THE LIBRARY</h1>
                 <p>Gain access to over 100 e-books</p>

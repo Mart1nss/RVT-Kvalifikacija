@@ -78,7 +78,7 @@
 
   </div>
 
-<!--
+
   <script>
     const overlayDiv = document.createElement('div');
     overlayDiv.style.backgroundColor = '#000';
@@ -105,8 +105,7 @@
       overlayDiv.style.display = 'none';
     };
 
-  </script> -->
-
+  </script> 
 </body>
 
 </html>

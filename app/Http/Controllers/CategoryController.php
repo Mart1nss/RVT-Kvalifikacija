@@ -9,8 +9,10 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::all();
-        return view('admin.categories.index', compact('categories'));
+        $categories = Category::withCount('products')->get();
+
+        
+        return view('admin.categories.index', ['categories' => $categories]);
     }
 
     public function store(Request $request)

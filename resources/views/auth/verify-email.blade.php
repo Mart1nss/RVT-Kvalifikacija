@@ -17,7 +17,7 @@
             <form method="POST" action="{{ route('verification.send') }}" style="width: 100%;">
                 @csrf
                 <button type="submit" class="btn-primary" 
-                    style="background: transparent; border: 1px solid #ff9800; color: #ff9800; width: max-content; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    style="height: 36px; padding: 0 10px; border-radius: 8px; background: transparent; border: 1px solid #ff9800; color: #ff9800; width: max-content; display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <i class='bx bxs-envelope'></i>
                     Send Verification Link
                 </button>
