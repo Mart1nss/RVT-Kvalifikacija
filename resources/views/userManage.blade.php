@@ -97,8 +97,8 @@
                   <form action="{{ route('users.destroy', $user) }}" method="POST" style="display: inline;">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete this user?')">
-                      <i class='bx bx-trash'></i>
+                    <button type="submit" class="remove-btn" onclick="return confirm('Are you sure you want to delete this user?')">
+                      DELETE
                     </button>
                   </form>
                 </td>

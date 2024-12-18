@@ -56,12 +56,12 @@
                         <form action="{{ route('categories.destroy', $category) }}" method="POST" style="display: inline;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn-category-primary btn-delete">Delete</button>
+                            <button type="submit" class="btn-delete">Delete</button>
                         </form>
                     </div>
                 </div>
 
-                <div id="edit-form-{{ $category->id }}" style="display: none;" class="category-item"
+                <div id="edit-form-{{ $category->id }}" style="display: none;" class="category-edit"
                     data-category-name="{{ strtolower($category->name) }}">
                     <form action="{{ route('categories.update', $category) }}" method="POST" style="width: 100%;">
                         @csrf

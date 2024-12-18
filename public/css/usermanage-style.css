@@ -127,16 +127,23 @@
 }
 
 .delete-btn {
-  background: none;
+  color: white;
+  text-decoration: none;
+  background-color: rgb(126, 6, 6);
   border: none;
-  color: #ff4444;
-  cursor: pointer;
-  padding: 5px;
-  font-size: 1.2rem;
+  border-radius: 8px;
+  padding: 10px;
+  font-family: sans-serif;
+  font-weight: 800;
+  font-size: 12px;
+  text-transform: uppercase;
+  transition: all 0.2s;
 }
 
 .delete-btn:hover {
-  opacity: 0.8;
+  background-color: rgb(80, 80, 80);
+  color: white;
+  cursor: pointer;
 }
 
 .upload-text {
@@ -195,7 +202,7 @@ tbody {
   }
 
 .remove-btn {
-  color: rgb(255, 255, 255);
+  color: white;
   text-decoration: none;
   background-color: rgb(126, 6, 6);
   border: none;
@@ -205,11 +212,12 @@ tbody {
   font-weight: 800;
   font-size: 12px;
   text-transform: uppercase;
-  transition: all 0.15s;
+  transition: all 0.2s;
 }
 
 .remove-btn:hover {
   background-color: rgb(80, 80, 80);
+  color: white;
   cursor: pointer;
 }
 

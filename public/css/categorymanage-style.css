@@ -1,6 +1,6 @@
 .category-container {
     background-color: rgb(37, 37, 37);
-    border-radius: 10px;
+    border-radius: 8px;
     padding: 20px;
     margin-top: 10px;
     color: white;
@@ -18,27 +18,38 @@
     background-color: rgb(56, 56, 56);
     padding: 15px;
     margin-bottom: 10px;
-    border-radius: 5px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.category-edit {
+    background-color: rgb(56, 56, 56);
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 .btn-category-primary {
-    border: 1px solid white;
     background-color: white;
+    border: none;
+    color: black;
     padding: 10px;
     height: 40px;
     width: max-content;
-    border-radius: 20px;
+    border-radius: 8px;
     font-weight: 800;
     font-size: 12px;
     text-transform: uppercase;
-    transition: all 0.15;
+    transition: all 0.20s;
 }
 
 .btn-category-primary:hover {
-    opacity: 0.7;
+    opacity: 0.5;
     cursor: pointer;
 }
 
@@ -49,7 +60,7 @@
     padding: 10px;
     height: 40px;
     width: max-content;
-    border-radius: 20px;
+    border-radius: 8px;
     font-weight: 800;
     font-size: 12px;
     text-transform: uppercase;
@@ -62,18 +73,27 @@
 }
 
 .btn-delete {
-    background-color: #dc3545;
+    background-color: rgb(126, 6, 6);
+    color: white;
+    text-transform: uppercase;
+    font-weight: 800;
+    font-size: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    transition: all 0.2s;
 }
 
 .btn-delete:hover {
-    background-color: #c82333;
+    background-color: rgb(80, 80, 80);
+    cursor: pointer;
 }
 
 input[type="text"], textarea {
     width: 100%;
     padding: 8px;
     margin-bottom: 10px;
-    border-radius: 5px;
+    border-radius: 8px;
     border: 1px solid #4a4a4a;
     background-color: rgb(56, 56, 56);
     color: white;
@@ -86,7 +106,7 @@ input[type="text"], textarea {
 .search-input {
     width: 100%;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: 8px;
     border: 1px solid #4a4a4a;
     background-color: rgb(56, 56, 56);
     color: white;
@@ -102,7 +122,7 @@ input[type="text"], textarea {
     text-align: center;
     padding: 20px;
     background-color: rgb(56, 56, 56);
-    border-radius: 5px;
+    border-radius: 8px;
     margin-top: 10px;
 }
 

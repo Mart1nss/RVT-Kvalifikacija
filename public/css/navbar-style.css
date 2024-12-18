@@ -202,6 +202,7 @@ body {
   flex: 1;
   background-color: #ffffff;
   padding: 10px;
+  border: none;
   color: black;
   border-radius: 8px;
   text-align: center;
@@ -214,16 +215,16 @@ body {
 
 .logout-btn {
   flex: 1;
-  background-color: #dc3545;
+  background-color: rgb(126, 6, 6);
   color: white;
   padding: 10px;
+  border: none;
   border-radius: 8px;
   text-align: center;
   text-decoration: none;
   font-size: 12px;
   text-transform: uppercase;
   font-weight: 800;
-
   transition: all 0.2s;
 }
 
@@ -256,19 +257,6 @@ body {
 
 .dropdown-item:hover {
   background-color: rgb(56, 56, 56);
-}
-
-.dropdown-item-logout {
-  border-radius: 20px;
-  border: red 1px solid;
-  background-color: rgb(37, 37, 37);
-  color: red;
-}
-
-.dropdown-item-logout:hover {
-  background-color: red;
-  color: white;
-  cursor: pointer;
 }
 
 #notification-btn {
