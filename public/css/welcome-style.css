@@ -71,36 +71,36 @@ nav {
 }
 
 .register-btn {
-    border: 1px solid white;
+    border: none;
     background-color: white;
     padding: 10px;
     height: 40px;
     width: 120px;
-    border-radius: 20px;
+    border-radius: 8px;
     font-weight: 800;
     font-size: 12px;
     text-transform: uppercase;
-    transition: all 0.15;
+    transition: all 0.2s;
 }
 
 .login-btn {
-    border: 1px solid white;
+    border: none;
     background-color: rgb(37, 37, 37);
     color: white;
     padding: 10px;
     height: 40px;
     width: 120px;
-    border-radius: 20px;
+    border-radius: 8px;
     font-weight: 800;
     margin-left: 20px;
     font-size: 12px;
     text-transform: uppercase;
-    transition: all 0.15;
+    transition: all 0.2s;
 }
 
 button:hover {
     cursor: pointer;
-    opacity: 0.7;
+    opacity: 0.5;
 }
 
 
@@ -122,7 +122,7 @@ button:hover {
         text-align: center;
     }
 
-    .nav-btn{
+    .nav-btn {
         display: flex;
         width: 100%;
         margin-top: 1%;
@@ -153,120 +153,141 @@ p {
 
 .item-container2 {
     background-color: rgb(37, 37, 37);
-    border-radius: 10px;
+    border-radius: 8px;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
-    grid-gap: 20px; 
-    justify-content: start; 
-    padding: 20px; 
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-gap: 20px;
+    justify-content: start;
+    padding: 20px;
 }
 
 .item-card {
-background-color: #1c1a1a;
-color: white;
-border-radius: 10px;
-border: white 1px solid;
-overflow: hidden;
-position: relative;
-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-transition: 0.15s;
-height: 400px;
+    background-color: #1c1a1a;
+    color: white;
+    border-radius: 8px;
+    border: white 1px solid;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: 0.15s;
+    height: 400px;
 }
 
 
 .main-container {
-background-color: #1c1a1a;
-padding: 0 50px;
-display: flex;
-flex-direction: column;
-width: 100%;
-height:min-content;
-padding-bottom: 30px;
+    background-color: #1c1a1a;
+    padding: 0 50px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: min-content;
+    padding-bottom: 30px;
 
-@media (max-width: 769px) {
-padding: 0 10px;
-margin-top: 12px;
-}
+    @media (max-width: 769px) {
+        padding: 0 10px;
+        margin-top: 12px;
+    }
 }
 
 .item-container {
-background-color: rgb(37, 37, 37);
-border-radius: 10px;
-padding: 16px;
+    background-color: rgb(37, 37, 37);
+    border-radius: 8px;
+    padding: 16px;
 }
 
+.carousel-container {
+    background-color: rgb(37, 37, 37);
+    border-radius: 8px;
+    padding: 16px;
+    margin: 0 100px;
+}
+
+@media (max-width: 769px) {
+    .carousel-container {
+        margin: 0px;
+    }
+ }
+
+@media (max-width: 1000px) {
+    .carousel-container {
+        margin: 0px;
+    }
+ }
+
+
 .pdf-carousel {
-display: flex;
-align-items: center;
-overflow-x: auto;
-scroll-snap-type: x mandatory;
+    display: flex;
+    align-items: center;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
 }
 
 .carousel-track-container {
-overflow: hidden;
-width: 100%;
-touch-action: pan-y;
+    overflow: hidden;
+    width: 100%;
+    touch-action: pan-y;
 }
 
 .carousel-track {
-display: flex;
-transition: transform 0.3s ease-in;
-gap: 13px; 
+    display: flex;
+    transition: transform 0.3s ease-in;
+    gap: 13px;
 }
 
 .pdf-item {
-width: calc(25% - 12px);
-flex: 0 0 auto;
-background-color: #1c1a1a;
-color: white;
-border-radius: 10px;
-border: white 1px solid;
-overflow: hidden;
-box-sizing: border-box;
-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-scroll-snap-align: start;
-transition: 0.15s;
+    width: calc(25% - 12px);
+    flex: 0 0 auto;
+    background-color: #1c1a1a;
+    color: white;
+    border-radius: 8px;
+    border: white 1px solid;
+    overflow: hidden;
+    box-sizing: border-box;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    scroll-snap-align: start;
+    transition: 0.15s;
 }
 
 .thumbnail img {
-max-width: 100%;
-object-fit: contain;
-height: 100%;
-width: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    height: 100%;
+    width: 100%;
 }
 
 .carousel-btn {
-height: 40px;
-width: 40px;
-background: white;
-text-align: center;
-color: black;
-line-height: 40px;
-border-radius: 50%;
-border: none;
-cursor: pointer;
-font-size: 1.25rem;
+    height: 40px;
+    width: 40px;
+    background: white;
+    text-align: center;
+    color: black;
+    line-height: 40px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    font-size: 1.25rem;
 }
 
-@media (max-width: 769px) { 
-.pdf-item {
-flex: 0 0 calc(50% - 10px); 
-min-width: calc(50% - 10px);
-}
-.carousel-track {
-gap: 10px; 
+@media (max-width: 769px) {
+    .pdf-item {
+        flex: 0 0 calc(50% - 10px);
+        min-width: calc(50% - 10px);
+    }
+
+    .carousel-track {
+        gap: 10px;
+    }
+
+    .carousel-btn {
+        display: none;
+    }
 }
 
-.carousel-btn {
-display: none;
-}
-}
-
-.text-container{
-background-color: rgb(37, 37, 37);
-color: white;
-text-align: center;
-padding: 16px;
-border-top-left-radius: 10px;
-border-top-right-radius: 10px;
+.text-container {
+    background-color: rgb(37, 37, 37);
+    color: white;
+    text-align: center;
+    padding: 16px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 }

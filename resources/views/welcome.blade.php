@@ -45,7 +45,33 @@
 
     <div class="main-container">
         <p class="main-text">Discover the Power of Knowledge to Transform Your Life</p><br>
-        <p class="main-text">Your Journey to Success Starts Here
+
+        <p class="main-text">Start Elevating Today
+        </p><br>
+
+
+        <div class="carousel-container">
+            <div class="text-container">
+                <h1>INSIDE THE LIBRARY</h1>
+                <p>Gain access to over 100 e-books</p>
+            </div>
+            <div class="pdf-carousel">
+                <button style="margin-right: 10px;" class="carousel-btn carousel-prev"><i
+                        class='bx bx-chevron-left'></i></button>
+                <div class="carousel-track-container">
+                    <div class="carousel-track">
+                        @foreach ($data as $book)
+                            <div class="pdf-item">
+                                <div class="thumbnail" data-pdfpath="/assets/{{ $book->file }}"></div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+                <button class="carousel-btn carousel-next"><i class='bx bx-chevron-right'></i></button>
+            </div>
+        </div>
+
+        <p class="main-text" style="margin-top: 20px;">Your Journey to Success Starts Here
             Dive into expertly written eBooks covering essential topics such as:
 
             Psychology: Understand the science of behavior and emotions to cultivate deeper relationships and inner
@@ -74,32 +100,9 @@
         <p class="faq">FREQUENTLY ASKED QUESTIONS
         </p><br>
 
-        <p class="main-text">Start Elevating Today
-        </p><br>
-        
         <button class="register-btn">Get Started</button><br>
 
 
-        <div class="item-container" style="margin: 0 150px;">
-            <div class="text-container">
-                <h1>INSIDE THE LIBRARY</h1>
-                <p>Gain access to over 100 e-books</p>
-            </div>
-            <div class="pdf-carousel">
-                <button style="margin-right: 10px;" class="carousel-btn carousel-prev"><i
-                        class='bx bx-chevron-left'></i></button>
-                <div class="carousel-track-container">
-                    <div class="carousel-track">
-                        @foreach ($data as $book)
-                            <div class="pdf-item">
-                                <div class="thumbnail" data-pdfpath="/assets/{{ $book->file }}"></div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-                <button class="carousel-btn carousel-next"><i class='bx bx-chevron-right'></i></button>
-            </div>
-        </div>
     </div>
 
     <script type="module">
