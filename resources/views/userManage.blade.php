@@ -8,6 +8,9 @@
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <link rel="stylesheet" href="{{ asset('css/notifications-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/usermanage-style.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/confirmation-modal-style.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/main-style.css') }}">
+
 </head>
 
 <body>
@@ -94,10 +97,10 @@
                 <td>{{ $user->created_at->format('M d, Y') }}</td>
                 <td>{{ $user->updated_at->format('M d, Y') }}</td>
                 <td>
-                  <form action="{{ route('users.destroy', $user) }}" method="POST" style="display: inline;">
+                  <form action="{{ route('users.destroy', $user) }}" method="POST" style="display: inline;" class="delete-form">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="remove-btn" onclick="return confirm('Are you sure you want to delete this user?')">
+                    <button type="button" class="remove-btn" onclick="confirmDelete({{ $user->id }}, '{{ $user->name }}')">
                       DELETE
                     </button>
                   </form>
@@ -107,6 +110,23 @@
           </tbody>
         </table>
       </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Delete User</h2>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete user "<span id="userName"></span>"?</p>
+            <p class="confirmation-text">This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+            <button type="button" class="btn-delete" id="confirmDeleteBtn">Delete</button>
+        </div>
     </div>
   </div>
 
@@ -322,6 +342,39 @@
     document.addEventListener('DOMContentLoaded', function () {
       handleSort('oldest', event);
     });
+
+    // Modal functionality
+    let currentForm = null;
+
+    function confirmDelete(userId, userName) {
+        const modal = document.getElementById('deleteModal');
+        const userNameSpan = document.getElementById('userName');
+        const confirmBtn = document.getElementById('confirmDeleteBtn');
+        
+        currentForm = event.target.closest('form');
+        userNameSpan.textContent = userName;
+        modal.style.display = 'block';
+        
+        confirmBtn.onclick = function() {
+            if (currentForm) {
+                currentForm.submit();
+            }
+        }
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('deleteModal');
+        modal.style.display = 'none';
+        currentForm = null;
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('deleteModal');
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
   </script>
 
 

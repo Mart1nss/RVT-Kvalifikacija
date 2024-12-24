@@ -25,9 +25,10 @@
 
             <a style="margin-bottom: 20px;" class="btn-dashboard" href="{{'/notifications'}}"><i id="dashboardIcon"
                     class='bx bx-bell'></i> notifications</a>
+            
+            <a style="margin-bottom: 20px;" class="btn-dashboard" href="#"><i id="dashboardIcon" class='bx bx-history'></i> Audit Logs</a>
 
-            <a class="btn-dashboard" href="{{'/bookpage'}}"><i id="dashboardIcon" class='bx bx-book'></i> View All
-                Books</a>
+            <a class="btn-dashboard" href="{{'/bookpage'}}"><i id="dashboardIcon" class='bx bx-book'></i> Library</a>
 
         </div>
 

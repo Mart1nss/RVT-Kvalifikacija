@@ -154,8 +154,8 @@
               if (genre) {  // Only add non-null genres
                   const li = document.createElement('li');
                   li.innerHTML = `
-                      <label>
-                          <input type="checkbox" value="${genre}" onchange="filterBooks()">
+                      <label class="genre-checkbox-container">
+                          <input class="genre-checkbox" type="checkbox" value="${genre}" onchange="filterBooks()">
                           ${genre}
                       </label>
                   `;
