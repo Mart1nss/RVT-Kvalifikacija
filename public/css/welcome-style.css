@@ -6,7 +6,7 @@
 }
 
 body {
-    background-color: #1c1a1a;
+    background-color: #0D0D0D;
     min-width: 375px;
     align-items: center;
     justify-content: center;
@@ -18,7 +18,7 @@ body {
     left: 0;
     width: 100%;
     padding: 20px 50px;
-    background: #1c1a1a;
+    background: #0D0D0D;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -141,6 +141,15 @@ button:hover {
     }
 }
 
+
+
+
+
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css");
+
+
+/* page content */
+
 p {
     font-weight: 800;
     margin-left: 20px;
@@ -150,32 +159,8 @@ p {
 }
 
 
-
-.item-container2 {
-    background-color: rgb(37, 37, 37);
-    border-radius: 8px;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    grid-gap: 20px;
-    justify-content: start;
-    padding: 20px;
-}
-
-.item-card {
-    background-color: #1c1a1a;
-    color: white;
-    border-radius: 8px;
-    border: white 1px solid;
-    overflow: hidden;
-    position: relative;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: 0.15s;
-    height: 400px;
-}
-
-
 .main-container {
-    background-color: #1c1a1a;
+    background-color: #0D0D0D;
     padding: 0 50px;
     display: flex;
     flex-direction: column;
@@ -188,32 +173,6 @@ p {
         margin-top: 12px;
     }
 }
-
-.item-container {
-    background-color: rgb(37, 37, 37);
-    border-radius: 8px;
-    padding: 16px;
-}
-
-.carousel-container {
-    background-color: rgb(37, 37, 37);
-    border-radius: 8px;
-    padding: 16px;
-    margin: 0 100px;
-}
-
-@media (max-width: 769px) {
-    .carousel-container {
-        margin: 0px;
-    }
- }
-
-@media (max-width: 1000px) {
-    .carousel-container {
-        margin: 0px;
-    }
- }
-
 
 .pdf-carousel {
     display: flex;
@@ -240,7 +199,7 @@ p {
     background-color: #1c1a1a;
     color: white;
     border-radius: 8px;
-    border: white 1px solid;
+    border: none;
     overflow: hidden;
     box-sizing: border-box;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -268,7 +227,7 @@ p {
     font-size: 1.25rem;
 }
 
-@media (max-width: 769px) {
+@media (max-width: 768px) {
     .pdf-item {
         flex: 0 0 calc(50% - 10px);
         min-width: calc(50% - 10px);
@@ -284,10 +243,249 @@ p {
 }
 
 .text-container {
-    background-color: rgb(37, 37, 37);
+    background-color: #202020;
     color: white;
     text-align: center;
     padding: 16px;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
+}
+
+
+/* Hero Section */
+.hero {
+    text-align: center;
+    padding: 30px 20px; /* Adjust padding as needed */
+    border-radius: 10px;
+}
+
+.hero-title {
+    font-size: 2rem; /* Responsive font size */
+    color: white;
+    margin-bottom: 10px;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    color: #eee;
+    margin-bottom: 20px;
+}
+
+/* Section Styles */
+.section-title {
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 10px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.section-subtitle,
+.section-text {
+    font-size: 1rem;
+    color: #eee;
+    margin: 0;
+}
+
+
+/* Responsive Adjustments */
+@media (min-width: 769px) {
+    .main-container {
+        padding: 30px 50px; /* More padding on larger screens */
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .section-subtitle,
+    .section-text {
+        font-size: 1.1rem;
+    }
+}
+
+/* Library Preview */
+.library-preview {
+    background-color: #202020;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.text-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+
+
+/* Benefits Section */
+.benefits {
+    margin-top: 20px;
+    padding: 0px;
+    max-width: 1000px;
+    margin-left: auto; /* Center the section */
+    margin-right: auto; /* Center the section */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content inside .benefits */
+}
+
+/* Genre Cards */
+.genre-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    width: 100%;
+    margin-top: 30px; /* Adjust spacing from the list above */
+    justify-content: center; /* Center the cards */
+}
+
+.genre-card {
+    background-color: #202020;
+    border: none;
+    border-radius: 8px;
+    padding: 20px;
+    width: calc(33% - 10px); /* Three cards per row on larger screens */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    min-height: 250px; /* Set a minimum height for all cards */
+}
+
+.genre-title {
+    display: flex;
+    align-items: center; /* Vertically align icon and title */
+    color: rgb(0, 0, 0);
+    margin-bottom: 10px;
+    gap: 10px; /* Add some space between icon and title */
+}
+
+.icon-container {
+    width: 40px;
+    height: 40px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Remove margin-bottom as it's now handled by gap in .genre-title */
+}
+
+.genre-icon {
+    color: #333;
+    font-size: 20px;
+}
+
+.genre-title-text {
+    color: white;
+    margin-bottom: 0; /* Remove default margin */
+    font-size: 1.2em;
+}
+
+.genre-description {
+    color: white;
+    font-size: 0.9em;
+    flex-grow: 1;
+    margin-left: 0;
+}
+
+/* Media Query for smaller screens (e.g., mobile) */
+@media (max-width: 768px) {
+    .genre-card {
+        width: calc(50% - 20px); /* Two cards per row on smaller screens */
+        min-height: 220px; /* Adjust min-height for smaller screens */
+    }
+    .genre-title {
+        margin-bottom: 5px; /* Reduce margin on smaller screens */
+    }
+
+    .benefits {
+        padding: 0px;
+    }
+}
+
+/* Media Query for even smaller screens */
+@media (max-width: 500px) {
+    .genre-card {
+        width: 100%; /* One card per row on very small screens */
+        min-height: auto; /* Allow height to adjust as needed */
+    }
+}
+
+
+.why-choose {
+    margin-top: 20px;
+}
+
+.why-choose-list {
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+}
+
+/* FAQ Accordion Styles */
+.faq-section {
+    margin-bottom: 30px;
+    margin-top: 30px;
+}
+
+.accordion {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.accordion-item {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    overflow: hidden; /* This is important to hide content properly */
+}
+
+.accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 70px;
+    padding: 15px;
+    background-color: #202020;
+    color: white;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+}
+
+.accordion-header i {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+}
+
+.accordion-item.active .accordion-header i {
+    transform: rotate(180deg);
+}
+
+.accordion-content {
+    background-color: #1c1a1a;
+    color: #eee;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.accordion-content .content-wrapper {
+    padding: 15px;
+    height: 70px;
+}
+
+.accordion-content p {
+    margin-bottom: 0;
 }

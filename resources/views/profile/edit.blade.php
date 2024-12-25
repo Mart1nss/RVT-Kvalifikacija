@@ -10,7 +10,7 @@
     }
 
     .item-container {
-        background-color: rgb(37, 37, 37);
+        background-color:rgb(37, 37, 37); 
         border-bottom-right-radius: 10px;
         border-bottom-left-radius: 10px;
         padding: 16px;
@@ -41,8 +41,8 @@
     <div class="item-container">
 
        
-            @include('auth.verify-email')
-        
+          
+       
 
         <div class="item-card">
             @include('profile.partials.update-profile-information-form')

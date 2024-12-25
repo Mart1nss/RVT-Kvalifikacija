@@ -118,7 +118,6 @@
     .main-container {
         max-width: 1000px;
         margin: 0 auto;
-        padding: 2rem;
     }
 
     .ticket-header {
@@ -211,7 +210,6 @@
     }
 
     .description-content {
-        white-space: pre-wrap;
         word-break: break-word;
         line-height: 1.6;
         margin-top: 1rem;
@@ -225,7 +223,6 @@
     }
 
     .response-content {
-        white-space: pre-wrap;
         word-break: break-word;
         line-height: 1.6;
         margin-top: 0.5rem;
