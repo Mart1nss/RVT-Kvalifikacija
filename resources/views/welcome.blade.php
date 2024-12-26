@@ -54,7 +54,6 @@
                 <p class="section-subtitle">Gain access to over 100 e-books</p>
             </div>
             <div class="pdf-carousel">
-                <button class="carousel-btn carousel-prev"><i class='bx bx-chevron-left'></i></button>
                 <div class="carousel-track-container">
                     <div class="carousel-track">
                         @foreach ($data as $book)
@@ -64,14 +63,13 @@
                         @endforeach
                     </div>
                 </div>
-                <button class="carousel-btn carousel-next"><i class='bx bx-chevron-right'></i></button>
             </div>
         </section>
 
         <section class="benefits">
             <h3 class="section-title">Your Journey to Success Starts Here</h3>
             <p class="section-text">
-                Dive into expertly written eBooks covering essential topics such as:
+                Dive into eBooks covering essential topics such as:
             </p>
         
             <div class="genre-cards">
@@ -131,7 +129,7 @@
                         <div class="icon-container">
                             <i class='bx bxs-heart'></i>
                         </div>
-                        <h4 class="genre-title-text">Health</h4>
+                        <h4 class="genre-title-text">Health & Wellness</h4>
                     </div>
                     <p class="genre-description">Discover holistic approaches to maintain physical and mental well-being for a fulfilling life.</p>
                 </div>
@@ -174,18 +172,6 @@
                             <p>Once you've registered and logged in, you can access our entire library of eBooks through
                                 your
                                 dashboard. You can read them online or download them for offline access.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="accordion-item">
-                    <button class="accordion-header">
-                        Can I download eBooks for offline reading?
-                        <i class='bx bx-chevron-down'></i>
-                    </button>
-                    <div class="accordion-content">
-                        <div class="content-wrapper">
-                            <p>Yes, you can download eBooks for offline reading. This allows you to access your favorite
-                                content anytime, anywhere, even without an internet connection.</p>
                         </div>
                     </div>
                 </div>
@@ -258,7 +244,7 @@
     </div>
 
     <script src="{{ asset('js/pdfThumbnails.js') }}" type="module"></script>
-    <script src="{{ asset('js/pdfCarousel.js') }}"></script>
+    
     <script>
         const accordionHeaders = document.querySelectorAll('.accordion-header');
 

@@ -174,82 +174,153 @@ p {
     }
 }
 
+
+
+
+.library-preview {
+    background-color: #202020;
+    border-radius: 8px;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.text-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
 .pdf-carousel {
-    display: flex;
-    align-items: center;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Add vignette containers */
+.pdf-carousel::before,
+.pdf-carousel::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 150px;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Left vignette */
+.pdf-carousel::before {
+    left: 0;
+    background: linear-gradient(
+        to right,
+        #202020 0%,
+        rgba(32, 32, 32, 0.9) 20%,
+        rgba(32, 32, 32, 0) 100%
+    );
+}
+
+/* Right vignette */
+.pdf-carousel::after {
+    right: 0;
+    background: linear-gradient(
+        to left,
+        #202020 0%,
+        rgba(32, 32, 32, 0.9) 20%,
+        rgba(32, 32, 32, 0) 100%
+    );
 }
 
 .carousel-track-container {
     overflow: hidden;
-    width: 100%;
-    touch-action: pan-y;
+
 }
 
 .carousel-track {
     display: flex;
-    transition: transform 0.3s ease-in;
-    gap: 13px;
+    animation: scroll 20s linear infinite;
+   
 }
 
 .pdf-item {
-    width: calc(25% - 12px);
-    flex: 0 0 auto;
-    background-color: #1c1a1a;
-    color: white;
-    border-radius: 8px;
-    border: none;
-    overflow: hidden;
+    flex: 0 0 300px;
+    padding: 0 10px;
     box-sizing: border-box;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    scroll-snap-align: start;
-    transition: 0.15s;
+}
+
+/* Tablet view */
+@media (max-width: 1024px) {
+    .pdf-item {
+        flex: 0 0 250px;
+    }
+    .carousel-track {
+        animation: scroll 30s linear infinite;
+    }
+    .pdf-carousel::before,
+    .pdf-carousel::after {
+        width: 100px; /* Smaller vignette for tablet */
+    }
+}
+
+/* Mobile view */
+@media (max-width: 768px) {
+    .pdf-item {
+        flex: 0 0 200px;
+    }
+    .carousel-track {
+        animation: scroll 20s linear infinite;
+    }
+    .pdf-carousel::before,
+    .pdf-carousel::after {
+        width: 60px; /* Even smaller vignette for mobile */
+    }
+}
+
+/* Small mobile view */
+@media (max-width: 480px) {
+    .pdf-item {
+        flex: 0 0 150px;
+    }
+    .carousel-track {
+        animation: scroll 5s linear infinite; /* Fastest for mobile */
+    }
+    .pdf-carousel::before,
+    .pdf-carousel::after {
+        width: 60px; /* Even smaller vignette for mobile */
+    }   
+}
+
+.thumbnail {
+    position: relative;
+    width: 100%;
+    padding-top: 140%;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transform: translateZ(0);
 }
 
 .thumbnail img {
-    max-width: 100%;
-    object-fit: contain;
-    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-.carousel-btn {
-    height: 40px;
-    width: 40px;
-    background: white;
-    text-align: center;
-    color: black;
-    line-height: 40px;
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    font-size: 1.25rem;
-}
 
-@media (max-width: 768px) {
-    .pdf-item {
-        flex: 0 0 calc(50% - 10px);
-        min-width: calc(50% - 10px);
+/* Basic scroll animation */
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
     }
-
-    .carousel-track {
-        gap: 10px;
-    }
-
-    .carousel-btn {
-        display: none;
+    100% {
+        transform: translateX(-50%);
     }
 }
 
-.text-container {
-    background-color: #202020;
-    color: white;
-    text-align: center;
-    padding: 16px;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-}
+
+
+
+
 
 
 /* Hero Section */
@@ -309,17 +380,6 @@ p {
     }
 }
 
-/* Library Preview */
-.library-preview {
-    background-color: #202020;
-    border-radius: 8px;
-    padding: 20px;
-}
-
-.text-container {
-    text-align: center;
-    margin-bottom: 20px;
-}
 
 
 
@@ -376,6 +436,10 @@ p {
     /* Remove margin-bottom as it's now handled by gap in .genre-title */
 }
 
+.icon-container i {
+    font-size: 22px;
+}
+
 .genre-icon {
     color: #333;
     font-size: 20px;
@@ -383,13 +447,17 @@ p {
 
 .genre-title-text {
     color: white;
+    font-weight: 800;
+    font-family: sans-serif;
+    text-transform: uppercase;
     margin-bottom: 0; /* Remove default margin */
-    font-size: 1.2em;
+    font-size: 18px;
 }
 
 .genre-description {
     color: white;
-    font-size: 0.9em;
+    text-transform: none;
+    font-size: 16px;
     flex-grow: 1;
     margin-left: 0;
 }
@@ -407,6 +475,8 @@ p {
     .benefits {
         padding: 0px;
     }
+
+
 }
 
 /* Media Query for even smaller screens */
@@ -458,9 +528,12 @@ p {
     height: 70px;
     padding: 15px;
     background-color: #202020;
+    box-shadow:rgba(0, 0, 0, 0.2);
     color: white;
     border: none;
     text-align: left;
+    font-weight: 800;
+    padding-left: 15px;
     cursor: pointer;
 }
 
@@ -481,11 +554,25 @@ p {
     transition: max-height 0.3s ease;
 }
 
+.accordion-content p {
+    text-transform: none;
+}
+
 .accordion-content .content-wrapper {
     padding: 15px;
-    height: 70px;
+    height: max-content;
 }
 
 .accordion-content p {
     margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+    .accordion-header {
+        height: 50px;
+    }
+
+    .accordion-content .content-wrapper {
+        height: max-content;
+    }
 }

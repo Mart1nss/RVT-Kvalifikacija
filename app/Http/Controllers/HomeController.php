@@ -59,8 +59,9 @@ class HomeController extends Controller
     {
         $bookCount = Product::count();
         $userCount = User::count();
-
-        return view('admin.adminhome', compact('bookCount', 'userCount'));
+        $recentBooks = Product::orderBy('created_at', 'desc')->take(5)->get();
+        
+        return view('admin.adminhome', compact('bookCount', 'userCount', 'recentBooks'));
     }
 
 
