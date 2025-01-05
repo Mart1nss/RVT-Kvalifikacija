@@ -6,7 +6,7 @@
 }
 
 body {
-  background-color: #1c1a1a;
+  background-color: #1c1a1a; 
   min-width: 375px;
   align-items: center;
   justify-content: center;
@@ -55,7 +55,7 @@ body {
 }
 
 .user-btn {
-  background-color: rgb(37, 37, 37);
+  background-color: #202020;
   color: white;
   border: none;
   padding: 10px;
@@ -103,7 +103,7 @@ body {
   margin-right: 0px;
   margin-top: 10px;
   top: 60px;
-  background-color: rgb(37, 37, 37);
+  background-color: #202020;
   border-radius: 10px;
   width: 400px;
   padding: 15px;
@@ -260,7 +260,7 @@ body {
 }
 
 #notification-btn {
-  background-color: rgb(37, 37, 37);
+  background-color: #202020;
   color: white;
   border: none;
   padding: 10px;
@@ -296,7 +296,7 @@ body {
   align-items: center;
   margin-right: 140px;
   top: 70px;
-  background-color: rgb(37, 37, 37);
+  background-color: #202020;
   width: 400px;
   border-radius: 10px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -313,7 +313,7 @@ body {
 .notifications-header {
   position: sticky;
   top: 0;
-  background-color: #252525;
+  background-color: #202020;
   padding: 10px;
   z-index: 2;
   color: #fff;
@@ -463,7 +463,7 @@ body {
 }
 
 .main-container {
-  background-color: #1c1a1a;
+  background-color: #1c1a1a; 
   display: flex;
   flex-direction: column;
   padding: 0 10px;

@@ -6,7 +6,7 @@
 }
 
 body {
-    background-color: #1c1a1a;
+    background-color: #0D0D0D;
     min-width: 375px;
     align-items: center;
     justify-content: center;
@@ -18,7 +18,7 @@ body {
     left: 0;
     width: 100%;
     padding: 20px 50px;
-    background: #1c1a1a;
+    background: #0D0D0D;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -71,36 +71,36 @@ nav {
 }
 
 .register-btn {
-    border: 1px solid white;
+    border: none;
     background-color: white;
     padding: 10px;
     height: 40px;
     width: 120px;
-    border-radius: 20px;
+    border-radius: 8px;
     font-weight: 800;
     font-size: 12px;
     text-transform: uppercase;
-    transition: all 0.15;
+    transition: all 0.2s;
 }
 
 .login-btn {
-    border: 1px solid white;
+    border: none;
     background-color: rgb(37, 37, 37);
     color: white;
     padding: 10px;
     height: 40px;
     width: 120px;
-    border-radius: 20px;
+    border-radius: 8px;
     font-weight: 800;
     margin-left: 20px;
     font-size: 12px;
     text-transform: uppercase;
-    transition: all 0.15;
+    transition: all 0.2s;
 }
 
 button:hover {
     cursor: pointer;
-    opacity: 0.7;
+    opacity: 0.5;
 }
 
 
@@ -122,7 +122,7 @@ button:hover {
         text-align: center;
     }
 
-    .nav-btn{
+    .nav-btn {
         display: flex;
         width: 100%;
         margin-top: 1%;
@@ -141,6 +141,15 @@ button:hover {
     }
 }
 
+
+
+
+
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css");
+
+
+/* page content */
+
 p {
     font-weight: 800;
     margin-left: 20px;
@@ -150,123 +159,420 @@ p {
 }
 
 
-
-.item-container2 {
-    background-color: rgb(37, 37, 37);
-    border-radius: 10px;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
-    grid-gap: 20px; 
-    justify-content: start; 
-    padding: 20px; 
-}
-
-.item-card {
-background-color: #1c1a1a;
-color: white;
-border-radius: 10px;
-border: white 1px solid;
-overflow: hidden;
-position: relative;
-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-transition: 0.15s;
-height: 400px;
-}
-
-
 .main-container {
-background-color: #1c1a1a;
-padding: 0 50px;
-display: flex;
-flex-direction: column;
-width: 100%;
-height:min-content;
-padding-bottom: 30px;
+    background-color: #0D0D0D;
+    padding: 0 50px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: min-content;
+    padding-bottom: 30px;
 
-@media (max-width: 769px) {
-padding: 0 10px;
-margin-top: 12px;
-}
+    @media (max-width: 769px) {
+        padding: 0 10px;
+        margin-top: 12px;
+    }
 }
 
-.item-container {
-background-color: rgb(37, 37, 37);
-border-radius: 10px;
-padding: 16px;
+
+
+
+.library-preview {
+    background-color: #202020;
+    border-radius: 8px;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.text-container {
+    text-align: center;
+    margin-bottom: 20px;
 }
 
 .pdf-carousel {
-display: flex;
-align-items: center;
-overflow-x: auto;
-scroll-snap-type: x mandatory;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Add vignette containers */
+.pdf-carousel::before,
+.pdf-carousel::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 150px;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Left vignette */
+.pdf-carousel::before {
+    left: 0;
+    background: linear-gradient(
+        to right,
+        #202020 0%,
+        rgba(32, 32, 32, 0.9) 20%,
+        rgba(32, 32, 32, 0) 100%
+    );
+}
+
+/* Right vignette */
+.pdf-carousel::after {
+    right: 0;
+    background: linear-gradient(
+        to left,
+        #202020 0%,
+        rgba(32, 32, 32, 0.9) 20%,
+        rgba(32, 32, 32, 0) 100%
+    );
 }
 
 .carousel-track-container {
-overflow: hidden;
-width: 100%;
-touch-action: pan-y;
+    overflow: hidden;
+
 }
 
 .carousel-track {
-display: flex;
-transition: transform 0.3s ease-in;
-gap: 13px; 
+    display: flex;
+    animation: scroll 20s linear infinite;
+   
 }
 
 .pdf-item {
-width: calc(25% - 12px);
-flex: 0 0 auto;
-background-color: #1c1a1a;
-color: white;
-border-radius: 10px;
-border: white 1px solid;
-overflow: hidden;
-box-sizing: border-box;
-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-scroll-snap-align: start;
-transition: 0.15s;
+    flex: 0 0 300px;
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+
+/* Tablet view */
+@media (max-width: 1024px) {
+    .pdf-item {
+        flex: 0 0 250px;
+    }
+    .carousel-track {
+        animation: scroll 30s linear infinite;
+    }
+    .pdf-carousel::before,
+    .pdf-carousel::after {
+        width: 100px; /* Smaller vignette for tablet */
+    }
+}
+
+/* Mobile view */
+@media (max-width: 768px) {
+    .pdf-item {
+        flex: 0 0 200px;
+    }
+    .carousel-track {
+        animation: scroll 20s linear infinite;
+    }
+    .pdf-carousel::before,
+    .pdf-carousel::after {
+        width: 60px; /* Even smaller vignette for mobile */
+    }
+}
+
+/* Small mobile view */
+@media (max-width: 480px) {
+    .pdf-item {
+        flex: 0 0 150px;
+    }
+    .carousel-track {
+        animation: scroll 5s linear infinite; /* Fastest for mobile */
+    }
+    .pdf-carousel::before,
+    .pdf-carousel::after {
+        width: 60px; /* Even smaller vignette for mobile */
+    }   
+}
+
+.thumbnail {
+    position: relative;
+    width: 100%;
+    padding-top: 140%;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transform: translateZ(0);
 }
 
 .thumbnail img {
-max-width: 100%;
-object-fit: contain;
-height: 100%;
-width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-.carousel-btn {
-height: 40px;
-width: 40px;
-background: white;
-text-align: center;
-color: black;
-line-height: 40px;
-border-radius: 50%;
-border: none;
-cursor: pointer;
-font-size: 1.25rem;
+
+/* Basic scroll animation */
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
 }
 
-@media (max-width: 769px) { 
-.pdf-item {
-flex: 0 0 calc(50% - 10px); 
-min-width: calc(50% - 10px);
-}
-.carousel-track {
-gap: 10px; 
+
+
+
+
+
+
+/* Hero Section */
+.hero {
+    text-align: center;
+    padding: 30px 20px; /* Adjust padding as needed */
+    border-radius: 10px;
 }
 
-.carousel-btn {
-display: none;
-}
+.hero-title {
+    font-size: 2rem; /* Responsive font size */
+    color: white;
+    margin-bottom: 10px;
 }
 
-.text-container{
-background-color: rgb(37, 37, 37);
-color: white;
-text-align: center;
-padding: 16px;
-border-top-left-radius: 10px;
-border-top-right-radius: 10px;
+.hero-subtitle {
+    font-size: 1.2rem;
+    color: #eee;
+    margin-bottom: 20px;
+}
+
+/* Section Styles */
+.section-title {
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 10px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.section-subtitle,
+.section-text {
+    font-size: 1rem;
+    color: #eee;
+    margin: 0;
+}
+
+
+/* Responsive Adjustments */
+@media (min-width: 769px) {
+    .main-container {
+        padding: 30px 50px; /* More padding on larger screens */
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .section-subtitle,
+    .section-text {
+        font-size: 1.1rem;
+    }
+}
+
+
+
+
+/* Benefits Section */
+.benefits {
+    margin-top: 20px;
+    padding: 0px;
+    max-width: 1000px;
+    margin-left: auto; /* Center the section */
+    margin-right: auto; /* Center the section */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content inside .benefits */
+}
+
+/* Genre Cards */
+.genre-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    width: 100%;
+    margin-top: 30px; /* Adjust spacing from the list above */
+    justify-content: center; /* Center the cards */
+}
+
+.genre-card {
+    background-color: #202020;
+    border: none;
+    border-radius: 8px;
+    padding: 20px;
+    width: calc(33% - 10px); /* Three cards per row on larger screens */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    min-height: 250px; /* Set a minimum height for all cards */
+}
+
+.genre-title {
+    display: flex;
+    align-items: center; /* Vertically align icon and title */
+    color: rgb(0, 0, 0);
+    margin-bottom: 10px;
+    gap: 10px; /* Add some space between icon and title */
+}
+
+.icon-container {
+    width: 40px;
+    height: 40px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Remove margin-bottom as it's now handled by gap in .genre-title */
+}
+
+.icon-container i {
+    font-size: 22px;
+}
+
+.genre-icon {
+    color: #333;
+    font-size: 20px;
+}
+
+.genre-title-text {
+    color: white;
+    font-weight: 800;
+    font-family: sans-serif;
+    text-transform: uppercase;
+    margin-bottom: 0; /* Remove default margin */
+    font-size: 18px;
+}
+
+.genre-description {
+    color: white;
+    text-transform: none;
+    font-size: 16px;
+    flex-grow: 1;
+    margin-left: 0;
+}
+
+/* Media Query for smaller screens (e.g., mobile) */
+@media (max-width: 768px) {
+    .genre-card {
+        width: calc(50% - 20px); /* Two cards per row on smaller screens */
+        min-height: 220px; /* Adjust min-height for smaller screens */
+    }
+    .genre-title {
+        margin-bottom: 5px; /* Reduce margin on smaller screens */
+    }
+
+    .benefits {
+        padding: 0px;
+    }
+
+
+}
+
+/* Media Query for even smaller screens */
+@media (max-width: 500px) {
+    .genre-card {
+        width: 100%; /* One card per row on very small screens */
+        min-height: auto; /* Allow height to adjust as needed */
+    }
+}
+
+
+.why-choose {
+    margin-top: 20px;
+}
+
+.why-choose-list {
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+}
+
+/* FAQ Accordion Styles */
+.faq-section {
+    margin-bottom: 30px;
+    margin-top: 30px;
+}
+
+.accordion {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.accordion-item {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    overflow: hidden; /* This is important to hide content properly */
+}
+
+.accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 70px;
+    padding: 15px;
+    background-color: #202020;
+    box-shadow:rgba(0, 0, 0, 0.2);
+    color: white;
+    border: none;
+    text-align: left;
+    font-weight: 800;
+    padding-left: 15px;
+    cursor: pointer;
+}
+
+.accordion-header i {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+}
+
+.accordion-item.active .accordion-header i {
+    transform: rotate(180deg);
+}
+
+.accordion-content {
+    background-color: #1c1a1a;
+    color: #eee;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.accordion-content p {
+    text-transform: none;
+}
+
+.accordion-content .content-wrapper {
+    padding: 15px;
+    height: max-content;
+}
+
+.accordion-content p {
+    margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+    .accordion-header {
+        height: 50px;
+    }
+
+    .accordion-content .content-wrapper {
+        height: max-content;
+    }
 }

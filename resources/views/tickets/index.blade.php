@@ -22,10 +22,11 @@
         </div>
 
         <div class="item-container">
-            <div class="table-responsive">
             @if(auth()->user()->isAdmin())
                 <h2>Open Tickets</h2>
             @endif
+            <div class="table-responsive">
+            
                 <table class="custom-table">
                     <thead>
                         <tr>

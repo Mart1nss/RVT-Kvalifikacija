@@ -10,7 +10,6 @@
   <link rel="stylesheet" href="{{ asset('css/navbar-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/notes-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/notifications-style.css') }}">
-  <link rel="stylesheet" type="text/css" href="{{ asset('css/app.css') }}">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>

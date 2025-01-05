@@ -1,58 +1,109 @@
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.7);
+.edit-modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    animation: fadeIn 0.3s;
 }
 
-.modal-content {
-  background-color: #1c1a1a;
-  margin: 15% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 400px;
-  border-radius: 8px;
-  color: white;
-  text-align: center;
+.edit-modal-content {
+    background-color: #1c1a1a;
+    margin: 15% auto;
+    padding: 20px;
+    border: none;
+    width: 400px;
+    border-radius: 8px;
+    color: white;
+    animation: slideIn 0.3s;
 }
 
-.modal-buttons {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
+.edit-modal-header {
+    margin-bottom: 20px;
 }
 
-.modal-buttons button {
-  padding: 8px 20px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-weight: bold;
-  text-transform: uppercase;
-  font-size: 12px;
+.edit-modal-header h2 {
+    margin: 0;
+    color: white;
+    text-transform: uppercase;
+    font-family: sans-serif;
+    font-weight: 800;
+    font-size: 24px;
 }
 
-.confirm-delete {
-  background-color: #ff0000;
-  color: white;
-  border: 1px solid #ff0000;
+#editForm label {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 5px;
 }
 
-.cancel-delete {
-  background-color: transparent;
-  color: white;
-  border: 1px solid white;
+#editForm input,
+#editForm select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    border: 1px solid #4a4a4a;
+    background-color: rgb(56, 56, 56);
+    color: white;
 }
+
+.edit-btn-primary {
+    border: none;
+    background-color: white;
+    color: black;
+    padding: 10px;
+    height: 40px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 12px;
+    text-transform: uppercase;
+    transition: all 0.2s;
+}
+
+.edit-btn-primary:hover {
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+.edit-btn-secondary {
+    border: none;
+    background-color: #383838;
+    color: white;
+    padding: 10px;
+    height: 40px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 12px;
+    text-transform: uppercase;
+    transition: all 0.2s;
+}
+
+.edit-btn-secondary:hover {
+    cursor: pointer;
+    opacity: 0.5;
+}   
 
 .modal-title {
-  margin-bottom: 20px;
+    margin-bottom: 20px;
 }
 
 .modal-details {
-  margin: 15px 0;
-  font-style: italic;
+    margin: 15px 0;
+    font-style: italic;
+}
+
+
+/* Animation Keyframes */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-100px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }

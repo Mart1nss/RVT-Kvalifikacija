@@ -27,3 +27,39 @@ body {
         margin-top: 12px;
     }
 }
+
+.btn-secondary {
+    border: none;
+    background-color: #1c1a1a;
+    color: white;
+    padding: 10px;
+    height: 40px;
+    width: max-content;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 12px;
+    text-transform: uppercase;
+    transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+    opacity: 0.7;
+    cursor: pointer;
+}
+
+.btn-delete {
+    background-color: rgb(126, 6, 6);
+    color: white;
+    text-transform: uppercase;
+    font-weight: 800;
+    font-size: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    transition: all 0.2s;
+}
+
+.btn-delete:hover {
+    background-color: rgb(80, 80, 80);
+    cursor: pointer;
+}

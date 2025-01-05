@@ -9,7 +9,6 @@
   <link type="text/css" rel="stylesheet" href="{{ asset('css/pdf-view.css') }}">
   <link rel="stylesheet" href="{{ asset('css/notifications-style.css') }}">
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-  <link rel="stylesheet" href="{{ asset('pdfjs-express/lib/ui/style.css') }}" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
 
 </head>

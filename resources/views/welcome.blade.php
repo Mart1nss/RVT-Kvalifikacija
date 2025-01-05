@@ -11,83 +11,49 @@
         integrity="sha512-kQO2X6Ls8Fs1i/pPQaRWkT40U/SELsldCgg4njL8zT0q4AfABNuS+xuy+69PFT21dow9T6OiJF43jan67GX+Kw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="{{ asset('css/welcome-style.css') }}">
-
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>    <link rel="stylesheet" href="{{ asset('css/welcome-style.css') }}">
 </head>
-
 
 <body>
 
     <header class="navbar">
         <h1 class="logo"
-            style="font-family: sans-serif; color: white; cursor: pointer; font-weight: 800 font-size: 24px">ELEVATE
+            style="font-family: sans-serif; color: white; cursor: pointer; font-weight: 800; font-size: 24px">
+            ELEVATE
             READS</h1>
 
         <nav class="nav-btn">
             @if (Route::has('login'))
                 @auth
-                    <button onclick="window.location.href = '{{ route('home') }}'" class="login-btn">Dashboard</button>
+                    <button onclick="window.location.href = '{{ route('home') }}'"
+                        class="login-btn">Dashboard</button>
                 @else
                     <button class="login-btn" style="margin-right: 14px;"
                         onclick="window.location.href = '{{ route('login') }}'">Login</button>
 
                     @if (Route::has('register'))
-                        <button onclick="window.location.href = '{{ route('register') }}'" class="register-btn">Register</button>
+                        <button onclick="window.location.href = '{{ route('register') }}'"
+                            class="register-btn">Register</button>
                     @endif
                 @endauth
             @endif
         </nav>
     </header>
 
-
-
     <div class="main-container">
-        <p class="main-text">Discover the Power of Knowledge to Transform Your Life</p><br>
-        <p class="main-text">Your Journey to Success Starts Here
-            Dive into expertly written eBooks covering essential topics such as:
+        <section class="hero">
+            <h2 class="hero-title">Discover the Power of Knowledge to Transform Your Life</h2>
+            <p class="hero-subtitle">Start Elevating Today</p>
+            <button onclick="window.location.href = '{{ route('register') }}'" class="register-btn cta-button">Get
+                Started</button>
+        </section>
 
-            Psychology: Understand the science of behavior and emotions to cultivate deeper relationships and inner
-            peace.
-
-            Sales & Negotiation: Master the art of persuasion and close deals with confidence.
-
-            Productivity: Unlock strategies to get more done in less time, without sacrificing balance.
-
-            Business & Career: Gain insights to accelerate your career and build successful businesses.
-
-            Money & Investments: Learn how to manage your finances and grow your wealth wisely.
-        </p><br>
-
-        <p class="main-text">Why Choose Elevate Reads?
-
-            Diverse Library: Access a comprehensive range of topics, all in one place.
-
-            Expert Authors: Learn from seasoned professionals and thought leaders.
-
-            Flexible Reading: Enjoy instant access to eBooks anytime, anywhere.
-
-            Tailored for Growth: Whether you’re looking to boost your career, sharpen your skills, or improve your
-            mindset, we’ve got you covered.</p><br>
-
-        <p class="faq">FREQUENTLY ASKED QUESTIONS
-        </p><br>
-
-        <p class="main-text">Start Elevating Today
-        </p><br>
-        
-        <button class="register-btn">Get Started</button><br>
-
-
-        <div class="item-container" style="margin: 0 150px;">
+        <section class="library-preview">
             <div class="text-container">
-                <h1>INSIDE THE LIBRARY</h1>
-                <p>Gain access to over 100 e-books</p>
+                <h3 class="section-title">Inside the Library</h3>
+                <p class="section-subtitle">Gain access to over 100 e-books</p>
             </div>
             <div class="pdf-carousel">
-                <button style="margin-right: 10px;" class="carousel-btn carousel-prev"><i
-                        class='bx bx-chevron-left'></i></button>
                 <div class="carousel-track-container">
                     <div class="carousel-track">
                         @foreach ($data as $book)
@@ -97,149 +63,205 @@
                         @endforeach
                     </div>
                 </div>
-                <button class="carousel-btn carousel-next"><i class='bx bx-chevron-right'></i></button>
             </div>
-        </div>
+        </section>
+
+        <section class="benefits">
+            <h3 class="section-title">Your Journey to Success Starts Here</h3>
+            <p class="section-text">
+                Dive into eBooks covering essential topics such as:
+            </p>
+        
+            <div class="genre-cards">
+        
+                <div class="genre-card">
+                    <div class="genre-title">
+                        <div class="icon-container">
+                            <i class='bx bxs-bulb'></i> 
+                        </div>
+                        <h4 class="genre-title-text">Psychology</h4>
+                    </div>
+                    <p class="genre-description">Understand the science of behavior and emotions to cultivate deeper relationships and inner peace.</p>
+                </div>
+        
+                <div class="genre-card">
+                    <div class="genre-title">
+                        <div class="icon-container">
+                            <i class='bx bxs-phone'></i>
+                        </div>
+                        <h4 class="genre-title-text">Sales & Negotiation</h4>
+                    </div>
+                    <p class="genre-description">Master the art of persuasion and close deals with confidence.</p>
+                </div>
+        
+                <div class="genre-card">
+                    <div class="genre-title">
+                        <div class="icon-container">
+                            <i class='bx bxs-chart'></i>
+                        </div>
+                        <h4 class="genre-title-text">Productivity</h4>
+                    </div>
+                    <p class="genre-description">Unlock strategies to get more done in less time, without sacrificing balance.</p>
+                </div>
+        
+                <div class="genre-card">
+                    <div class="genre-title">
+                        <div class="icon-container">
+                            <i class='bx bxs-briefcase'></i>
+                        </div>
+                        <h4 class="genre-title-text">Business & Career</h4>
+                    </div>
+                    <p class="genre-description">Gain insights to accelerate your career and build successful businesses.</p>
+                </div>
+        
+                <div class="genre-card">
+                    <div class="genre-title">
+                        <div class="icon-container">
+                            <i class='bx bxs-wallet'></i>
+                        </div>
+                        <h4 class="genre-title-text">Money & Investments</h4>
+                    </div>
+                    <p class="genre-description">Learn how to manage your finances and grow your wealth wisely.</p>
+                </div>
+        
+                <div class="genre-card">
+                    <div class="genre-title">
+                        <div class="icon-container">
+                            <i class='bx bxs-heart'></i>
+                        </div>
+                        <h4 class="genre-title-text">Health & Wellness</h4>
+                    </div>
+                    <p class="genre-description">Discover holistic approaches to maintain physical and mental well-being for a fulfilling life.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="why-choose">
+            <h3 class="section-title">Why Choose Elevate Reads?</h3>
+            <ul class="why-choose-list">
+                hz
+                <button onclick="window.location.href = '{{ route('register') }}'" class="register-btn cta-button">Get
+                    Started</button>
+            </ul>
+            
+        </section>
+
+        <section class="faq-section">
+            <h3 class="section-title">Frequently Asked Questions</h3>
+            <div class="accordion">
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        What types of eBooks do you offer?
+                        <i class='bx bx-chevron-down'></i>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="content-wrapper">
+                            <p>We offer a wide range of eBooks across various categories, including psychology, sales,
+                                negotiation, productivity, business, career development, money management, and
+                                investments.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        How do I access the eBooks?
+                        <i class='bx bx-chevron-down'></i>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="content-wrapper">
+                            <p>Once you've registered and logged in, you can access our entire library of eBooks through
+                                your
+                                dashboard. You can read them online or download them for offline access.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        Are the eBooks compatible with all devices?
+                        <i class='bx bx-chevron-down'></i>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="content-wrapper">
+                            <p>Our eBooks are available in PDF format, which is compatible with most devices, including
+                                computers, tablets, and smartphones. </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        How often is new content added?
+                        <i class='bx bx-chevron-down'></i>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="content-wrapper">
+                            <p>We are constantly adding new eBooks to our library to ensure you have access to the latest
+                                insights and knowledge in various fields.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        Is there a subscription fee?
+                        <i class='bx bx-chevron-down'></i>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="content-wrapper">
+                            <p>We offer both free and premium content. While some eBooks are available for free, others
+                                may
+                                require a one-time purchase or be part of a subscription plan. </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        Can I suggest topics or authors for future eBooks?
+                        <i class='bx bx-chevron-down'></i>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="content-wrapper">
+                            <p>Absolutely! We value your input and encourage you to suggest topics or authors you'd like
+                                to
+                                see in our library. You can send us your suggestions through our contact form.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        How do I get support if I have a question or issue?
+                        <i class='bx bx-chevron-down'></i>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="content-wrapper">
+                            <p>If you have any questions or need assistance, you can reach out to our support team
+                                through
+                                our contact form or email. We're here to help!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </div>
 
-    <script type="module">
-        // Book Thumbnails
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.worker.min.mjs';
-        function generateThumbnail(pdfPath) {
-            pdfjsLib.getDocument(pdfPath).promise.then(function (pdf) {
-                pdf.getPage(1).then(function (page) {
-                    var scale = 1;
-                    var viewport = page.getViewport({ scale: scale });
-                    var canvas = document.createElement('canvas');
-                    var context = canvas.getContext('2d');
+    <script src="{{ asset('js/pdfThumbnails.js') }}" type="module"></script>
+    
+    <script>
+        const accordionHeaders = document.querySelectorAll('.accordion-header');
 
-                    canvas.height = viewport.height;
-                    canvas.width = viewport.width;
+        accordionHeaders.forEach(header => {
+            header.addEventListener('click', () => {
+                const accordionItem = header.parentElement;
+                const accordionContent = header.nextElementSibling;
 
-                    var renderContext = {
-                        canvasContext: context,
-                        viewport: viewport
-                    };
+                accordionItem.classList.toggle('active');
 
-                    page.render(renderContext).promise.then(function () {
-                        var thumbnailImg = document.createElement('img');
-                        thumbnailImg.src = canvas.toDataURL();
-
-                        var thumbnailDiv = document.querySelector('.thumbnail[data-pdfpath="' + pdfPath + '"]');
-                        thumbnailDiv.innerHTML = '';
-                        thumbnailDiv.appendChild(thumbnailImg);
-                    });
-                });
-            }).catch(function (error) {
-                console.error("Error loading PDF:", error);
+                if (accordionItem.classList.contains('active')) {
+                    accordionContent.style.maxHeight = accordionContent.scrollHeight + 'px';
+                } else {
+                    accordionContent.style.maxHeight = 0;
+                }
             });
-        }
-
-        document.querySelectorAll('.thumbnail[data-pdfpath]').forEach(function (thumbnailDiv) {
-            var pdfPath = thumbnailDiv.dataset.pdfpath;
-            generateThumbnail(pdfPath);
         });
-
-        // Carousel functionality
-        const track = document.querySelector('.carousel-track');
-        const slides = Array.from(track.children);
-        const nextButton = document.querySelector('.carousel-next');
-        const prevButton = document.querySelector('.carousel-prev');
-        const slideWidth = slides[0].getBoundingClientRect().width;
-        const gap = parseInt(getComputedStyle(track).gap); // Get the gap between slides
-        const slidesPerPage = 2; // Number of slides to move at a time
-
-        // Helper function to set initial slide positions
-        const setSlidePosition = (slide, index) => {
-            slide.style.left = (slideWidth + gap) * index + 'px';
-        };
-        slides.forEach(setSlidePosition);
-
-        // Function to move to a specific slide
-        const moveToSlide = (track, currentSlide, targetSlide) => {
-            const currentSlideIndex = slides.indexOf(currentSlide);
-            const targetSlideIndex = slides.indexOf(targetSlide);
-            const moveAmount = (slideWidth + gap) * targetSlideIndex; // Ensure it moves by the total width of the slides including gap
-            track.style.transform = 'translateX(-' + moveAmount + 'px)';
-            currentSlide.classList.remove('current-slide');
-            targetSlide.classList.add('current-slide');
-        };
-
-        // Get the next slide, handling wraparound
-        const getNextSlide = (currentSlide) => {
-            const currentSlideIndex = slides.indexOf(currentSlide);
-            let nextSlideIndex = (currentSlideIndex + slidesPerPage) % slides.length;
-            return slides[nextSlideIndex];
-        };
-
-        // Get the previous slide, handling wraparound
-        const getPrevSlide = (currentSlide) => {
-            const currentSlideIndex = slides.indexOf(currentSlide);
-            let prevSlideIndex = (currentSlideIndex - slidesPerPage + slides.length) % slides.length;
-            return slides[prevSlideIndex];
-        };
-
-        // Update the currentSlide variable within the event listeners
-        nextButton.addEventListener('click', () => {
-            const currentSlide = track.querySelector('.current-slide');
-            const nextSlide = getNextSlide(currentSlide);
-            moveToSlide(track, currentSlide, nextSlide);
-        });
-
-        prevButton.addEventListener('click', () => {
-            const currentSlide = track.querySelector('.current-slide');
-            const prevSlide = getPrevSlide(currentSlide);
-            moveToSlide(track, currentSlide, prevSlide);
-        });
-
-        // Initially mark the first slide as current
-        slides[0].classList.add('current-slide');
-
-
-        // Dragging functionality
-        let startX, currentX, initialPosition, isDragging = false;
-
-        track.addEventListener('touchstart', (e) => {
-            startX = e.touches[0].clientX;
-            initialPosition = track.style.transform ? parseInt(track.style.transform.split('(')[1].split('px')[0]) : 0;
-            isDragging = true;
-            track.style.transition = 'none';
-        });
-
-        track.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
-            currentX = e.touches[0].clientX;
-            const moveX = currentX - startX;
-            track.style.transform = `translateX(${initialPosition + moveX}px)`;
-        });
-
-        track.addEventListener('touchend', (e) => {
-            if (!isDragging) return;
-            isDragging = false;
-            track.style.transition = 'transform 0.3s ease-in';
-            const moveX = currentX - startX;
-
-            if (moveX < -50) {
-                const currentSlide = track.querySelector('.current-slide');
-                const nextSlide = currentSlide.nextElementSibling;
-                if (nextSlide) {
-                    moveToSlide(track, currentSlide, nextSlide);
-                } else {
-                    track.style.transform = `translateX(${initialPosition}px)`;
-                }
-            } else if (moveX > 50) {
-                const currentSlide = track.querySelector('.current-slide');
-                const prevSlide = currentSlide.previousElementSibling;
-                if (prevSlide) {
-                    moveToSlide(track, currentSlide, prevSlide);
-                } else {
-                    track.style.transform = `translateX(${initialPosition}px)`;
-                }
-            } else {
-                track.style.transform = `translateX(${initialPosition}px)`;
-            }
-        });
-
     </script>
 
 </body>
