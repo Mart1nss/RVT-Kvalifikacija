@@ -17,7 +17,7 @@
 }
 
 .upload-book-form {
-  border: rgb(255, 255, 255) 1px solid;
+  border: none;
   background-color: #1c1a1a;
   padding: 15px;
   border-radius: 8px;
@@ -302,8 +302,6 @@
   font-style: italic;
 }
 
-
-
 .category-link {
   width: max-content;
   background-color: #1c1a1a;
@@ -317,7 +315,143 @@
   transition: all 0.2s;
 }
 
-
 .category-link:hover {
   opacity: 0.7;
+}
+
+.file-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.drop-zone {
+  border: 2px dashed #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+}
+
+.drop-zone.dragover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: #ffffff;
+}
+
+.drop-zone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: #ffffff;
+}
+
+.drop-zone-content i {
+  font-size: 2em;
+  color: #ffffff;
+}
+
+.drop-zone-content p {
+  margin: 0;
+  color: #ffffff;
+}
+
+.file-input {
+  display: none;
+}
+
+.custom-file-upload {
+  border: none;
+  background-color: white;
+  color: black;
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.custom-file-upload:hover {
+  background-color: #e6e6e6;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+#file-chosen {
+  color: #ffffff;
+  flex-grow: 1;
+}
+
+.clear-file-btn {
+  padding: 6px 12px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.clear-file-btn:hover {
+  background-color: #c82333;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+}
+
+#alertContainer {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.alert {
+  padding: 15px 20px;
+  border-radius: 10px;
+  font-family: sans-serif;
+  font-size: 14px;
+  margin-bottom: 10px;
+  animation: slideIn 0.3s ease-out;
+}
+
+.alert-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.file-error {
+  border-color: #dc3545 !important;
+}
+
+#fileError {
+  color: #dc3545;
+  font-size: 0.875em;
+  margin-top: 0.25rem;
 }

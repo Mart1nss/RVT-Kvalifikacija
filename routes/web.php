@@ -149,4 +149,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/tickets/{ticket}/assign', [TicketController::class, 'assignTicket'])->middleware('admin')->name('tickets.assign');
 });
 
+Route::post('/toggle-visibility/{id}', [HomeController::class, 'toggleVisibility'])->name('toggle.visibility')->middleware('auth');
+
 require __DIR__ . '/auth.php';

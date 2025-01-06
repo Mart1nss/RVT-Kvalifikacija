@@ -68,55 +68,69 @@ class HomeController extends Controller
 
     public function store(Request $request)
     {
-        $product = new Product;
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'author' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'file' => 'required|mimes:pdf|max:10240' // 10240 KB = 10 MB
+        ], [
+            'file.max' => 'The file size must not exceed 10MB.',
+            'file.mimes' => 'The file must be a PDF document.',
+            'file.required' => 'Please select a PDF file.'
+        ]);
 
+        $product = new Product;
         $product->title = $request->title;
         $product->author = $request->author;
         $product->category_id = $request->category_id;
+        $product->is_public = $request->has('is_public');
         
-        // Get category name for backward compatibility
-        if ($request->category_id) {
-            $category = Category::find($request->category_id);
-        }
-
-        $file = $request->file;
-        if($file)
-        {
-            $filename = md5($file->getClientOriginalName()).'.'.$file->getClientOriginalExtension();
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $filename = md5($file->getClientOriginalName()) . '.' . $file->getClientOriginalExtension();
             $file->move('assets', $filename);
             $product->file = $filename;
         }
 
         $product->save();
 
-        return redirect()->back()->with('message', 'Book Added Successfully');
+        return redirect()->back()->with('success', 'Book uploaded successfully!');
     }
 
     public function show(Request $request)
     {
         $query = $request->get('query');
-
-        $data = product::query();
+        $visibility = $request->get('visibility', 'all'); // Default to 'all'
+        
+        $data = Product::query();
 
         if ($query) {
             $data->where('title', 'like', '%' . $query . '%');
         }
 
-        $data = product::all();
-        return view('product', compact('data'));
+        // Apply visibility filter
+        if ($visibility === 'public') {
+            $data->where('is_public', true);
+        } elseif ($visibility === 'private') {
+            $data->where('is_public', false);
+        }
+
+        $data = $data->get();
+        $categories = Category::all();
+        return view('product', compact('data', 'categories', 'visibility'));
     }
 
     public function bookpage(Request $request)
     {
         $query = $request->get('query');
-
-        $data = product::query();
+        $data = Product::query();
 
         if ($query) {
             $data->where('title', 'like', '%' . $query . '%');
         }
 
-        $data = product::all();
+        // Only show public books in the library
+        $data = $data->where('is_public', true)->get();
         return view('allBooks', compact('data'));
     }
 
@@ -134,6 +148,7 @@ class HomeController extends Controller
         $product->title = $request->title;
         $product->author = $request->author;
         $product->category_id = $request->category_id;
+        $product->is_public = $request->has('is_public');
         
         // Update category name for backward compatibility
         if ($request->category_id) {
@@ -147,7 +162,12 @@ class HomeController extends Controller
 
     public function carousel(Request $request)
     {
-        $data = product::all();
+        // Only show public books to non-admin users
+        if (Auth::user() && Auth::user()->usertype === 'admin') {
+            $data = Product::all();
+        } else {
+            $data = Product::where('is_public', true)->get();
+        }
 
         return view('welcome', compact('data'));
     }
@@ -159,8 +179,14 @@ class HomeController extends Controller
 
     public function view($id)
     {
-        $data = Product::find($id);
         $product = Product::findOrFail($id);
+
+        // Check if book is private and user is not admin
+        if (!$product->is_public && (!Auth::check() || Auth::user()->usertype !== 'admin')) {
+            return redirect()->route('bookpage')->with('error', 'You do not have permission to view this book.');
+        }
+
+        $data = $product;  // For backward compatibility
         $reviews = $product->reviews()->latest()->get();
 
         return view('viewproduct', compact('product', 'reviews', 'data'));
@@ -185,6 +211,18 @@ class HomeController extends Controller
         } else {
             return redirect()->back()->withErrors(['error' => 'nav labi']);
         }
+    }
+
+    public function toggleVisibility(Request $request, $id)
+    {
+        $product = Product::findOrFail($id);
+        $product->is_public = !$product->is_public;
+        $product->save();
+        
+        return response()->json([
+            'success' => true,
+            'is_public' => $product->is_public
+        ]);
     }
 
 

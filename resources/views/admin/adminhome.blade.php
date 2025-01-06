@@ -11,7 +11,7 @@
 <div class="main-container">
 
     <div class="text-container">
-        <h1 class="h1-text">Dashboard</h1>
+        <h1 class="h1-text">Admin Dashboard</h1>
     </div>
         
     <div class="item-container">

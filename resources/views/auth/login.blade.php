@@ -35,7 +35,7 @@
       <!-- Email Address -->
       <div class="form-group">
         <input style="height: 48px;" placeholder="EMAIL" id="email" class="form-control" type="email" name="email"
-          :value="old('email')" required autofocus autocomplete="username" />
+          :value="old('email')" required autofocus autocomplete="email" />
         @error('email')
           <div class="error-message">{{ $message }}</div>
         @enderror
