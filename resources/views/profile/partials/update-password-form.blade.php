@@ -5,16 +5,17 @@
       background-color: rgb(255, 255, 255);
       color: rgb(0, 0, 0);
       padding: 10px;
-      border-radius: 20px;
+      border-radius: 8px;
       font-weight: 800;
       font-size: 12px;
       text-transform: uppercase;
       text-decoration: none;
+      transition: all 0.2s;
 }
 
     .save-btn:hover {
         cursor: pointer;
-        opacity: 0.7;
+        opacity: 0.5;
     }
 
     .input-label {
@@ -27,7 +28,7 @@
         height: 38px;
         background-color: rgb(37, 37, 37);
         border: none;
-        border-radius: 20px;
+        border-radius: 8px;
         font-size: 16px;
         outline: transparent;
         color: white;
@@ -40,7 +41,7 @@
         height: 38px;
         background-color: rgb(37, 37, 37);
         border: none;
-        border-radius: 20px;
+        border-radius: 8px;
         font-size: 16px;
         outline: transparent;
         color: white;
@@ -55,7 +56,7 @@
         height: 38px;
         background-color: rgb(37, 37, 37);
         border: none;
-        border-radius: 20px;
+        border-radius: 8px;
         font-size: 16px;
         outline: transparent;
         color: white;
@@ -73,7 +74,7 @@
         background-color: rgba(255, 0, 0, 0.1);
         color: rgb(255, 0, 0);
         padding: 10px;
-        border-radius: 10px;
+        border-radius: 8px;
         margin-top: 5px;
         font-family: sans-serif;
         font-weight: 800;

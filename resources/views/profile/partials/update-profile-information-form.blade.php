@@ -1,20 +1,21 @@
 <style>
     .save-btn {
     display: inline-flex;
-      border: 1px solid rgb(0, 0, 0);
+      border: none;
       background-color: rgb(255, 255, 255);
       color: rgb(0, 0, 0);
       padding: 10px;
-      border-radius: 20px;
+      border-radius: 8px;
       font-weight: 800;
       font-size: 12px;
       text-transform: uppercase;
       text-decoration: none;
+      transition: all 0.2s;
 }
 
     .save-btn:hover {
         cursor: pointer;
-        opacity: 0.7;
+        opacity: 0.5;
     }
 
     h2 {
@@ -31,17 +32,12 @@
         
     }
 
-    .input-text {
-
-
-    }
-
     #name {
         width: 100%;
         height: 38px;
         background-color: rgb(37, 37, 37);
         border: none;
-        border-radius: 20px;
+        border-radius: 8px;
         font-size: 16px;
         outline: transparent;
         color: white;
@@ -54,7 +50,7 @@
         height: 38px;
         background-color: rgb(37, 37, 37);
         border: none;
-        border-radius: 20px;
+        border-radius: 8px;
         font-size: 16px;
         outline: transparent;
         padding-left: 10px;
@@ -67,7 +63,7 @@
         color: rgb(255, 0, 0);
         text-decoration: none;
         border: rgb(255, 0, 0) 1px solid;
-        border-radius: 20px;
+        border-radius: 8px;
         padding: 10px;
         font-family: sans-serif;
         font-weight: 800;
@@ -100,7 +96,7 @@
         background-color: rgba(255, 0, 0, 0.1);
         color: rgb(255, 0, 0);
         padding: 10px;
-        border-radius: 10px;
+        border-radius: 8px;
         margin-top: 5px;
         font-family: sans-serif;
         font-weight: 800;

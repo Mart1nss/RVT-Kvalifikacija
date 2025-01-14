@@ -53,6 +53,20 @@
         </div>
 
         <div class="item-card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h2 class="text-lg font-medium text-white">
+                        Reading Preferences
+                    </h2>
+                    <p class="mt-1 text-sm text-gray-300">
+                        Update your reading preferences (book genres) to get better book recommendations.
+                    </p>
+                </div>
+                <a class="save-btn" href="{{ route('preferences.edit') }}">Update Preferences</a>
+            </div>
+        </div>
+
+        <div class="item-card">
             @include('profile.partials.delete-user-form')
         </div>
 

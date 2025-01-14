@@ -29,6 +29,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        $user = auth()->user();
+        if ($user->userPreferences()->count() === 0) {
+            return redirect()->route('preferences.show');
+        }
+
         return redirect()->intended(RouteServiceProvider::HOME);
     }
 

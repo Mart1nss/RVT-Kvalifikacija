@@ -1,9 +1,9 @@
 <style>
     #delete-btn {
-        color: rgb(255, 0, 0);
+        color: rgb(126, 6, 6);
         text-decoration: none;
-        border: rgb(255, 0, 0) 1px solid;
-        border-radius: 20px;
+        border: rgb(126, 6, 6) 1px solid;
+        border-radius: 8px;
         padding: 10px;
         font-family: sans-serif;
         font-weight: 800;
@@ -11,10 +11,11 @@
         text-transform: uppercase;
         background-color: #1a1a1a;
         cursor: pointer;
+        transition: all 0.2s;
     }
 
     #delete-btn:hover {
-        background-color: rgb(255, 0, 0);
+        background-color: rgb(126, 6, 6);
         color: white;
     }
 
@@ -35,7 +36,7 @@
         background-color: #1c1a1a;
         color: white;
         padding: 20px;
-        border-radius: 10px;
+        border-radius: 8px;
         width: 90%;
         max-width: 500px;
         position: relative;
@@ -62,7 +63,7 @@
         height: 38px;
         background-color: rgb(37, 37, 37);
         border: none;
-        border-radius: 20px;
+        border-radius: 8px;
         font-size: 16px;
         outline: transparent;
         color: white;
@@ -81,7 +82,7 @@
         color: white;
         text-decoration: none;
         border: white 1px solid;
-        border-radius: 20px;
+        border-radius: 8px;
         padding: 10px 20px;
         font-family: sans-serif;
         font-weight: 800;
@@ -89,27 +90,37 @@
         text-transform: uppercase;
         background-color: transparent;
         cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .cancel-btn:hover {
+        opacity: 0.5;
     }
 
     .delete-confirm-btn {
         color: white;
         text-decoration: none;
-        border: rgb(255, 0, 0) 1px solid;
-        border-radius: 20px;
+        border: none;
+        border-radius: 8px;
         padding: 10px 20px;
         font-family: sans-serif;
         font-weight: 800;
         font-size: 12px;
         text-transform: uppercase;
-        background-color: rgb(255, 0, 0);
+        background-color: rgb(126, 6, 6);
         cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .delete-confirm-btn:hover {
+        background-color: rgb(80, 80, 80);
     }
 
     .validation-errors {
         background-color: rgba(255, 0, 0, 0.1);
         color: rgb(255, 0, 0);
         padding: 10px;
-        border-radius: 10px;
+        border-radius: 8px;
         margin-top: 5px;
         font-family: sans-serif;
         font-weight: 800;

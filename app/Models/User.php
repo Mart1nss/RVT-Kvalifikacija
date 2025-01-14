@@ -7,6 +7,8 @@ use App\Models\Favorite;
 use App\Models\Review;
 use App\Models\Ticket;
 use App\Models\Notification;
+use App\Models\UserPreference;
+use App\Models\Category;
 use App\Notifications\CustomResetPassword;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
@@ -27,6 +29,7 @@ class User extends Authenticatable
         'email',
         'password',
         'last_online',
+        'has_genre_preference_set',
     ];
 
     /**
@@ -79,6 +82,16 @@ class User extends Authenticatable
     public function notifications()
     {
         return $this->hasMany(Notification::class);
+    }
+
+    public function userPreferences()
+    {
+        return $this->hasMany(UserPreference::class);
+    }
+
+    public function preferredCategories()
+    {
+        return $this->belongsToMany(Category::class, 'user_preferences');
     }
 
     public function sendPasswordResetNotification($token)

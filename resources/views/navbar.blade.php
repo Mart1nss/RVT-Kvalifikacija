@@ -121,7 +121,7 @@
 }
 
 .notifications-footer {
-  background-color: #252525;
+  background-color: #202020;
   color: #fff;
   padding: 10px;
   border-top: 1px solid #444;

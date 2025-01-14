@@ -11,6 +11,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\PreferenceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -150,5 +151,12 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::post('/toggle-visibility/{id}', [HomeController::class, 'toggleVisibility'])->name('toggle.visibility')->middleware('auth');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/preferences', [PreferenceController::class, 'show'])->name('preferences.show');
+    Route::post('/preferences', [PreferenceController::class, 'store'])->name('preferences.store');
+    Route::post('/preferences/skip', [PreferenceController::class, 'skip'])->name('skip.preferences');
+    Route::get('/preferences/edit', [PreferenceController::class, 'edit'])->name('preferences.edit');
+});
 
 require __DIR__ . '/auth.php';
