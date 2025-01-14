@@ -19,15 +19,7 @@ class HomeController extends Controller
     public function index()
     {
         if (Auth::id()) {
-            $usertype = Auth()->user()->usertype;
-
-            if ($usertype == 'user') {
-                return view('dashboard');
-            } else if ($usertype == 'admin') {
-                return $this->dashboard();
-            } else {
-                return redirect()->back();
-            }
+            return $this->dashboard();
         }
     }
 
@@ -57,11 +49,29 @@ class HomeController extends Controller
 
     public function dashboard()
     {
-        $bookCount = Product::count();
-        $userCount = User::count();
-        $recentBooks = Product::orderBy('created_at', 'desc')->take(5)->get();
+        $recentBooks = Product::orderBy('created_at', 'desc')->take(10)->get();
         
-        return view('admin.adminhome', compact('bookCount', 'userCount', 'recentBooks'));
+        // Get user preferences and related books
+        $userPreferences = Auth::user()->preferredCategories()->get();
+        $preferredBooks = [];
+        
+        foreach ($userPreferences as $category) {
+            $books = Product::where('category_id', $category->id)
+                          ->orderBy('created_at', 'desc')
+                          ->take(10)
+                          ->get();
+            if ($books->count() > 0) {
+                $preferredBooks[$category->name] = $books;
+            }
+        }
+
+        if (Auth::user()->usertype == 'admin') {
+            $bookCount = Product::count();
+            $userCount = User::count();
+            return view('admin.adminhome', compact('bookCount', 'userCount', 'recentBooks', 'preferredBooks'));
+        } else {
+            return view('dashboard', compact('recentBooks', 'preferredBooks'));
+        }
     }
 
 

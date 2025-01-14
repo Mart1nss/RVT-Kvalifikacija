@@ -48,88 +48,69 @@
 
     </div>
 
-    <div class="newest-books-container">
-        <h2 class="newest-books-title">Newest Books</h2>
-        <div class="carousel-container">
-            <button class="carousel-button prev"><i class='bx bx-chevron-left'></i></button>
-            <div class="carousel-wrapper">
-                @foreach($recentBooks as $book)
-                <div class="carousel-item">
-                    <div class="thumbnail" data-pdfpath="/assets/{{ $book->file }}"></div>
-                    <div class="info-container">
-                        <h3 class="info-title">{{ $book->title }}</h3>
-                        <p class="info-author">{{ $book->author }}</p>
-                        <p class="info-category">{{ $book->category->name ?? 'Uncategorized' }}</p>
-                        <div class="button-container">
-                            <a class="view-btn" href="{{ route('view', $book->id) }}">
-                                <i class='bx bx-book-reader'></i> View
-                            </a>
-                            <button class="favorite-btn" onclick="toggleFavorite({{ $book->id }})">
-                                <i class='bx bx-heart'></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-            <button class="carousel-button next"><i class='bx bx-chevron-right'></i></button>
-        </div>
-    </div>
+    @include('components.book-carousels')
 
 </div>
-
-
 
 <script type="module">
     import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.mjs';
     
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.worker.min.mjs';
     
-    function generateThumbnail(pdfPath) {
-        pdfjsLib.getDocument(pdfPath).promise.then(function(pdf) {
-            pdf.getPage(1).then(function(page) {
-                var scale = 1.5; // Increased scale for better quality
-                var viewport = page.getViewport({ scale: scale });
-                var canvas = document.createElement('canvas');
-                var context = canvas.getContext('2d');
-                
-                // Set canvas dimensions to match viewport
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-                
-                var renderContext = {
-                    canvasContext: context,
-                    viewport: viewport
-                };
-                
-                page.render(renderContext).promise.then(function() {
-                    var thumbnailImg = document.createElement('img');
-                    thumbnailImg.src = canvas.toDataURL();
-                    thumbnailImg.style.width = '100%';
-                    thumbnailImg.style.height = '100%';
-                    thumbnailImg.style.objectFit = 'cover';
-                    
-                    var thumbnailDiv = document.querySelector('.thumbnail[data-pdfpath="' + pdfPath + '"]');
-                    if (thumbnailDiv) {
-                        thumbnailDiv.innerHTML = '';
-                        thumbnailDiv.appendChild(thumbnailImg);
-                    }
-                });
+    async function generateThumbnail(pdfPath) {
+        try {
+            const loadingTask = pdfjsLib.getDocument(pdfPath);
+            const pdf = await loadingTask.promise;
+            const page = await pdf.getPage(1);
+            
+            const viewport = page.getViewport({ scale: 1 });
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            
+            const renderContext = {
+                canvasContext: context,
+                viewport: viewport
+            };
+            
+            await page.render(renderContext).promise;
+            
+            const thumbnailImg = document.createElement('img');
+            thumbnailImg.src = canvas.toDataURL();
+            thumbnailImg.style.width = '100%';
+            thumbnailImg.style.height = '100%';
+            thumbnailImg.style.objectFit = 'cover';
+            
+            // Get all thumbnail divs with this PDF path
+            const thumbnailDivs = document.querySelectorAll('.thumbnail[data-pdfpath="' + pdfPath + '"]');
+            thumbnailDivs.forEach(div => {
+                div.innerHTML = '';
+                div.appendChild(thumbnailImg.cloneNode(true));
             });
-        }).catch(function(error) {
+        } catch (error) {
             console.error("Error loading PDF:", error);
-            // Show a fallback image on error
-            var thumbnailDiv = document.querySelector('.thumbnail[data-pdfpath="' + pdfPath + '"]');
-            if (thumbnailDiv) {
-                thumbnailDiv.innerHTML = '<img src="{{ asset("images/pdf-icon.png") }}" style="width: 100%; height: 100%; object-fit: contain; padding: 20px;">';
-            }
-        });
+            // Show fallback image on all instances
+            const thumbnailDivs = document.querySelectorAll('.thumbnail[data-pdfpath="' + pdfPath + '"]');
+            thumbnailDivs.forEach(div => {
+                div.innerHTML = '<img src="{{ asset("images/pdf-icon.png") }}" style="width: 100%; height: 100%; object-fit: contain; padding: 20px;">';
+            });
+        }
     }
     
-    // Wait for the DOM to be fully loaded
+    // Process all thumbnails when DOM is loaded
     document.addEventListener('DOMContentLoaded', function() {
+        // Create a Set to store unique PDF paths
+        const uniquePdfPaths = new Set();
+        
+        // Collect all unique PDF paths
         document.querySelectorAll('.thumbnail[data-pdfpath]').forEach(function(thumbnailDiv) {
-            var pdfPath = thumbnailDiv.dataset.pdfpath;
+            uniquePdfPaths.add(thumbnailDiv.dataset.pdfpath);
+        });
+        
+        // Generate thumbnails for each unique PDF path
+        uniquePdfPaths.forEach(function(pdfPath) {
             generateThumbnail(pdfPath);
         });
     });
