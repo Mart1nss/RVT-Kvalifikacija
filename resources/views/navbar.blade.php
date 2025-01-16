@@ -12,7 +12,7 @@
   <h1 class="logo" style="font-family: sans-serif; color: white; cursor: pointer; font-weight: 800; white-space: nowrap;">ELEVATE READS</h1>
 
   <div class="back-btn-div">
-    <span id="back-btn" class='bx bxs-left-arrow-alt'></span>
+    <span id="back-btn" class='bx bxs-left-arrow-alt '></span>
   </div>
 
   @auth 
