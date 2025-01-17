@@ -13,18 +13,17 @@
 
 </head>
 
-<style>
-</style>
-
 <body>
   @include('components.alert')
   @include('navbar')
 
+
   <div class="container">
+    <button id="exit-focus-mode" class="exit-focus-mode" style="display: none;">
+      <i class='bx bx-x-circle'></i> FOCUS MODE
+    </button>
+
     <div class="pdf-viewer-wrapper">
-      <button id="exit-focus-mode" class="exit-focus-mode" style="display: none;">
-        <i class='bx bx-x-circle'></i> FOCUS MODE
-      </button>
       <div id="pdf-toolbar">
         <button id="zoom-in"><i class='bx bx-zoom-in'></i></button>
         <button id="zoom-out"><i class='bx bx-zoom-out'></i></button>
@@ -153,7 +152,7 @@
           @else
             @foreach ($reviews as $review)
               <div class="review-card" data-score="{{ $review->review_score }}">
-                @if (auth()->check() && auth()->id() === $review->user_id)
+                @if (auth()->check() && (auth()->id() === $review->user_id || auth()->user()->isAdmin()))
                   <div class="review-options">
                     <button class="review-options-btn" onclick="toggleReviewOptions(event, {{ $review->id }})">
                       <i class='bx bx-dots-vertical-rounded'></i>
@@ -165,7 +164,7 @@
                         @method('DELETE')
                         <button type="submit">
                           <i class='bx bx-trash'></i>
-                          Delete
+                          Delete{{ auth()->user()->isAdmin() && auth()->id() !== $review->user_id ? ' (Admin)' : '' }}
                         </button>
                       </form>
                     </div>
