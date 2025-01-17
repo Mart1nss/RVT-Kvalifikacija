@@ -43,8 +43,8 @@ class ReviewController extends Controller
 
     public function destroy(Product $product, Review $review)
     {
-        // Ensure the user is the owner of the review
-        if ($review->user_id != Auth::id()) {
+        // Allow admins to delete any review, regular users can only delete their own
+        if (!auth()->user()->isAdmin() && $review->user_id != Auth::id()) {
             return back()->with('error', 'You are not authorized to delete this review.');
         }
 
