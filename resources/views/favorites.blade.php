@@ -37,32 +37,38 @@
     </div>
 
     <div class="item-container">
-
       @if ($favorites->count() > 0)
-      @foreach ($favorites as $favorite)
-      <div class="pdf-item">
-      <div class="thumbnail" data-pdfpath="/assets/{{ $favorite->product->file }}"></div>
-      <div class="info-container">
-      <h5 class="info-title">{{ $favorite->product->title }}</h5>
-      <h5 class="info-author">{{ $favorite->product->author }}</h5>
-      <h5 class="info-category">{{ $favorite->product->category->name ?? '' }}</h5>
-      <div class="button-container">
-      <a class="view-btn" href="{{route('view', $favorite->product->id)}}">View</a>
-      </div>
-      </div>
-      <form action="{{ route('favorites.delete', $favorite->product_id) }}" method="POST">
-      @csrf
-      @method('DELETE')
-      <button type="submit" class="remove-btn"><i class='bx bx-trash'></i></button>
-      </form>
-      </div>
-    @endforeach
-    @else
-      <p style="font-family: sans-serif; font-size: 14px; font-weight: 800; text-transform: uppercase; color: white;">
-      There are no favorites!</p>
-    @endif
-
-
+        @foreach ($favorites as $favorite)
+          <div class="pdf-item" data-book-id="{{ $favorite->product->id }}">
+            <div class="rating-badge">
+              <i class='bx bxs-star'></i>
+              <span>{{ number_format($favorite->product->rating ?? 0, 1) }}</span>
+            </div>
+            <div class="thumbnail" data-pdfpath="/assets/{{ $favorite->product->file }}"></div>
+            <div class="info-container">
+              <h3 class="info-title">{{ $favorite->product->title }}</h3>
+              <p class="info-author">{{ $favorite->product->author }}</p>
+              <p class="info-category">{{ $favorite->product->category->name ?? '' }}</p>
+              <div class="button-container">
+                <a class="view-btn" href="{{ route('view', $favorite->product->id) }}">
+                  <i class='bx bx-book-reader'></i> View
+                </a>
+                <form action="{{ route('favorites.delete', $favorite->product_id) }}" method="POST"
+                  style="display: contents;">
+                  @csrf
+                  @method('DELETE')
+                  <button type="submit" class="favorite-btn">
+                    <i class='bx bx-heart'></i>
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        @endforeach
+      @else
+        <p style="font-family: sans-serif; font-size: 14px; font-weight: 800; text-transform: uppercase; color: white;">
+          There are no favorites!</p>
+      @endif
     </div>
 
   </div>
@@ -70,11 +76,14 @@
   <script type="module">
     //Book Thumbnails
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.worker.min.mjs';
+
     function generateThumbnail(pdfPath) {
-      pdfjsLib.getDocument(pdfPath).promise.then(function (pdf) {
-        pdf.getPage(1).then(function (page) {
+      pdfjsLib.getDocument(pdfPath).promise.then(function(pdf) {
+        pdf.getPage(1).then(function(page) {
           var scale = 1;
-          var viewport = page.getViewport({ scale: scale });
+          var viewport = page.getViewport({
+            scale: scale
+          });
           var canvas = document.createElement('canvas');
           var context = canvas.getContext('2d');
 
@@ -86,7 +95,7 @@
             viewport: viewport
           };
 
-          page.render(renderContext).promise.then(function () {
+          page.render(renderContext).promise.then(function() {
 
             var thumbnailImg = document.createElement('img');
             thumbnailImg.src = canvas.toDataURL();
@@ -96,13 +105,13 @@
             thumbnailDiv.appendChild(thumbnailImg);
           });
         });
-      }).catch(function (error) {
+      }).catch(function(error) {
         console.error("Error loading PDF:", error);
       });
     }
 
 
-    document.querySelectorAll('.thumbnail[data-pdfpath]').forEach(function (thumbnailDiv) {
+    document.querySelectorAll('.thumbnail[data-pdfpath]').forEach(function(thumbnailDiv) {
       var pdfPath = thumbnailDiv.dataset.pdfpath;
       generateThumbnail(pdfPath);
     });

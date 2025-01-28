@@ -142,14 +142,19 @@ class HomeController extends Controller
     public function bookpage(Request $request)
     {
         $query = $request->get('query');
-        $data = Product::query();
+        $data = Product::query()
+            ->where('is_public', true)
+            ->withAvg('reviews', 'review_score')
+            ->when($query, function ($q) use ($query) {
+                return $q->where('title', 'like', '%' . $query . '%');
+            })
+            ->get();
 
-        if ($query) {
-            $data->where('title', 'like', '%' . $query . '%');
-        }
+        // Format the rating for each book
+        $data->each(function ($book) {
+            $book->rating = $book->reviews_avg_review_score ?? 0;
+        });
 
-        // Only show public books in the library
-        $data = $data->where('is_public', true)->get();
         return view('allBooks', compact('data'));
     }
 

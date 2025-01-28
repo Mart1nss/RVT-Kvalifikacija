@@ -10,6 +10,10 @@
     .item-container {
         display: block;
     }
+
+    .h1-text {
+        font-size: 28px;
+    }
 }
 
 #dropdown-1 {
