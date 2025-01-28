@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Services\AuditLogService;
 
 class HomeController extends Controller
 {
@@ -50,16 +51,16 @@ class HomeController extends Controller
     public function dashboard()
     {
         $recentBooks = Product::orderBy('created_at', 'desc')->take(10)->get();
-        
+
         // Get user preferences and related books
         $userPreferences = Auth::user()->preferredCategories()->get();
         $preferredBooks = [];
-        
+
         foreach ($userPreferences as $category) {
             $books = Product::where('category_id', $category->id)
-                          ->orderBy('created_at', 'desc')
-                          ->take(10)
-                          ->get();
+                ->orderBy('created_at', 'desc')
+                ->take(10)
+                ->get();
             if ($books->count() > 0) {
                 $preferredBooks[$category->name] = $books;
             }
@@ -94,7 +95,7 @@ class HomeController extends Controller
         $product->author = $request->author;
         $product->category_id = $request->category_id;
         $product->is_public = $request->has('is_public');
-        
+
         if ($request->hasFile('file')) {
             $file = $request->file('file');
             $filename = md5($file->getClientOriginalName()) . '.' . $file->getClientOriginalExtension();
@@ -104,6 +105,14 @@ class HomeController extends Controller
 
         $product->save();
 
+        AuditLogService::log(
+            "Uploaded book",
+            "book",
+            "Uploaded new book",
+            $product->id,
+            $product->title
+        );
+
         return redirect()->back()->with('success', 'Book uploaded successfully!');
     }
 
@@ -111,7 +120,7 @@ class HomeController extends Controller
     {
         $query = $request->get('query');
         $visibility = $request->get('visibility', 'all'); // Default to 'all'
-        
+
         $data = Product::query();
 
         if ($query) {
@@ -154,19 +163,56 @@ class HomeController extends Controller
     public function update(Request $request, $id)
     {
         $product = Product::findOrFail($id);
-        
+
+        // Store old values before update
+        $changes = [];
+
+        if ($product->title !== $request->title) {
+            $changes[] = "title from '{$product->title}' to '{$request->title}'";
+        }
+
+        if ($product->author !== $request->author) {
+            $changes[] = "author from '{$product->author}' to '{$request->author}'";
+        }
+
+        if ((int) $product->category_id !== (int) $request->category_id) {
+            $oldCategory = Category::find($product->category_id);
+            $newCategory = Category::find($request->category_id);
+            if ($oldCategory && $newCategory) {
+                $changes[] = "category from '{$oldCategory->name}' to '{$newCategory->name}'";
+            }
+        }
+
+        // Convert boolean values for proper comparison
+        $oldIsPublic = (bool) $product->is_public;
+        $newIsPublic = (bool) $request->has('is_public');
+
+        if ($oldIsPublic !== $newIsPublic) {
+            $oldVisibility = $oldIsPublic ? 'public' : 'private';
+            $newVisibility = $newIsPublic ? 'public' : 'private';
+            $changes[] = "visibility from {$oldVisibility} to {$newVisibility}";
+        }
+
+        // Update the product
         $product->title = $request->title;
         $product->author = $request->author;
         $product->category_id = $request->category_id;
-        $product->is_public = $request->has('is_public');
-        
-        // Update category name for backward compatibility
-        if ($request->category_id) {
-            $category = Category::find($request->category_id);
-        }
-        
+        $product->is_public = $newIsPublic;
+
         $product->save();
-        
+
+        // Create the audit log with detailed changes
+        if (!empty($changes)) {
+            $changeDescription = "Changed " . implode(', ', $changes);
+            AuditLogService::log(
+                "Updated book",
+                "book",
+                $changeDescription,
+                $product->id,
+                $product->title
+            );
+        }
+
         return redirect()->back()->with('success', 'Book updated successfully');
     }
 
@@ -217,6 +263,14 @@ class HomeController extends Controller
 
             $data->delete();
 
+            AuditLogService::log(
+                "Deleted book",
+                "book",
+                "Deleted book",
+                $id,
+                $data->title
+            );
+
             return redirect()->back()->with('success', 'Book deleted successfully!');
         } else {
             return redirect()->back()->withErrors(['error' => 'nav labi']);
@@ -228,7 +282,7 @@ class HomeController extends Controller
         $product = Product::findOrFail($id);
         $product->is_public = !$product->is_public;
         $product->save();
-        
+
         return response()->json([
             'success' => true,
             'is_public' => $product->is_public

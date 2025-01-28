@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Services\AuditLogService;
 
 class NotificationController extends Controller
 {
@@ -13,7 +14,6 @@ class NotificationController extends Controller
     {
         $request->validate(['message' => 'required']);
 
-
         $users = User::all();
         foreach ($users as $user) {
             Notification::create([
@@ -21,6 +21,14 @@ class NotificationController extends Controller
                 'message' => $request->message
             ]);
         }
+
+        AuditLogService::log(
+            "Sent notification",
+            "notification",
+            $request->message,
+            null,
+            "Global notification"
+        );
 
         if ($request->ajax()) {
             return response()->json(['success' => true]);
@@ -32,7 +40,6 @@ class NotificationController extends Controller
 
     public function markAsRead(Request $request, Notification $notification)
     {
-        // Ensure user can only mark their own notifications as read
         if ($notification->user_id !== auth()->id()) {
             abort(403);
         }

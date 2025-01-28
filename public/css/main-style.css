@@ -5,29 +5,6 @@
     box-sizing: border-box;
 }
 
-body {
-    background-color: #1c1a1a;
-    min-width: 375px;
-    align-items: center;
-    justify-content: center;
-    font-family: sans-serif;
-}
-
-.main-container {
-    background-color: #1c1a1a;
-    padding: 0 10px;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height:min-content;
-    padding-bottom: 30px;
-    
-    @media (max-width: 769px) {
-        padding: 0 10px;
-        margin-top: 12px;
-    }
-}
-
 .btn-secondary {
     border: none;
     background-color: #1c1a1a;

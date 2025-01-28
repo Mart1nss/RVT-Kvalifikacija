@@ -21,78 +21,77 @@
 
   <div class="main-container">
 
-    @if($notes->count() > 0)
-    <div class="item-container">
-      <div class="text-container">
-      <h1>Notes</h1>
-      <div class="sort-dropdown">
-        <button class="sort-button">
-        Sort by <i class='bx bx-sort-alt-2'></i>
-        </button>
-        <div class="sort-options">
-        <a href="#" data-sort="newest" class="active">Newest First</a>
-        <a href="#" data-sort="oldest">Oldest First</a>
-        </div>
-      </div>
-      </div>
-
-      @foreach ($notes as $note)
-
-      <div class="item-card">
-      <div class="item-card-header">
-      <div class="div-control" data-note-id="{{ $note->id }}">
-      <div class="note-header">
-        <b style="font-size:18px">Book: {{ $note->product->title }}</b> by <b
-        style="font-size:18px">{{$note->product->author}} </b><br>
-        <span class="last-updated" data-timestamp="{{ $note->updated_at->timestamp }}">
-        {{-- dynamic text --}}
-        </span>
-      </div>
-
-      <div class="note-btn">
-        <i class='bx bxs-down-arrow-alt' alt="Expand note"></i>
-        <a href="{{ route('view', ['id' => $note->product_id]) }}" class="goto-note-btn" alt="Go to note">
-        <i class='bx bxs-arrow-to-right'></i>
-        </a>
-      </div>
-      </div>
-      </div>
-      <div class="note-content">
-      {{ $note->note_text }}
-      </div>
-
-      </div>
-
-    @endforeach
-    @else
+    @if ($notes->count() > 0)
       <div class="item-container">
-      <div class="text-container">
-        <h1>Notes</h1>
-        <div class="sort-dropdown">
-        <button class="sort-button">
-          Sort by <i class='bx bx-sort-alt-2'></i>
-        </button>
-        <div class="sort-options">
-          <a href="#" data-sort="newest" class="active">Newest First</a>
-          <a href="#" data-sort="oldest">Oldest First</a>
+        <div class="text-container">
+          <h1>Notes</h1>
+          <div class="sort-dropdown">
+            <button class="sort-button">
+              Sort by <i class='bx bx-sort-alt-2'></i>
+            </button>
+            <div class="sort-options">
+              <a href="#" data-sort="newest" class="active">Newest First</a>
+              <a href="#" data-sort="oldest">Oldest First</a>
+            </div>
+          </div>
         </div>
+
+        @foreach ($notes as $note)
+          <div class="item-card">
+            <div class="item-card-header">
+              <div class="div-control" data-note-id="{{ $note->id }}">
+                <div class="note-header">
+                  <b style="font-size:18px">Book: {{ $note->product->title }}</b> by <b
+                    style="font-size:18px">{{ $note->product->author }} </b><br>
+                  <span class="last-updated" data-timestamp="{{ $note->updated_at->timestamp }}">
+                    {{-- dynamic text --}}
+                  </span>
+                </div>
+
+                <div class="note-btn">
+                  <i class='bx bxs-down-arrow-alt' alt="Expand note"></i>
+                  <a href="{{ route('view', ['id' => $note->product_id]) }}" class="goto-note-btn" alt="Go to note">
+                    <i class='bx bxs-arrow-to-right'></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="note-content">
+              {{ $note->note_text }}
+            </div>
+
+          </div>
+        @endforeach
+      @else
+        <div class="item-container">
+          <div class="text-container">
+            <h1>Notes</h1>
+            <div class="sort-dropdown">
+              <button class="sort-button">
+                Sort by <i class='bx bx-sort-alt-2'></i>
+              </button>
+              <div class="sort-options">
+                <a href="#" data-sort="newest" class="active">Newest First</a>
+                <a href="#" data-sort="oldest">Oldest First</a>
+              </div>
+            </div>
+          </div>
+          <p
+            style="font-family: sans-serif; font-size: 14px; font-weight: 800; text-transform: uppercase; color: white;">
+            You don't have any notes yet.</p>
         </div>
-      </div>
-      <p style="font-family: sans-serif; font-size: 14px; font-weight: 800; text-transform: uppercase; color: white;">
-        You don't have any notes yet.</p>
-      </div>
     @endif
 
 
-    </div>
+  </div>
 
   </div>
 
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
   <script>
-    $(document).ready(function () {
-      $('.div-control').click(function (e) {
+    $(document).ready(function() {
+      $('.div-control').click(function(e) {
         // Prevent click from triggering if clicking the goto button
         if ($(e.target).closest('.goto-note-btn').length) {
           return;
@@ -118,18 +117,18 @@
       });
 
       // Sort dropdown toggle
-      $('.sort-button').click(function (e) {
+      $('.sort-button').click(function(e) {
         e.stopPropagation();
         $('.sort-options').toggle();
       });
 
       // Close dropdown when clicking outside
-      $(document).click(function () {
+      $(document).click(function() {
         $('.sort-options').hide();
       });
 
       // Sort functionality
-      $('.sort-options a').click(function (e) {
+      $('.sort-options a').click(function(e) {
         e.preventDefault();
         const sortType = $(this).data('sort');
 
@@ -142,17 +141,18 @@
         const $items = $container.children('.item-card').get();
 
         // Sort items
-        $items.sort(function (a, b) {
+        $items.sort(function(a, b) {
           const timeA = $(a).find('.last-updated').data('timestamp');
           const timeB = $(b).find('.last-updated').data('timestamp');
 
-          return sortType === 'newest'
-            ? timeB - timeA  // Newest first
-            : timeA - timeB; // Oldest first
+          return sortType === 'newest' ?
+            timeB - timeA // Newest first
+            :
+            timeA - timeB; // Oldest first
         });
 
         // Re-append sorted items
-        $.each($items, function (index, item) {
+        $.each($items, function(index, item) {
           $container.append(item);
         });
 
@@ -161,7 +161,7 @@
       });
 
       function updateTimeDisplays() {
-        $('.last-updated').each(function () {
+        $('.last-updated').each(function() {
           const timestamp = $(this).data('timestamp') * 1000;
           const timeAgoText = moment(timestamp).fromNow();
           $(this).html('Last updated <em>' + timeAgoText + '</em>');

@@ -12,6 +12,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\PreferenceController;
+use App\Http\Controllers\AuditLogController;
 
 /*
 |--------------------------------------------------------------------------
@@ -92,14 +93,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/notifications', function () {
         return view('notifications');
     })->name('notifications')->middleware(['auth', 'admin']);
-    
+
     Route::post('/notifications/send', [NotificationController::class, 'sendNotification'])
         ->name('admin.send.notification');
-        
+
     Route::post('/notifications/{notification}/mark-read', [NotificationController::class, 'markAsRead'])
         ->name('notifications.mark-read');
-        Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
-        Route::get('/notifications/count', [NotificationController::class, 'getCount'])->name('notifications.count');
+    Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
+    Route::get('/notifications/count', [NotificationController::class, 'getCount'])->name('notifications.count');
 });
 
 // Notes Routes
@@ -158,5 +159,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/preferences/skip', [PreferenceController::class, 'skip'])->name('skip.preferences');
     Route::get('/preferences/edit', [PreferenceController::class, 'edit'])->name('preferences.edit');
 });
+
+Route::get('/audit-logs', [AuditLogController::class, 'index'])->middleware(['auth', 'admin']);
 
 require __DIR__ . '/auth.php';
