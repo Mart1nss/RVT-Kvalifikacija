@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Category;
 use App\Models\Favorite;
 use App\Models\Review;
+use App\Models\ReadLater;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -30,6 +31,19 @@ class Product extends Model
     public function favorites()
     {
         return $this->hasMany(Favorite::class);
+    }
+
+    public function readLater()
+    {
+        return $this->hasMany(ReadLater::class);
+    }
+
+    public function isInReadLaterOf($user)
+    {
+        if (!$user) {
+            return false;
+        }
+        return $this->readLater()->where('user_id', $user->id)->exists();
     }
 
     public function category()

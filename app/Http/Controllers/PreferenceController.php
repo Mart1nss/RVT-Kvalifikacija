@@ -42,12 +42,10 @@ class PreferenceController extends Controller
         // Set the flag
         auth()->user()->update(['has_genre_preference_set' => true]);
 
-        // If coming from edit page, stay there with success message
         if ($request->input('from') === 'edit') {
             return redirect()->route('preferences.edit')->with('success', 'Reading preferences updated successfully!');
         }
 
-        // Otherwise, redirect to home for new users
         return redirect('/home');
     }
 

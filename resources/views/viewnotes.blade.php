@@ -21,20 +21,22 @@
 
   <div class="main-container">
 
+    <div class="text-container">
+      <h1 class="text-container-title">Notes</h1>
+      <div class="sort-dropdown">
+        <button class="sort-button">
+          Sort by <i class='bx bx-sort-alt-2'></i>
+        </button>
+        <div class="sort-options">
+          <a href="#" data-sort="newest" class="active">Newest First</a>
+          <a href="#" data-sort="oldest">Oldest First</a>
+        </div>
+      </div>
+    </div>
+
     @if ($notes->count() > 0)
       <div class="item-container">
-        <div class="text-container">
-          <h1>Notes</h1>
-          <div class="sort-dropdown">
-            <button class="sort-button">
-              Sort by <i class='bx bx-sort-alt-2'></i>
-            </button>
-            <div class="sort-options">
-              <a href="#" data-sort="newest" class="active">Newest First</a>
-              <a href="#" data-sort="oldest">Oldest First</a>
-            </div>
-          </div>
-        </div>
+
 
         @foreach ($notes as $note)
           <div class="item-card">

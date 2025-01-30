@@ -13,6 +13,7 @@ use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\PreferenceController;
 use App\Http\Controllers\AuditLogController;
+use App\Http\Controllers\ReadLaterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -161,5 +162,11 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::get('/audit-logs', [AuditLogController::class, 'index'])->middleware(['auth', 'admin']);
+
+// Read Later Routes
+Route::middleware(['auth'])->group(function () {
+    Route::post('/readlater/{id}', [ReadLaterController::class, 'add'])->name('readlater.add');
+    Route::delete('/readlater/{id}', [ReadLaterController::class, 'delete'])->name('readlater.delete');
+});
 
 require __DIR__ . '/auth.php';

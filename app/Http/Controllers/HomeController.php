@@ -52,7 +52,6 @@ class HomeController extends Controller
     {
         $recentBooks = Product::orderBy('created_at', 'desc')->take(10)->get();
 
-        // Get user preferences and related books
         $userPreferences = Auth::user()->preferredCategories()->get();
         $preferredBooks = [];
 
@@ -83,7 +82,7 @@ class HomeController extends Controller
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
-            'file' => 'required|mimes:pdf|max:10240' // 10240 KB = 10 MB
+            'file' => 'required|mimes:pdf|max:10240'
         ], [
             'file.max' => 'The file size must not exceed 10MB.',
             'file.mimes' => 'The file must be a PDF document.',
@@ -119,7 +118,7 @@ class HomeController extends Controller
     public function show(Request $request)
     {
         $query = $request->get('query');
-        $visibility = $request->get('visibility', 'all'); // Default to 'all'
+        $visibility = $request->get('visibility', 'all');
 
         $data = Product::query();
 
@@ -127,7 +126,6 @@ class HomeController extends Controller
             $data->where('title', 'like', '%' . $query . '%');
         }
 
-        // Apply visibility filter
         if ($visibility === 'public') {
             $data->where('is_public', true);
         } elseif ($visibility === 'private') {
@@ -150,7 +148,6 @@ class HomeController extends Controller
             })
             ->get();
 
-        // Format the rating for each book
         $data->each(function ($book) {
             $book->rating = $book->reviews_avg_review_score ?? 0;
         });
@@ -188,7 +185,6 @@ class HomeController extends Controller
             }
         }
 
-        // Convert boolean values for proper comparison
         $oldIsPublic = (bool) $product->is_public;
         $newIsPublic = (bool) $request->has('is_public');
 
@@ -198,7 +194,6 @@ class HomeController extends Controller
             $changes[] = "visibility from {$oldVisibility} to {$newVisibility}";
         }
 
-        // Update the product
         $product->title = $request->title;
         $product->author = $request->author;
         $product->category_id = $request->category_id;
@@ -206,7 +201,6 @@ class HomeController extends Controller
 
         $product->save();
 
-        // Create the audit log with detailed changes
         if (!empty($changes)) {
             $changeDescription = "Changed " . implode(', ', $changes);
             AuditLogService::log(
@@ -223,7 +217,6 @@ class HomeController extends Controller
 
     public function carousel(Request $request)
     {
-        // Only show public books to non-admin users
         if (Auth::user() && Auth::user()->usertype === 'admin') {
             $data = Product::all();
         } else {
@@ -247,7 +240,7 @@ class HomeController extends Controller
             return redirect()->route('bookpage')->with('error', 'You do not have permission to view this book.');
         }
 
-        $data = $product;  // For backward compatibility
+        $data = $product;
         $reviews = $product->reviews()->latest()->get();
 
         return view('viewproduct', compact('product', 'reviews', 'data'));

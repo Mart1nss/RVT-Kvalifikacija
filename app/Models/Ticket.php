@@ -31,7 +31,6 @@ class Ticket extends Model
         'resolved_at'
     ];
 
-    // Define valid status values
     const STATUS_OPEN = 'open';
     const STATUS_IN_PROGRESS = 'in_progress';
     const STATUS_RESOLVED = 'resolved';
@@ -61,7 +60,7 @@ class Ticket extends Model
         parent::boot();
         
         static::creating(function ($ticket) {
-            // Get the latest ticket ID number
+            // Get the latest ticket ID
             $latestTicket = static::orderBy('id', 'desc')->first();
             $nextId = $latestTicket ? intval(substr($latestTicket->ticket_id, 1)) + 1 : 1;
             $ticket->ticket_id = '#' . $nextId;

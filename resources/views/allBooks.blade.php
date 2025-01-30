@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="{{ asset('css/navbar-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/allbooks-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/notifications-style.css') }}">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.mjs"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf_viewer.min.css"
     integrity="sha512-kQO2X6Ls8Fs1i/pPQaRWkT40U/SELsldCgg4njL8zT0q4AfABNuS+xuy+69PFT21dow9T6OiJF43jan67GX+Kw=="
@@ -24,7 +25,7 @@
 
 
     <div class="text-container">
-      <h1 style="color: white; text-transform:uppercase; font-family: sans-serif; font-weight: 800;">Library</h1>
+      <h1 class="text-container-title">Library</h1>
       <div class="search-filter-container">
         <div class="search-container">
           <input type="text" id="search-input" placeholder="Search books...">
@@ -56,10 +57,15 @@
               <a class="view-btn" href="{{ route('view', $book->id) }}">
                 <i class='bx bx-book-reader'></i> View
               </a>
-              <form action="{{ route('favorites.add', $book->id) }}" method="POST" style="display: contents;">
+              <form
+                action="{{ $book->isInReadLaterOf(auth()->user()) ? route('readlater.delete', $book->id) : route('readlater.add', $book->id) }}"
+                method="POST" style="display: contents;">
                 @csrf
+                @if ($book->isInReadLaterOf(auth()->user()))
+                  @method('DELETE')
+                @endif
                 <button type="submit" class="favorite-btn">
-                  <i class='bx bx-heart'></i>
+                  <i class='bx {{ $book->isInReadLaterOf(auth()->user()) ? 'bxs-bookmark' : 'bx-bookmark' }}'></i>
                 </button>
               </form>
             </div>
@@ -92,10 +98,15 @@
               <a class="view-btn" href="{{ route('view', $book->id) }}">
                 <i class='bx bx-book-reader'></i> Read Now
               </a>
-              <form action="{{ route('favorites.add', $book->id) }}" method="POST" style="display: contents;">
+              <form
+                action="{{ $book->isInReadLaterOf(auth()->user()) ? route('readlater.delete', $book->id) : route('readlater.add', $book->id) }}"
+                method="POST" style="display: contents;">
                 @csrf
+                @if ($book->isInReadLaterOf(auth()->user()))
+                  @method('DELETE')
+                @endif
                 <button type="submit" class="favorite-btn">
-                  <i class='bx bx-heart'></i>
+                  <i class='bx {{ $book->isInReadLaterOf(auth()->user()) ? 'bxs-bookmark' : 'bx-bookmark' }}'></i>
                 </button>
               </form>
             </div>
@@ -219,14 +230,15 @@
 
 
   <script>
-    // Book Search
     $(document).ready(function() {
       $("#search-input").on("keyup", function() {
         let searchTerm = $(this).val().toLowerCase();
 
         $(".pdf-item").each(function() {
-          let title = $(this).find(".info-container h5:first").text().toLowerCase();
-          if (title.includes(searchTerm)) {
+          let title = $(this).find(".info-title").text().toLowerCase();
+          let author = $(this).find(".info-author").text().toLowerCase();
+
+          if (title.includes(searchTerm) || author.includes(searchTerm)) {
             $(this).show();
           } else {
             $(this).hide();
@@ -258,6 +270,29 @@
         }
       });
     }
+
+    // Handle dropdown click
+    document.addEventListener('DOMContentLoaded', function() {
+      const dropdownBtn = document.querySelector('.dropdown-btn');
+      const dropdownContent = document.querySelector('.dropdown-content');
+
+      dropdownBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        dropdownContent.classList.toggle('show');
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', function(e) {
+        if (!e.target.matches('.dropdown-btn') && !e.target.closest('.dropdown-content')) {
+          dropdownContent.classList.remove('show');
+        }
+      });
+
+      // Prevent dropdown from closing when clicking inside
+      dropdownContent.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+    });
 
     // Fetch and populate genres
     fetch('/get-genres')

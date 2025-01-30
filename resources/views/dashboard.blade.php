@@ -44,7 +44,7 @@
 
     <div class="main-container">
         <div class="text-container">
-            <h1 style="color: white; text-transform:uppercase; font-family: sans-serif; font-weight: 800;">Dashbaord</h1>
+            <h1 class="text-container-title">Dashbaord</h1>
         </div>
 
         <div class="item-container">

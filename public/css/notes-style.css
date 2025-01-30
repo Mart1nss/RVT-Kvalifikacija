@@ -1,4 +1,4 @@
-    .btn-primary {
+.btn-primary {
     margin-top: 20px;
     border: 1px solid white;
     background-color: white;
@@ -25,26 +25,6 @@
     text-transform: uppercase;
 }
 
-.remove-btn {
-    position: absolute;
-    top: 0;
-    right: 0;
-    color: rgb(255, 0, 0);
-    text-decoration: none;
-    border: rgb(255, 0, 0) 1px solid;
-    border-radius: 20px;
-    margin-right: 5px;
-    margin-top: 10px;
-    padding: 5px;
-    font-family: sans-serif;
-    font-weight: 800;
-    font-size: 20px;
-    text-transform: uppercase;
-    background-color: #1a1a1a;
-    cursor: pointer;
-    width: 40px;
-}
-
 .view-btn {
     border: 1px solid rgb(0, 0, 0);
     background-color: rgb(255, 255, 255);
@@ -64,11 +44,12 @@
 
 .item-container {
     background-color: rgb(37, 37, 37);
-    border-radius: 8px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
     display: flex;
+    padding-top: 20px;
     flex-direction: column;
     gap: 16px;
-    margin-top: 10px;
 }
 
 .item-card {
@@ -156,14 +137,6 @@
     transform: rotate(180deg);
 }
 
-.badge {
-    background-color: red;
-    border-radius: 20px;
-    width: 20px;
-    position: absolute;
-    top: 15;
-}
-
 #dropdown-4 {
     background-color: rgb(56, 56, 56);
 }
@@ -173,15 +146,6 @@
     justify-content: space-between;
     align-items: center;
     margin: 0;
-}
-
-.text-container h1 {
-    color: white;
-    text-transform: uppercase;
-    font-family: sans-serif;
-    font-weight: 800;
-    margin: 0;
-    padding-left: 6px;
 }
 
 .sort-dropdown {
@@ -240,10 +204,4 @@
 
 .sort-options a:last-child {
     border-radius: 0 0 10px 10px;
-}
-
-.main-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
 }

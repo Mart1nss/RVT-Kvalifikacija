@@ -13,9 +13,9 @@ class FavoritesController extends Controller
     {
         $user = Auth::user();
         $favorites = $user->favorites()->with('product')->get();
+        $readLater = $user->readLater()->with('product')->get();
 
-
-        return view('favorites', compact('favorites'));
+        return view('favorites', compact('favorites', 'readLater'));
     }
     public function add($id)
     {
@@ -46,11 +46,9 @@ class FavoritesController extends Controller
 
         $favorite->delete();
 
-        return redirect()->back()->with('success', 'Book removed from favorites!');
+        return redirect()->back()->with('success', 'Book removed from favorites!')
+            ->withInput(['tab' => request('current_tab', 'favorites')]);
     }
-
-
-
 }
 
 

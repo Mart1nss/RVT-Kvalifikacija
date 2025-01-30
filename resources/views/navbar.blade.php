@@ -94,7 +94,7 @@
 
         <div class="menu-section {{ Request::is('favorites') ? 'active' : '' }}"
           onclick="window.location.href='{{ '/favorites' }}'">
-          <a href="{{ '/favorites' }}" class="section-header">FAVORITES</a>
+          <a href="{{ '/favorites' }}" class="section-header">MY COLLECTION</a>
         </div>
 
         <div class="menu-section {{ Request::is('profile') ? 'active' : '' }}"

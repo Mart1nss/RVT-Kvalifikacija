@@ -24,11 +24,9 @@ class NoteController extends Controller
         }
 
         if ($note) {
-            // Update existing note
             $note->note_text = $request->note_text;
             $note->save();
         } else {
-            // Create new note
             $note = Note::create([
                 'note_text' => $request->note_text,
                 'user_id' => Auth::id(),

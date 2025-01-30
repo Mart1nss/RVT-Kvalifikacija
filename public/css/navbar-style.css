@@ -480,6 +480,21 @@ body {
     border-top-right-radius: 8px;
 }
 
+.text-container-title {
+    color: white;
+    text-transform: uppercase;
+    font-family: sans-serif;
+    font-weight: 800;
+}
+
+.welcome-message {
+    margin-bottom: 20px;
+    color: white;
+    font-family: sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+}
+
 .btn-kkas {
     background-color: rgb(255, 255, 255);
     border: none;

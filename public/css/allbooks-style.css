@@ -124,7 +124,7 @@
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    background-color: rgb(126, 6, 6);
+    background-color: #363636;
     color: white;
     display: flex;
     align-items: center;
@@ -133,11 +133,7 @@
 }
 
 .favorite-btn:hover {
-    background-color: rgb(80, 80, 80);
-}
-
-.favorite-btn.active {
-    background-color: #cc0000;
+    background-color: #505050;
 }
 
 .rating-badge {
@@ -306,6 +302,7 @@
 .genre-dropdown {
     display: block;
     width: 160px;
+    position: relative;
 }
 
 .dropdown-btn {
@@ -319,6 +316,13 @@
     text-transform: uppercase;
     font-family: sans-serif;
     font-weight: 800;
+    width: 100%;
+    text-align: left;
+    transition: all 0.2s;
+}
+
+.dropdown-btn:hover {
+    background-color: #2a2a2a;
 }
 
 .dropdown-content {
@@ -326,13 +330,18 @@
     position: absolute;
     background-color: #1c1a1a;
     color: white;
-    min-width: 160px;
-    max-width: 220px;
+    width: max-content;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-    z-index: 1;
+    z-index: 1000;
     text-decoration: none;
     border-radius: 8px;
     list-style-type: none;
+    margin-top: 5px;
+    padding: 5px 0;
+}
+
+.dropdown-content.show {
+    display: block;
 }
 
 .dropdown-content input {
@@ -376,11 +385,6 @@
     cursor: pointer;
 }
 
-.genre-dropdown:hover .dropdown-content {
-    display: block;
-    text-decoration: none;
-}
-
 .filter-list {
     text-decoration: none;
     padding: 5px 10px;
@@ -418,11 +422,15 @@
     background-color: #1c1a1a;
     margin-bottom: 12px;
     color: white;
-    text-transform: uppercase;
     font-family: sans-serif;
     font-weight: 800;
     align-items: center;
     margin-top: 10px;
+}
+
+#search-input:focus {
+    outline: white 1px solid;
+    background-color: rgb(36, 36, 36);
 }
 
 @media (max-width: 768px) {
@@ -442,6 +450,7 @@
 
     .pdf-item:hover {
         transform: none;
+        cursor: pointer;
     }
 
     .mobile-modal.active {
@@ -450,6 +459,12 @@
 
     .search-filter-container {
         display: block;
+    }
+
+    .rating-badge {
+        font-size: 12px;
+        top: 5px;
+        right: 5px;
     }
 
     .genre-dropdown {
@@ -477,12 +492,6 @@
         align-content: center;
         justify-content: center;
         margin: 0px;
-    }
-
-    .favorite-btn,
-    .remove-btn {
-        margin-right: 5px;
-        margin-top: 5px;
     }
 
     .info-category {
