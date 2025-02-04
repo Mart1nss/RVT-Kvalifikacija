@@ -47,8 +47,8 @@ Route::get('/', [HomeController::class, 'carousel']);
 Route::get('/testings', [HomeController::class, 'uploadpage'])->middleware(['auth', 'admin'])->name('uploadpage');
 
 //See Books
-Route::get('/bookpage', [HomeController::class, 'bookpage'])
-    ->name('bookpage')
+Route::get('/library', [HomeController::class, 'bookpage'])
+    ->name('library')
     ->middleware(['auth']);
 
 Route::get('/get-genres', function () {
@@ -66,7 +66,7 @@ Route::get('/assets/{filename}', function ($filename) {
 
 //Book Manage Routes
 Route::post('/uploadbook', [HomeController::class, 'store'])->middleware(['auth', 'admin']);
-Route::get('/uploadpage', [HomeController::class, 'show'])->middleware(['auth', 'admin'])->name('uploadpage');
+Route::get('/book-manage', [HomeController::class, 'show'])->middleware(['auth', 'admin'])->name('book-manage');
 // Show edit form
 Route::get('/edit/{id}', [HomeController::class, 'edit'])->middleware(['auth', 'admin'])->name('edit');
 // Handle edit request
@@ -84,10 +84,10 @@ Route::get('/download/{file}', [HomeController::class, 'download'])->name('downl
 Route::delete('/delete/{id}', [HomeController::class, 'destroy'])->name('delete');
 Route::get('/redirect-back', [HomeController::class, 'redirectAfterBack'])->name('redirect.back');
 
-//Favorites Routes
-Route::get('/favorites', [FavoritesController::class, 'favorites'])->name('favorites');
-Route::post('/favorites/{id}', [FavoritesController::class, 'add'])->name('favorites.add');
-Route::delete('/favorites/{id}', [FavoritesController::class, 'delete'])->name('favorites.delete');
+//My Collection Routes
+Route::get('/my-collection', [FavoritesController::class, 'favorites'])->name('my-collection');
+Route::post('/my-collection/{id}', [FavoritesController::class, 'add'])->name('my-collection.add');
+Route::delete('/my-collection/{id}', [FavoritesController::class, 'delete'])->name('my-collection.delete');
 
 //Notification Routes
 Route::middleware(['auth'])->group(function () {

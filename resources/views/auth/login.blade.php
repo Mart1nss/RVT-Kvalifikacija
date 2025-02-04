@@ -15,7 +15,7 @@
 
 
   <div class="back-btn-div">
-    <span id="back-btn" onclick="window.location.href='{{'/'}}'" class='bx bxs-left-arrow-alt'></span>
+    <span id="back-btn" onclick="window.location.href='{{ '/' }}'" class='bx bxs-left-arrow-alt'></span>
   </div>
 
 
@@ -34,8 +34,8 @@
 
       <!-- Email Address -->
       <div class="form-group">
-        <input style="height: 48px;" placeholder="EMAIL" id="email" class="form-control" type="email" name="email"
-          :value="old('email')" required autofocus autocomplete="email" />
+        <input style="height: 48px;" placeholder="EMAIL" id="email" class="form-control" type="email"
+          name="email" :value="old('email')" required autofocus autocomplete="email" />
         @error('email')
           <div class="error-message">{{ $message }}</div>
         @enderror
@@ -51,11 +51,11 @@
       </div>
 
       <!-- Remember Me -->
-            <div class="">
+      <div class="">
 
-                    <input id="remember_me" type="checkbox" class="checkbox" name="remember">
-                    <span class="remember-text">{{ __('Remember me') }}</span>
-            </div>
+        <input id="remember_me" type="checkbox" class="checkbox" name="remember">
+        <span class="remember-text">{{ __('Remember me') }}</span>
+      </div>
 
       <div style="display: flex">
         <x-primary-button class="btn-primary" href="{{ route('login') }}"
@@ -65,10 +65,10 @@
       </div>
 
       @if (Route::has('password.request'))
-      <button class="login-btn"
-      style="margin-top: 10px; margin-left: 5px; width: 48%; display: inline-block; float: right; border: 2px solid white;"
-      onclick="window.location.href='{{ route('password.request') }}'">{{ __('Reset Password') }}</button>
-    @endif
+        <button class="login-btn"
+          style="margin-top: 10px; margin-left: 5px; width: 48%; display: inline-block; float: right; border: 2px solid white;"
+          onclick="window.location.href='{{ route('password.request') }}'">{{ __('Reset Password') }}</button>
+      @endif
       <x-primary-button class="login-btn"
         style="margin-top: 10px; margin-left: 0; width: 49%; display: inline-block; float: left; border: 2px solid white;"
         onclick="window.location.href='{{ route('register') }}'">{{ __('Sign Up') }}</x-primary-button>
@@ -80,32 +80,32 @@
 
 
   <script>
-    const overlayDiv = document.createElement('div');
-    overlayDiv.style.backgroundColor = '#000';
-    overlayDiv.style.position = 'fixed';
-    overlayDiv.style.top = 0;
-    overlayDiv.style.left = 0;
-    overlayDiv.style.width = '100%';
-    overlayDiv.style.height = '100%';
-    overlayDiv.style.opacity = 1;
+    /* fade up animation
+      const overlayDiv = document.createElement('div');
+      overlayDiv.style.backgroundColor = '#000';
+      overlayDiv.style.position = 'fixed';
+      overlayDiv.style.top = 0;
+      overlayDiv.style.left = 0;
+      overlayDiv.style.width = '100%';
+      overlayDiv.style.height = '100%';
+      overlayDiv.style.opacity = 1;
 
-    document.body.appendChild(overlayDiv);
+      document.body.appendChild(overlayDiv);
 
-    const opacityAnimation = overlayDiv.animate(
-      {
-        opacity: 0,
-      },
-      {
-        duration: 1000,
-        easing: 'linear'
-      }
-    );
+      const opacityAnimation = overlayDiv.animate(
+        {
+          opacity: 0,
+        },
+        {
+          duration: 1000,
+          easing: 'linear'
+        }
+      );
 
-    opacityAnimation.onfinish = function () {
-      overlayDiv.style.display = 'none';
-    };
-
-  </script> 
+      opacityAnimation.onfinish = function () {
+        overlayDiv.style.display = 'none';
+      }; */
+  </script>
 </body>
 
 </html>

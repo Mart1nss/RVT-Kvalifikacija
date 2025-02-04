@@ -1,12 +1,11 @@
 /* Pagination styles */
 .pagination-container {
-    margin-top: 20px;
     display: flex;
     justify-content: center;
 }
 
 .pagination-nav {
-    background: rgba(255, 255, 255, 0.1);
+    background: #252525;
     width: 100%;
     display: flex;
     justify-content: center;

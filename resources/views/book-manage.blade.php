@@ -188,46 +188,109 @@
   </div>
 
   <div style="margin-bottom: 20px;" class="item-container">
+    @foreach ($data as $book)
+      <div class="pdf-item" data-book-id="{{ $book->id }}" data-genre="{{ $book->category->name ?? '' }}">
+        <div class="rating-badge">
+          <i class='bx bxs-star'></i>
+          <span>{{ number_format($book->rating ?? 0, 1) }}</span>
+        </div>
 
-    @foreach ($data as $data)
-      <div class="pdf-item" data-genre="{{ $data->category->name ?? '' }}">
-        <div class="thumbnail" data-pdfpath="/assets/{{ $data->file }}"></div>
+        <div class="admin-actions">
+          <button class="admin-btn edit-btn" onclick="openEditModal({{ $book->id }})" title="Edit">
+            <i class='bx bx-edit-alt'></i>
+          </button>
+          <form id="deleteForm{{ $book->id }}" action="{{ route('delete', $book->id) }}" method="POST"
+            style="display: contents;">
+            @csrf
+            @method('DELETE')
+            <button type="button" class="admin-btn delete-btn" title="Delete"
+              onclick="confirmDelete('{{ $book->title }}', '{{ $book->author }}', {{ $book->id }})">
+              <i class='bx bx-trash'></i>
+            </button>
+          </form>
+          <a href="{{ route('download', $book->file) }}" class="admin-btn download-btn" title="Download">
+            <i class='bx bxs-download'></i>
+          </a>
+        </div>
+
+        <div class="thumbnail" data-pdfpath="/assets/{{ $book->file }}">
+          <img src="" alt="Book Cover" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
         <div class="info-container">
-          <h5 class="info-title" style="margin-bottom: 10px; font-size: 20px; color: rgb(255, 255, 255);">
-            {{ $data->title ?? '' }}
-          </h5>
-          <h5 class="info-author" style="margin-bottom: 10px; font-size: 16px; color: rgb(255, 255, 255);">
-            {{ $data->author ?? '' }}
-          </h5>
-          <h5 class="info-category" style="margin-bottom: 10px; font-size: 14px; color: rgb(255, 255, 255);">
-            {{ $data->category->name ?? '' }}
-          </h5>
-          <div class="button-container" style="display: flex; justify-content: space-between;">
-            <a class="view-btn" href="{{ route('view', $data->id) }}">View</a>
-            <button style="margin-left: 5px;" class="edit-btn"
-              onclick="openEditModal({{ $data->id }})">EDIT</button>
-            <form id="deleteForm{{ $data->id }}" action="{{ route('delete', $data->id) }}" method="POST"
-              style="margin: 0;">
+          <h3 class="info-title">{{ $book->title ?? '' }}</h3>
+          <p class="info-author">{{ $book->author ?? '' }}</p>
+          <p class="info-category">{{ $book->category->name ?? '' }}</p>
+          <div class="button-container">
+            <a class="view-btn" href="{{ route('view', $book->id) }}">
+              <i class='bx bx-book-reader'></i> View
+            </a>
+            <form action="{{ route('readlater.add', $book->id) }}" method="POST" style="display: contents;">
               @csrf
-              @method('DELETE')
-              <button type="button" class="remove-btn2"
-                onclick="confirmDelete('{{ $data->title }}', '{{ $data->author }}', {{ $data->id }})"><i
-                  class='bx bx-trash'></i></button>
+              <button type="submit" class="readlater-btn">
+                <i class='bx {{ $book->isInReadLaterOf(auth()->user()) ? 'bxs-bookmark' : 'bx-bookmark' }}'></i>
+              </button>
             </form>
           </div>
         </div>
-
-        <form action="{{ route('favorites.add', $data->id) }}" method="POST">
-          @csrf
-          <button type="submit" class="favorite-btn"><i class='bx bx-star'></i></button>
-        </form>
-        <a style="padding-left: 12px; padding-top: 12px; margin-top: 60px; align-items: center; justify-content: center;"
-          class="favorite-btn" href="{{ route('download', $data->file) }}"><i id="download-icon"
-            class='bx bxs-download'></i></a>
       </div>
     @endforeach
+  </div>
 
+  <div class="pagination-container">
+    {{ $data->onEachSide(1)->links() }}
+  </div>
 
+  {{-- Mobile Modals --}}
+  <div class="mobile-modals-container">
+    @foreach ($data as $book)
+      <div class="mobile-modal" data-book-id="{{ $book->id }}">
+        <div class="modal-content">
+          <button class="modal-close"><i class='bx bx-x'></i></button>
+          <div class="modal-book-info">
+            <div class="modal-thumbnail">
+              <div class="thumbnail" data-pdfpath="/assets/{{ $book->file }}">
+                <img src="" alt="Book Cover" style="width: 100%; height: 100%; object-fit: cover;">
+              </div>
+            </div>
+            <div class="modal-details">
+              <h3>{{ $book->title }}</h3>
+              <p class="modal-author">{{ $book->author }}</p>
+              <p class="modal-category">{{ $book->category->name ?? 'Uncategorized' }}</p>
+              <div class="modal-rating">
+                <i class='bx bxs-star'></i>
+                <span>{{ number_format($book->rating ?? 0, 1) }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="modal-buttons">
+            <div class="modal-action-row">
+              <a class="view-btn" href="{{ route('view', $book->id) }}">
+                <i class='bx bx-book-reader'></i> Read Now
+              </a>
+              <div class="action-buttons-group">
+                <form action="{{ route('readlater.add', $book->id) }}" method="POST" style="display: contents;">
+                  @csrf
+                  <button type="submit" class="action-btn">
+                    <i class='bx {{ $book->isInReadLaterOf(auth()->user()) ? 'bxs-bookmark' : 'bx-bookmark' }}'></i>
+                  </button>
+                </form>
+                <button class="action-btn edit-btn"
+                  onclick="openEditModal({{ $book->id }}); closeAllMobileModals();">
+                  <i class='bx bx-edit-alt'></i>
+                </button>
+                <a href="{{ route('download', $book->file) }}" class="action-btn download-btn">
+                  <i class='bx bxs-download'></i>
+                </a>
+                <button class="action-btn delete-btn"
+                  onclick="confirmDelete('{{ $book->title }}', '{{ $book->author }}', {{ $book->id }}); closeAllMobileModals();">
+                  <i class='bx bx-trash'></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    @endforeach
   </div>
 
   <!-- Edit Modal -->
@@ -349,46 +412,199 @@
 </script>
 
 <script type="module">
+  import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.mjs';
+
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.worker.min.mjs';
 
-  function generateThumbnail(pdfPath) {
-    pdfjsLib.getDocument(pdfPath).promise.then(function(pdf) {
-      pdf.getPage(1).then(function(page) {
-        var scale = 1;
-        var viewport = page.getViewport({
-          scale: scale
-        });
-        var canvas = document.createElement('canvas');
-        var context = canvas.getContext('2d');
+  // Track which thumbnails have been generated and are loading
+  const generatedThumbnails = new Set();
+  const loadingThumbnails = new Set();
+  const failedThumbnails = new Set();
 
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
+  // Intersection Observer for lazy loading
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const thumbnailDiv = entry.target;
+        const pdfPath = thumbnailDiv.dataset.pdfpath;
 
-        var renderContext = {
-          canvasContext: context,
-          viewport: viewport
-        };
-
-        page.render(renderContext).promise.then(function() {
-          // Create an img element
-          var thumbnailImg = document.createElement('img');
-          thumbnailImg.src = canvas.toDataURL(); // Set the image source
-
-          var thumbnailDiv = document.querySelector('.thumbnail[data-pdfpath="' +
-            pdfPath + '"]');
-          thumbnailDiv.innerHTML = ''; // Clear any previous content
-          thumbnailDiv.appendChild(thumbnailImg); // Add the img element
-        });
-      });
-    }).catch(function(error) {
-      console.error("Error loading PDF:", error);
+        if (!generatedThumbnails.has(pdfPath) && !loadingThumbnails.has(pdfPath) && !failedThumbnails.has(
+            pdfPath)) {
+          loadingThumbnails.add(pdfPath);
+          generateThumbnail(pdfPath);
+        }
+      }
     });
+  }, {
+    rootMargin: '100px 0px', // Preload margin
+    threshold: 0.1 // Trigger when 10% visible
+  });
+
+  async function generateThumbnail(pdfPath) {
+    try {
+      const loadingTask = pdfjsLib.getDocument(pdfPath);
+      let timeoutId = setTimeout(() => {
+        loadingTask.destroy();
+        handleThumbnailError(pdfPath, new Error('Loading timeout'));
+      }, 10000); // 10 second timeout
+
+      const pdf = await loadingTask.promise;
+      clearTimeout(timeoutId);
+
+      const page = await pdf.getPage(1);
+
+      // Calculate optimal dimensions
+      const viewport = page.getViewport({
+        scale: 1.0
+      });
+      const MAX_WIDTH = 400;
+      const scale = Math.min(1.0, MAX_WIDTH / viewport.width);
+      const scaledViewport = page.getViewport({
+        scale
+      });
+
+      const canvas = document.createElement('canvas');
+      canvas.width = scaledViewport.width;
+      canvas.height = scaledViewport.height;
+
+      const context = canvas.getContext('2d', {
+        alpha: false,
+        desynchronized: true
+      });
+
+      await page.render({
+        canvasContext: context,
+        viewport: scaledViewport,
+        intent: 'display'
+      }).promise;
+
+      // Create and optimize thumbnail
+      const thumbnailImg = new Image();
+      thumbnailImg.decoding = 'async';
+      thumbnailImg.loading = 'lazy';
+      thumbnailImg.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
+
+      // Use better quality JPEG with reasonable compression
+      thumbnailImg.src = canvas.toDataURL('image/jpeg', 0.85);
+
+      // Update all instances of this thumbnail
+      document.querySelectorAll(`.thumbnail[data-pdfpath="${pdfPath}"]`).forEach(div => {
+        div.innerHTML = '';
+        div.appendChild(thumbnailImg.cloneNode(true));
+      });
+
+      // Cleanup
+      canvas.width = 0;
+      canvas.height = 0;
+      context.clearRect(0, 0, 0, 0);
+      page.cleanup();
+      pdf.destroy();
+      loadingTask.destroy();
+
+      generatedThumbnails.add(pdfPath);
+      loadingThumbnails.delete(pdfPath);
+
+    } catch (error) {
+      handleThumbnailError(pdfPath, error);
+    }
   }
 
+  function handleThumbnailError(pdfPath, error) {
+    console.error("Error generating thumbnail:", error);
+    document.querySelectorAll(`.thumbnail[data-pdfpath="${pdfPath}"]`).forEach(div => {
+      div.innerHTML = `
+        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #2a2a2a;">
+          <i class='bx bx-error' style="font-size: 2rem; color: #ff4444;"></i>
+        </div>
+      `;
+    });
+    loadingThumbnails.delete(pdfPath);
+    failedThumbnails.add(pdfPath);
+  }
 
-  document.querySelectorAll('.thumbnail[data-pdfpath]').forEach(function(thumbnailDiv) {
-    var pdfPath = thumbnailDiv.dataset.pdfpath;
-    generateThumbnail(pdfPath);
+  // Add styles
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .thumbnail {
+      position: relative;
+      background: #2a2a2a;
+    }
+    .loading-indicator {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #2a2a2a;
+    }
+    .loading-indicator i {
+      font-size: 2rem;
+      color: white;
+      animation: spin 1s linear infinite;
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Observe thumbnails
+  document.querySelectorAll('.thumbnail[data-pdfpath]').forEach(thumbnailDiv => {
+    // Add loading indicator to each thumbnail
+    thumbnailDiv.innerHTML = `
+      <div class="loading-indicator">
+        <i class='bx bx-loader-alt'></i>
+      </div>
+    `;
+    observer.observe(thumbnailDiv);
+  });
+
+  // Memory management
+  let cleanupInterval;
+  const MAX_CACHED_THUMBNAILS = 50;
+
+  function startCleanupInterval() {
+    cleanupInterval = setInterval(() => {
+      if (generatedThumbnails.size > MAX_CACHED_THUMBNAILS) {
+        const thumbnailsToRemove = Array.from(generatedThumbnails).slice(0, 20);
+        thumbnailsToRemove.forEach(path => {
+          generatedThumbnails.delete(path);
+          document.querySelectorAll(`.thumbnail[data-pdfpath="${path}"]`).forEach(div => {
+            if (!div.isIntersecting) {
+              div.innerHTML = `
+                <div class="loading-indicator">
+                  <i class='bx bx-loader-alt'></i>
+                </div>
+              `;
+            }
+          });
+        });
+      }
+    }, 30000); // Check every 30 seconds
+  }
+
+  // Visibility handling
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      clearInterval(cleanupInterval);
+    } else {
+      startCleanupInterval();
+    }
+  });
+
+  startCleanupInterval();
+
+  // Cleanup on page leave
+  window.addEventListener('unload', () => {
+    observer.disconnect();
+    generatedThumbnails.clear();
+    loadingThumbnails.clear();
+    failedThumbnails.clear();
+    clearInterval(cleanupInterval);
   });
 </script>
 
@@ -397,17 +613,18 @@
 <script>
   // Book Search
   $(document).ready(function() {
-    $("#search-input").on("keyup", function() {
-      let searchTerm = $(this).val().toLowerCase();
+    let searchTimeout;
 
-      $(".pdf-item").each(function() {
-        let title = $(this).find(".info-container h5:first").text().toLowerCase();
-        if (title.includes(searchTerm)) {
-          $(this).show();
-        } else {
-          $(this).hide();
-        }
-      });
+    $("#search-input").on("keyup", function() {
+      clearTimeout(searchTimeout);
+      const searchTerm = $(this).val().toLowerCase();
+
+      searchTimeout = setTimeout(() => {
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('query', searchTerm);
+        currentUrl.searchParams.delete('page'); // Reset to first page when searching
+        window.location.href = currentUrl.toString();
+      }, 500);
     });
   });
 </script>
@@ -424,15 +641,14 @@
       }
     });
 
-    const books = document.querySelectorAll('.pdf-item');
-    books.forEach(book => {
-      const genre = book.dataset.genre;
-      if (selectedGenres.length === 0 || selectedGenres.includes(genre)) {
-        book.style.display = '';
-      } else {
-        book.style.display = 'none';
-      }
-    });
+    const currentUrl = new URL(window.location.href);
+    if (selectedGenres.length > 0) {
+      currentUrl.searchParams.set('genres', selectedGenres.join(','));
+    } else {
+      currentUrl.searchParams.delete('genres');
+    }
+    currentUrl.searchParams.delete('page'); // Reset to first page when filtering
+    window.location.href = currentUrl.toString();
   }
 
   // Handle dropdown click
@@ -491,6 +707,9 @@
     if (searchQuery) {
       currentUrl.searchParams.set('query', searchQuery);
     }
+
+    // Reset to first page when filtering
+    currentUrl.searchParams.delete('page');
 
     window.location.href = currentUrl.toString();
   }
@@ -743,6 +962,59 @@
       }
     });
   });
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const isMobile = window.innerWidth <= 768;
+
+    if (isMobile) {
+      document.querySelectorAll('.pdf-item').forEach(item => {
+        item.addEventListener('click', function(e) {
+          if (e.target.closest('.view-btn') || e.target.closest('.readlater-btn')) {
+            return;
+          }
+
+          const bookId = this.dataset.bookId;
+          const modal = document.querySelector(`.mobile-modal[data-book-id="${bookId}"]`);
+
+          if (modal) {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+          }
+        });
+      });
+
+      document.querySelectorAll('.modal-close').forEach(button => {
+        button.addEventListener('click', function(e) {
+          e.stopPropagation();
+          closeAllMobileModals();
+        });
+      });
+
+      document.querySelectorAll('.mobile-modal').forEach(modal => {
+        modal.addEventListener('click', function(e) {
+          if (e.target === this) {
+            closeAllMobileModals();
+          }
+        });
+      });
+    }
+
+    window.addEventListener('resize', function() {
+      const isMobile = window.innerWidth <= 768;
+      if (!isMobile) {
+        closeAllMobileModals();
+      }
+    });
+  });
+
+  function closeAllMobileModals() {
+    document.querySelectorAll('.mobile-modal.active').forEach(modal => {
+      modal.classList.remove('active');
+    });
+    document.body.style.overflow = '';
+  }
 </script>
 
 </body>

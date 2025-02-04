@@ -1,195 +1,251 @@
-document.addEventListener('DOMContentLoaded', function () {
-  const pdfjsLib = window['pdfjs-dist/build/pdf'];
-  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.min.js';
+document.addEventListener("DOMContentLoaded", function () {
+    const pdfjsLib = window["pdfjs-dist/build/pdf"];
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.min.js";
 
-  let pdfDoc = null,
-      scale = 1.0;
+    // PDF viewer state
+    let pdfDoc = null;
+    let scale = 1.0;
+    let currentPageNum = 1;
+    let pagesRendering = new Set();
+    let pageViewports = new Map();
+    let pageCanvases = new Map();
 
-  const pdfContainer = document.getElementById('pdf-container');
-  const pageNumSpan = document.getElementById('page-num');
-  const pageCountSpan = document.getElementById('page-count');
-  const toolbarHeight = document.getElementById('pdf-toolbar').offsetHeight;
-  
-  // Get the book ID from the URL
-  const bookId = window.location.pathname.split('/').pop();
+    // Cache DOM elements
+    const pdfContainer = document.getElementById("pdf-container");
+    const pageNumSpan = document.getElementById("page-num");
+    const pageCountSpan = document.getElementById("page-count");
+    const toolbarHeight = document.getElementById("pdf-toolbar").offsetHeight;
+    const zoomInBtn = document.getElementById("zoom-in");
+    const zoomOutBtn = document.getElementById("zoom-out");
 
-  const initPDFViewer = (url) => {
-      pdfjsLib.getDocument(url).promise.then((pdfDoc_) => {
-          pdfDoc = pdfDoc_;
-          pageCountSpan.textContent = pdfDoc.numPages;
+    // Get book ID from URL
+    const bookId = window.location.pathname.split("/").pop();
 
-          for (let i = 1; i <= pdfDoc.numPages; i++) {
-              renderPage(i);
-          }
+    const initPDFViewer = async (url) => {
+        try {
+            // Show loading indicator
+            pdfContainer.innerHTML =
+                '<div class="loading">Loading PDF...</div>';
 
-          // Restore the last page position after rendering
-          restorePagePosition();
+            pdfDoc = await pdfjsLib.getDocument(url).promise;
+            pageCountSpan.textContent = pdfDoc.numPages;
 
-          pdfContainer.addEventListener('scroll', handleScroll);
-      });
-  };
+            // Clear loading indicator
+            pdfContainer.innerHTML = "";
 
-  const renderPage = (num) => {
-      pdfDoc.getPage(num).then((page) => {
-          const viewport = page.getViewport({ scale: scale });
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          canvas.height = viewport.height;
-          canvas.width = viewport.width;
+            // Create placeholder divs for all pages
+            for (let i = 1; i <= pdfDoc.numPages; i++) {
+                const pageDiv = document.createElement("div");
+                pageDiv.className = "pdf-page-container";
+                pageDiv.dataset.pageNumber = i;
+                pageDiv.style.minHeight = "800px"; // Default height until actual page is loaded
+                pdfContainer.appendChild(pageDiv);
+            }
 
-          canvas.classList.add('pdf-page');
-          canvas.dataset.pageNumber = num;
+            checkVisiblePages();
 
-          const renderContext = {
-              canvasContext: ctx,
-              viewport: viewport
-          };
-          page.render(renderContext);
+            pdfContainer.addEventListener(
+                "scroll",
+                throttle(checkVisiblePages, 100)
+            );
+            window.addEventListener("resize", throttle(checkVisiblePages, 100));
 
-          pdfContainer.appendChild(canvas);
-      });
-  };
+            restorePagePosition();
+        } catch (error) {
+            console.error("Error loading PDF:", error);
+            pdfContainer.innerHTML =
+                '<p class="error">Error loading PDF. Please try again.</p>';
+        }
+    };
 
-  const cleanupLocalStorage = () => {
-    const keys = Object.keys(localStorage);
-    const bookKeys = keys.filter(key => key.startsWith('book_'));
-    if (bookKeys.length > 100) { 
-        localStorage.removeItem(bookKeys[0]); 
+    // Throttle function to limit how often a function is called
+    function throttle(func, limit) {
+        let inThrottle;
+        return function () {
+            const args = arguments;
+            const context = this;
+            if (!inThrottle) {
+                func.apply(context, args);
+                inThrottle = true;
+                setTimeout(() => (inThrottle = false), limit);
+            }
+        };
     }
-};
 
-  const handleScroll = () => {
-    cleanupLocalStorage();
-      const pages = document.querySelectorAll('.pdf-page');
-      let currentPage = 1;
-      const containerScrollTop = pdfContainer.scrollTop;
-      const containerHeight = pdfContainer.clientHeight;
+    // Check which pages are visible and render them
+    const checkVisiblePages = async () => {
+        if (!pdfDoc) return;
 
-      for (let page of pages) {
-          const pageNumber = parseInt(page.dataset.pageNumber, 10);
-          const pageTop = page.offsetTop;
-          const pageHeight = page.clientHeight;
+        const containerRect = pdfContainer.getBoundingClientRect();
+        const pageDivs = document.querySelectorAll(".pdf-page-container");
 
-          if (containerScrollTop >= pageTop - toolbarHeight && containerScrollTop < pageTop + pageHeight - toolbarHeight) {
-              currentPage = pageNumber;
-              break;
-          }
-      }
+        for (const pageDiv of pageDivs) {
+            const pageRect = pageDiv.getBoundingClientRect();
+            const pageNumber = parseInt(pageDiv.dataset.pageNumber);
 
-      pageNumSpan.textContent = currentPage;
-      
-      // Save the current page and scroll position
-      localStorage.setItem(`book_${bookId}_page`, currentPage);
-      localStorage.setItem(`book_${bookId}_scroll`, containerScrollTop);
-  };
+            // Check if page is visible or near visible (one page above and below)
+            const isNearVisible =
+                pageRect.top < containerRect.bottom + containerRect.height &&
+                pageRect.bottom > containerRect.top - containerRect.height;
 
-  // Function to restore the last page position
-  const restorePagePosition = () => {
-      const lastPage = parseInt(localStorage.getItem(`book_${bookId}_page`)) || 1;
-      const lastScroll = parseInt(localStorage.getItem(`book_${bookId}_scroll`)) || 0;
-      
-      // Wait for pages to render
-      setTimeout(() => {
-          pdfContainer.scrollTop = lastScroll;
-          pageNumSpan.textContent = lastPage;
-      }, 100);
-  };
+            if (
+                isNearVisible &&
+                !pageCanvases.has(pageNumber) &&
+                !pagesRendering.has(pageNumber)
+            ) {
+                renderPage(pageNumber);
+            } else if (!isNearVisible && pageCanvases.has(pageNumber)) {
+                // Optionally remove far away pages to save memory
+                // pageCanvases.get(pageNumber).remove();
+                // pageCanvases.delete(pageNumber);
+            }
 
-  document.getElementById('zoom-in').addEventListener('click', () => {
-      const currentScroll = pdfContainer.scrollTop;
-      scale += 0.1;
-      pdfContainer.innerHTML = '';
-      for (let i = 1; i <= pdfDoc.numPages; i++) {
-          renderPage(i);
-      }
-      // Maintain scroll position after zoom
-      setTimeout(() => pdfContainer.scrollTop = currentScroll * (1 + 0.1), 100);
-  });
+            // Update current page number
+            if (
+                pageRect.top <= containerRect.top + toolbarHeight &&
+                pageRect.bottom > containerRect.top + toolbarHeight
+            ) {
+                currentPageNum = pageNumber;
+                pageNumSpan.textContent = currentPageNum;
+                savePagePosition(currentPageNum, pdfContainer.scrollTop);
+            }
+        }
+    };
 
-  document.getElementById('zoom-out').addEventListener('click', () => {
-      if (scale <= 0.1) return;
-      const currentScroll = pdfContainer.scrollTop;
-      scale -= 0.1;
-      pdfContainer.innerHTML = '';
-      for (let i = 1; i <= pdfDoc.numPages; i++) {
-          renderPage(i);
-      }
-      // Maintain scroll position after zoom
-      setTimeout(() => pdfContainer.scrollTop = currentScroll * (1 - 0.1), 100);
-  });
+    // Render a single page
+    const renderPage = async (pageNumber) => {
+        try {
+            pagesRendering.add(pageNumber);
+            const page = await pdfDoc.getPage(pageNumber);
+            const viewport = page.getViewport({ scale: scale });
+            pageViewports.set(pageNumber, viewport);
 
-  // Add bookmark functionality
-  const bookmarkBtn = document.getElementById('bookmark-btn');
-  let currentBookmark = null;
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            canvas.classList.add("pdf-page");
 
-  // Load existing bookmark when page loads
-  const loadBookmark = () => {
-    fetch(`/bookmarks/${bookId}`)
-      .then(response => response.json())
-      .then(data => {
-        if (data && data.id) {  
-          currentBookmark = data;
-          bookmarkBtn.classList.add('active');
-          // Option to jump to bookmark
-          if (confirm('Would you like to go to your bookmarked page?')) {
-            pdfContainer.scrollTop = data.scroll_position;
-            pageNumSpan.textContent = data.page_number;
-          }
+            const pageDiv = document.querySelector(
+                `.pdf-page-container[data-page-number="${pageNumber}"]`
+            );
+            pageDiv.style.height = `${viewport.height}px`;
+            pageDiv.innerHTML = ""; // Clear any existing content
+            pageDiv.appendChild(canvas);
+
+            await page.render({
+                canvasContext: ctx,
+                viewport: viewport,
+            }).promise;
+
+            pageCanvases.set(pageNumber, canvas);
+            pagesRendering.delete(pageNumber);
+        } catch (error) {
+            console.error(`Error rendering page ${pageNumber}:`, error);
+            pagesRendering.delete(pageNumber);
+        }
+    };
+
+    // Save and restore page position
+    const savePagePosition = (pageNumber, scrollPosition) => {
+        localStorage.setItem(`book_${bookId}_page`, pageNumber);
+        localStorage.setItem(`book_${bookId}_scroll`, scrollPosition);
+        cleanupLocalStorage();
+    };
+
+    const restorePagePosition = () => {
+        const lastPage =
+            parseInt(localStorage.getItem(`book_${bookId}_page`)) || 1;
+        const lastScroll =
+            parseInt(localStorage.getItem(`book_${bookId}_scroll`)) || 0;
+
+        setTimeout(() => {
+            pdfContainer.scrollTop = lastScroll;
+            pageNumSpan.textContent = lastPage;
+            checkVisiblePages();
+        }, 100);
+    };
+
+    // Cleanup old localStorage entries
+    const cleanupLocalStorage = () => {
+        const keys = Object.keys(localStorage);
+        const bookKeys = keys.filter((key) => key.startsWith("book_"));
+        if (bookKeys.length > 100) {
+            localStorage.removeItem(bookKeys[0]);
+        }
+    };
+
+    // Handle zoom
+    const handleZoom = async (zoomIn) => {
+        const oldScale = scale;
+        if (zoomIn) {
+            scale = Math.min(3, scale + 0.2); // Max zoom 3x
         } else {
-          currentBookmark = null;
-          bookmarkBtn.classList.remove('active');
+            scale = Math.max(0.5, scale - 0.2); // Min zoom 0.5x
         }
-      })
-      .catch(error => {
-        console.error('Error loading bookmark:', error);
-        currentBookmark = null;
-        bookmarkBtn.classList.remove('active');
-      });
-  };
 
-  // Toggle bookmark
-  bookmarkBtn.addEventListener('click', () => {
-    const currentPage = parseInt(pageNumSpan.textContent);
-    const scrollPosition = pdfContainer.scrollTop;
+        if (oldScale === scale) return;
 
-    if (currentBookmark) {
-      // Remove bookmark
-      fetch(`/bookmarks/${bookId}`, {
-        method: 'DELETE',
-        headers: {
-          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        // Store current page and relative scroll position
+        const currentPage = parseInt(pageNumSpan.textContent);
+        const currentPageDiv = document.querySelector(
+            `.pdf-page-container[data-page-number="${currentPage}"]`
+        );
+        const relativeScrollPosition =
+            (pdfContainer.scrollTop - currentPageDiv.offsetTop) /
+            currentPageDiv.offsetHeight;
+
+        // Clear existing canvases and reset maps
+        pageCanvases.clear();
+        pageViewports.clear();
+        pagesRendering.clear();
+
+        // Re-render visible pages
+        await checkVisiblePages();
+
+        // Restore scroll position relative to current page
+        const newPageDiv = document.querySelector(
+            `.pdf-page-container[data-page-number="${currentPage}"]`
+        );
+        if (newPageDiv) {
+            const newScrollTop =
+                newPageDiv.offsetTop +
+                newPageDiv.offsetHeight * relativeScrollPosition;
+            pdfContainer.scrollTop = newScrollTop;
         }
-      })
-      .then(() => {
-        currentBookmark = null;
-        bookmarkBtn.classList.remove('active');
-        alert('Bookmark removed');
-      });
-    } else {
-      // Add bookmark
-      fetch('/bookmarks', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-        },
-        body: JSON.stringify({
-          product_id: bookId,
-          page_number: currentPage,
-          scroll_position: scrollPosition
-        })
-      })
-      .then(response => response.json())
-      .then(data => {
-        currentBookmark = data.bookmark;
-        bookmarkBtn.classList.add('active');
-        alert('Page bookmarked!');
-      });
-    }
-  });
+    };
 
-  // Load bookmark when page loads
-  loadBookmark();
+    // Event listeners
+    zoomInBtn.addEventListener("click", () => handleZoom(true));
+    zoomOutBtn.addEventListener("click", () => handleZoom(false));
 
-  window.initPDFViewer = initPDFViewer;
+    // Touch zoom support
+    let touchStartDistance = 0;
+    pdfContainer.addEventListener("touchstart", (e) => {
+        if (e.touches.length === 2) {
+            touchStartDistance = Math.hypot(
+                e.touches[0].pageX - e.touches[1].pageX,
+                e.touches[0].pageY - e.touches[1].pageY
+            );
+        }
+    });
+
+    pdfContainer.addEventListener("touchmove", (e) => {
+        if (e.touches.length === 2) {
+            e.preventDefault(); // Prevent page scroll during pinch zoom
+            const currentDistance = Math.hypot(
+                e.touches[0].pageX - e.touches[1].pageX,
+                e.touches[0].pageY - e.touches[1].pageY
+            );
+
+            if (Math.abs(currentDistance - touchStartDistance) > 50) {
+                handleZoom(currentDistance > touchStartDistance);
+                touchStartDistance = currentDistance;
+            }
+        }
+    });
+
+    // Expose initialization function
+    window.initPDFViewer = initPDFViewer;
 });

@@ -102,15 +102,25 @@
 }
 
 .view-btn {
-    border: 1px solid rgb(0, 0, 0);
-    background-color: rgb(255, 255, 255);
-    color: rgb(0, 0, 0);
-    padding: 10px;
+    flex: 1;
+    border: none;
+    background-color: white;
+    color: black;
+    padding: 8px 15px;
     border-radius: 8px;
-    font-weight: 800;
-    font-size: 12px;
+    font-weight: 600;
+    font-size: 14px;
     text-transform: uppercase;
     text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: all 0.2s;
+}
+
+.view-btn:hover {
+    opacity: 0.8;
 }
 
 .item-container {
@@ -118,17 +128,49 @@
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    grid-gap: 20px;
+    grid-template-columns: repeat(5, 1fr);
+    grid-gap: 15px;
     justify-content: start;
     padding: 20px;
-    transition: height 0.3s ease-in-out;
+    margin-bottom: 20px;
 }
 
-@media (max-width: 600px) {
-    .item-container {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    }
+.pdf-item {
+    background-color: #1c1a1a;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    transition: 0.15s;
+    aspect-ratio: 2/3;
+}
+
+.pdf-item:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.favorite-btn {
+    position: absolute;
+    background-color: #363636;
+    color: white;
+    border: none;
+    top: 10px;
+    right: 10px;
+    padding: 8px;
+    height: 36px;
+    width: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    z-index: 2;
+}
+
+.favorite-btn:hover {
+    background-color: #505050;
+    cursor: pointer;
 }
 
 .item-container3 {
@@ -152,48 +194,6 @@
     transition: 0.2s;
 }
 
-.pdf-item {
-    background-color: #1c1a1a;
-    color: white;
-    border-radius: 8px;
-    border: none;
-    overflow: hidden;
-    position: relative;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: 0.2s;
-}
-
-.pdf-item:hover {
-    transform: scale(1.02);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-}
-
-.favorite-btn {
-    display: none;
-    position: absolute;
-    background-color: rgb(37, 37, 37);
-    color: white;
-    border: none;
-    top: 0;
-    right: 0;
-    margin-right: 10px;
-    margin-top: 10px;
-    padding: 5px;
-    height: 40px;
-    width: 40px;
-    border-radius: 20px;
-    font-weight: 800;
-    margin-left: 20px;
-    font-size: 16px;
-    text-transform: uppercase;
-    transition: all 0.2s;
-}
-
-.favorite-btn:hover {
-    background-color: rgb(56, 56, 56);
-    cursor: pointer;
-}
-
 .max-file-size-text {
     color: white;
     font-family: sans-serif;
@@ -207,44 +207,41 @@
 }
 
 .remove-btn2 {
-    display: inline-flex;
+    height: 38px;
+    width: 38px;
+    padding: 0;
+    border: none;
     background-color: rgb(126, 6, 6);
     color: white;
-    border: none;
-    padding: 5px;
-    width: 40px;
-    height: 40px;
-    margin-left: 5px;
-    justify-content: center;
+    border-radius: 8px;
+    display: flex;
     align-items: center;
-    border-radius: 20px;
-    font-weight: 800;
-    font-size: 16px;
-    text-transform: uppercase;
+    justify-content: center;
+    cursor: pointer;
     transition: all 0.2s;
 }
 
 .remove-btn2:hover {
-    background-color: rgb(56, 56, 56);
-    cursor: pointer;
+    background-color: rgb(150, 8, 8);
 }
 
 .edit-btn {
+    height: 38px;
+    width: 38px;
+    padding: 0;
+    border: none;
+    background-color: #363636;
     color: white;
-    background-color: #1a1a1a;
-    text-decoration: none;
-    border: white 1px solid;
     border-radius: 8px;
-    padding: 10px;
-    font-family: sans-serif;
-    font-weight: 800;
-    font-size: 12px;
-    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
+    transition: all 0.2s;
 }
 
 .edit-btn:hover {
-    opacity: 0.7;
+    background-color: #505050;
 }
 
 .fade-out {
@@ -445,4 +442,447 @@
     color: #dc3545;
     font-size: 0.875em;
     margin-top: 0.25rem;
+}
+
+@media (max-width: 1200px) {
+    .item-container {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 992px) {
+    .item-container {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    .item-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        padding: 12px;
+    }
+}
+
+@media (max-width: 540px) {
+    .item-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+}
+
+@media (max-width: 400px) {
+    .item-container {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
+
+.button-container {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.action-buttons {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 2;
+}
+
+.action-btn {
+    height: 36px;
+    width: 36px;
+    padding: 8px;
+    border: none;
+    background-color: #363636;
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.action-btn:hover {
+    background-color: #505050;
+}
+
+.readlater-btn {
+    background-color: #363636;
+}
+
+.rating-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #ffd700;
+    padding: 5px 10px;
+    border-radius: 20px;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.admin-actions {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.pdf-item:hover .admin-actions {
+    opacity: 1;
+}
+
+.admin-btn {
+    height: 36px;
+    width: 36px;
+    padding: 8px;
+    border: none;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.admin-btn:hover {
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+.edit-btn {
+    color: white;
+}
+
+.delete-btn {
+    color: #ff4444;
+}
+
+.download-btn {
+    color: white;
+}
+
+.button-container {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.view-btn {
+    flex: 1;
+    border: none;
+    background-color: white;
+    color: black;
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: all 0.2s;
+}
+
+.view-btn:hover {
+    opacity: 0.8;
+}
+
+.readlater-btn {
+    height: 36px;
+    width: 36px;
+    padding: 8px;
+    border: none;
+    background-color: #363636;
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.readlater-btn:hover {
+    background-color: #505050;
+}
+
+.edit-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 9999;
+    overflow-y: auto;
+}
+
+.edit-modal-content {
+    position: relative;
+    background-color: #1c1a1a;
+    margin: 5% auto;
+    padding: 20px;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 8px;
+    color: white;
+    z-index: 10000;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 9999;
+}
+
+.modal-content {
+    position: relative;
+    background-color: #1c1a1a;
+    margin: 5% auto;
+    padding: 20px;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 8px;
+    color: white;
+    z-index: 10000;
+}
+
+.mobile-modals-container {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+.mobile-modal {
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    animation: fadeIn 0.3s;
+    pointer-events: none;
+}
+
+.mobile-modal.active {
+    display: block;
+    pointer-events: auto;
+}
+
+.mobile-modal .modal-content {
+    background: #1c1a1a;
+    border-radius: 12px;
+    padding: 20px;
+    position: fixed;
+    width: 90%;
+    max-width: 400px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    animation: slideIn 0.3s;
+    pointer-events: auto;
+}
+
+.mobile-modal .modal-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.mobile-modal .modal-book-info {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.mobile-modal .modal-thumbnail {
+    flex: 0 0 120px;
+}
+
+.mobile-modal .modal-thumbnail .thumbnail {
+    width: 100%;
+    height: 180px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.mobile-modal .modal-thumbnail .thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.mobile-modal .modal-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.mobile-modal h3 {
+    font-size: 20px;
+    margin-bottom: 8px;
+    padding-right: 30px;
+}
+
+.mobile-modal .modal-author {
+    color: #ddd;
+    margin-bottom: 8px;
+}
+
+.mobile-modal .modal-category {
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+.mobile-modal .modal-rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #ffd700;
+}
+
+.mobile-modal .modal-buttons {
+    margin-top: 10px;
+}
+
+.mobile-modal .modal-action-row {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    align-items: center;
+}
+
+.mobile-modal .view-btn {
+    flex: 1;
+    min-width: 120px;
+    height: 39px;
+}
+
+.mobile-modal .action-buttons-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.mobile-modal .action-btn {
+    height: 38px;
+    width: 38px;
+    padding: 8px;
+    border: none;
+    background-color: #363636;
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.mobile-modal .action-btn:hover {
+    background-color: #505050;
+}
+
+.mobile-modal .edit-btn {
+    color: white;
+}
+
+.mobile-modal .delete-btn {
+    color: #ff4444;
+}
+
+.mobile-modal .download-btn {
+    color: white;
+}
+
+.mobile-modal .modal-admin-buttons,
+.mobile-modal .modal-action-buttons {
+    display: none;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+@media (max-width: 768px) {
+    .pdf-item {
+        aspect-ratio: 2/3;
+    }
+
+    .info-container {
+        display: none;
+    }
+
+    .pdf-item:hover {
+        transform: none;
+    }
+
+    .pdf-item {
+        cursor: pointer;
+    }
+
+    .admin-actions {
+        display: none;
+    }
 }

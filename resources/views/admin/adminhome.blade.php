@@ -21,7 +21,7 @@
       <h1 class="welcome-message">
         Welcome, {{ auth()->user()->name }}!</h1>
 
-      <a style="margin-bottom: 20px;" class="btn-dashboard" href="{{ '/uploadpage' }}"><i id="dashboardIcon"
+      <a style="margin-bottom: 20px;" class="btn-dashboard" href="{{ '/book-manage' }}"><i id="dashboardIcon"
           class='bx bx-cog'></i> Manage Books</a>
 
       <a style="margin-bottom: 20px;" class="btn-dashboard" href="{{ route('categories.index') }}"><i id="dashboardIcon"
@@ -36,7 +36,7 @@
       <a style="margin-bottom: 20px;" class="btn-dashboard" href="{{ url('/audit-logs') }}"><i id="dashboardIcon"
           class='bx bx-history'></i> Audit Logs</a>
 
-      <a class="btn-dashboard" href="{{ '/bookpage' }}"><i id="dashboardIcon" class='bx bx-book'></i> Library</a>
+      <a class="btn-dashboard" href="{{ '/library' }}"><i id="dashboardIcon" class='bx bx-book'></i> Library</a>
 
     </div>
 

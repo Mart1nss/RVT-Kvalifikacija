@@ -15,7 +15,7 @@ class FavoritesController extends Controller
         $favorites = $user->favorites()->with('product')->get();
         $readLater = $user->readLater()->with('product')->get();
 
-        return view('favorites', compact('favorites', 'readLater'));
+        return view('my-collection', compact('favorites', 'readLater'));
     }
     public function add($id)
     {

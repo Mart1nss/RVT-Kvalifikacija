@@ -73,7 +73,7 @@
             <i class='bx bxs-dashboard'></i>
             <span>DASHBOARD</span>
           </a>
-          <a href="{{ route('bookpage') }}" class="menu-item {{ Request::is('bookpage') ? 'active' : '' }}">
+          <a href="{{ route('library') }}" class="menu-item {{ Request::is('library') ? 'active' : '' }}">
             <i class='bx bx-book'></i>
             <span>LIBRARY</span>
           </a>
@@ -92,9 +92,9 @@
           <a href="{{ '/viewnotes' }}" class="section-header">NOTES</a>
         </div>
 
-        <div class="menu-section {{ Request::is('favorites') ? 'active' : '' }}"
-          onclick="window.location.href='{{ '/favorites' }}'">
-          <a href="{{ '/favorites' }}" class="section-header">MY COLLECTION</a>
+        <div class="menu-section {{ Request::is('my-collection') ? 'active' : '' }}"
+          onclick="window.location.href='{{ '/my-collection' }}'">
+          <a href="{{ '/my-collection' }}" class="section-header">MY COLLECTION</a>
         </div>
 
         <div class="menu-section {{ Request::is('profile') ? 'active' : '' }}"

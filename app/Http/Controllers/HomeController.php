@@ -44,7 +44,7 @@ class HomeController extends Controller
 
     public function uploadpage()
     {
-        return view('product');
+        return view('book-manage');
     }
 
 
@@ -119,6 +119,7 @@ class HomeController extends Controller
     {
         $query = $request->get('query');
         $visibility = $request->get('visibility', 'all');
+        $genres = $request->get('genres') ? explode(',', $request->get('genres')) : [];
 
         $data = Product::query();
 
@@ -132,27 +133,40 @@ class HomeController extends Controller
             $data->where('is_public', false);
         }
 
-        $data = $data->get();
+        if (!empty($genres)) {
+            $data->whereHas('category', function ($q) use ($genres) {
+                $q->whereIn('name', $genres);
+            });
+        }
+
+        $data = $data->paginate(15)->withQueryString();
         $categories = Category::all();
-        return view('product', compact('data', 'categories', 'visibility'));
+        return view('book-manage', compact('data', 'categories', 'visibility'));
     }
 
     public function bookpage(Request $request)
     {
         $query = $request->get('query');
+        $genres = $request->get('genres') ? explode(',', $request->get('genres')) : [];
+
         $data = Product::query()
             ->where('is_public', true)
             ->withAvg('reviews', 'review_score')
             ->when($query, function ($q) use ($query) {
                 return $q->where('title', 'like', '%' . $query . '%');
             })
-            ->get();
+            ->when(!empty($genres), function ($q) use ($genres) {
+                return $q->whereHas('category', function ($sq) use ($genres) {
+                    $sq->whereIn('name', $genres);
+                });
+            })
+            ->paginate(15)->withQueryString();
 
         $data->each(function ($book) {
             $book->rating = $book->reviews_avg_review_score ?? 0;
         });
 
-        return view('allBooks', compact('data'));
+        return view('Library', compact('data'));
     }
 
 

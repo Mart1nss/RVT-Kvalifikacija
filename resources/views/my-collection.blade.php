@@ -55,7 +55,7 @@
                   <a class="view-btn" href="{{ route('view', $favorite->product->id) }}">
                     <i class='bx bx-book-reader'></i> View
                   </a>
-                  <form action="{{ route('favorites.delete', $favorite->product_id) }}" method="POST"
+                  <form action="{{ route('my-collection.delete', $favorite->product_id) }}" method="POST"
                     style="display: contents;">
                     @csrf
                     @method('DELETE')
@@ -138,7 +138,7 @@
               <a class="view-btn" href="{{ route('view', $favorite->product->id) }}">
                 <i class='bx bx-book-reader'></i> Read Now
               </a>
-              <form action="{{ route('favorites.delete', $favorite->product_id) }}" method="POST"
+              <form action="{{ route('my-collection.delete', $favorite->product_id) }}" method="POST"
                 style="display: contents;">
                 @csrf
                 @method('DELETE')

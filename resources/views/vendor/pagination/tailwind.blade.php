@@ -3,7 +3,7 @@
 
 @if ($paginator->hasPages())
   <nav class="pagination-nav">
-    <div class="pagination-links" style="background-color: rgba(63, 63, 63, 0.1);">
+    <div class="pagination-links">
       {{-- Previous Page Link --}}
       @if (!$paginator->onFirstPage())
         <a href="{{ $paginator->previousPageUrl() }}" class="pagination-btn">

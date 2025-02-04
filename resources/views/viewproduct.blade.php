@@ -28,19 +28,6 @@
         <button id="zoom-in"><i class='bx bx-zoom-in'></i></button>
         <button id="zoom-out"><i class='bx bx-zoom-out'></i></button>
         <span>Page: <span id="page-num">1</span> / <span id="page-count"></span></span>
-        <form id="bookmark-form"
-          action="{{ $product->isFavoritedBy(auth()->user()) ? route('favorites.delete', $product->id) : route('favorites.add', $product->id) }}"
-          method="POST" style="display: inline;">
-          @csrf
-          @if ($product->isFavoritedBy(auth()->user()))
-            @method('DELETE')
-          @endif
-          <button id="bookmark-btn" class="btn {{ $product->isFavoritedBy(auth()->user()) ? '' : 'btn-primary' }}"
-            type="submit" data-bookmarked="{{ $product->isFavoritedBy(auth()->user()) ? 'true' : 'false' }}">
-            <i class='bx {{ $product->isFavoritedBy(auth()->user()) ? 'bxs-bookmark' : 'bx-bookmark' }}'></i>
-          </button>
-          <span id="bookmark-page" style="display: inline-block; margin-left: 4px; font-size: 0.8em;"></span>
-        </form>
       </div>
 
       <div class="container">
@@ -52,6 +39,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js"></script>
     <script src="{{ asset('js/pdfViewer.js') }}"></script>
 
+    <!-- Initialize PDF Viewer -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const pdfUrl = "/assets/{{ $data->file }}";
+        initPDFViewer(pdfUrl);
+      });
+    </script>
 
     <button id="toggle-button" class="fab">
       <i class="toggle-icon bx bx-notepad"></i>
@@ -73,7 +67,7 @@
       <h2>{{ $data->title }} by {{ $data->author }}</h2>
       <div class="action-buttons">
         <form class="favorite-form"
-          action="{{ $product->isFavoritedBy(auth()->user()) ? route('favorites.delete', $product->id) : route('favorites.add', $product->id) }}"
+          action="{{ $product->isFavoritedBy(auth()->user()) ? route('my-collection.delete', $product->id) : route('my-collection.add', $product->id) }}"
           method="POST">
           @csrf
           @if ($product->isFavoritedBy(auth()->user()))
@@ -480,74 +474,11 @@
     });
   </script>
 
+  <!-- BOOKMARK FUNCTIONALITY -->
   <script>
-    //BOOKMARK FUNCTIONALITY
     document.addEventListener('DOMContentLoaded', function() {
       const pdfUrl = "/assets/{{ $data->file }}";
       initPDFViewer(pdfUrl);
-
-      const bookmarkForm = document.getElementById('bookmark-form');
-      const bookmarkBtn = document.getElementById('bookmark-btn');
-      const bookmarkPageSpan = document.getElementById('bookmark-page');
-
-      function updateBookmarkPageDisplay(pageNumber = null) {
-        if (pageNumber) {
-          bookmarkPageSpan.textContent = `P${pageNumber}`;
-        } else {
-          bookmarkPageSpan.textContent = '';
-        }
-      }
-
-      fetch(`/bookmarks/{{ $product->id }}`)
-        .then(response => response.json())
-        .then(data => {
-          if (data && data.id) {
-            updateBookmarkPageDisplay(data.page_number);
-          }
-        })
-        .catch(error => console.error('Error:', error));
-
-      bookmarkForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const currentPage = document.getElementById('page-num').textContent;
-
-        fetch(this.action, {
-            method: this.method,
-            headers: {
-              'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
-            },
-            body: new FormData(this)
-          })
-          .then(response => {
-            if (response.ok) {
-              const isBookmarked = bookmarkBtn.getAttribute('data-bookmarked') === 'true';
-              const bookmarkIcon = bookmarkBtn.querySelector('i');
-
-              if (isBookmarked) {
-                bookmarkIcon.className = 'bx bx-bookmark';
-                bookmarkBtn.setAttribute('data-bookmarked', 'false');
-                bookmarkBtn.classList.add('btn-primary');
-                bookmarkForm.action = '{{ route('favorites.add', $product->id) }}';
-                bookmarkForm.querySelector('input[name="_method"]')?.remove();
-                updateBookmarkPageDisplay(null);
-              } else {
-                bookmarkIcon.className = 'bx bxs-bookmark';
-                bookmarkBtn.setAttribute('data-bookmarked', 'true');
-                bookmarkBtn.classList.remove('btn-primary');
-                bookmarkForm.action = '{{ route('favorites.delete', $product->id) }}';
-                updateBookmarkPageDisplay(currentPage);
-                if (!bookmarkForm.querySelector('input[name="_method"]')) {
-                  const methodInput = document.createElement('input');
-                  methodInput.type = 'hidden';
-                  methodInput.name = '_method';
-                  methodInput.value = 'DELETE';
-                  bookmarkForm.appendChild(methodInput);
-                }
-              }
-            }
-          })
-          .catch(error => console.error('Error:', error));
-      });
     });
   </script>
 
