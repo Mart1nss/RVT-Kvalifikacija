@@ -8,7 +8,7 @@
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <link rel="stylesheet" href="{{ asset('css/notifications-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/usermanage-style.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/confirmation-modal-style.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/modal-confirmation-delete.css') }}">
   <link rel="stylesheet" href="{{ asset('css/main-style.css') }}">
 
 </head>
@@ -29,7 +29,8 @@
 
     <div class="item-container">
       <div class="filter-div">
-        <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names..." title="Type in a name">
+        <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names..."
+          title="Type in a name">
 
         <div class="button-container">
           <div class="dropdown">
@@ -78,7 +79,7 @@
             </tr>
           </thead>
           <tbody>
-            @foreach($users as $user)
+            @foreach ($users as $user)
               <tr>
                 <td>{{ $user->id }}</td>
                 <td>{{ $user->name }}</td>
@@ -97,10 +98,12 @@
                 <td>{{ $user->created_at->format('M d, Y') }}</td>
                 <td>{{ $user->updated_at->format('M d, Y') }}</td>
                 <td>
-                  <form action="{{ route('users.destroy', $user) }}" method="POST" style="display: inline;" class="delete-form">
+                  <form action="{{ route('users.destroy', $user) }}" method="POST" style="display: inline;"
+                    class="delete-form">
                     @csrf
                     @method('DELETE')
-                    <button type="button" class="remove-btn" onclick="confirmDelete({{ $user->id }}, '{{ $user->name }}')">
+                    <button type="button" class="remove-btn"
+                      onclick="confirmDelete({{ $user->id }}, '{{ $user->name }}')">
                       DELETE
                     </button>
                   </form>
@@ -114,24 +117,23 @@
   </div>
 
   <!-- Delete Confirmation Modal -->
-  <div id="deleteModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Delete User</h2>
-        </div>
-        <div class="modal-body">
-            <p>Are you sure you want to delete user "<span id="userName"></span>"?</p>
-            <p class="confirmation-text">This action cannot be undone.</p>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
-            <button type="button" class="btn-delete" id="confirmDeleteBtn">Delete</button>
-        </div>
+  <div id="deleteModal" class="delete-confirmation-modal">
+    <div class="delete-confirmation-content">
+      <div class="delete-confirmation-header">
+        <h2>Delete User</h2>
+      </div>
+      <div class="delete-confirmation-body">
+        <p>Are you sure you want to delete user "<span id="userName"></span>"?</p>
+        <p class="delete-confirmation-text">This action cannot be undone.</p>
+      </div>
+      <div class="delete-confirmation-footer">
+        <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+        <button type="button" class="btn-delete" id="confirmDeleteBtn">Delete</button>
+      </div>
     </div>
   </div>
 
   <script>
-
     function myFunction() {
       var input, filter, table, tr, td, i, txtValue;
       input = document.getElementById("myInput");
@@ -180,7 +182,7 @@
     }
 
     // Close dropdowns if user clicks anywhere on the page
-    document.addEventListener('click', function (event) {
+    document.addEventListener('click', function(event) {
       var dropdowns = document.getElementsByClassName("dropdown-content");
       var sortButton = document.getElementById("sortButton");
       var filterButton = document.getElementById("filterButton");
@@ -196,8 +198,8 @@
     });
 
     // Prevent clicks inside dropdowns from bubbling to document
-    document.querySelectorAll('.dropdown-content').forEach(function (dropdown) {
-      dropdown.addEventListener('click', function (event) {
+    document.querySelectorAll('.dropdown-content').forEach(function(dropdown) {
+      dropdown.addEventListener('click', function(event) {
         event.stopPropagation();
       });
     });
@@ -212,14 +214,22 @@
       const unit = matches[2];
 
       switch (unit) {
-        case 'second': return value / 60;
-        case 'minute': return value;
-        case 'hour': return value * 60;
-        case 'day': return value * 24 * 60;
-        case 'week': return value * 7 * 24 * 60;
-        case 'month': return value * 30 * 24 * 60;
-        case 'year': return value * 365 * 24 * 60;
-        default: return 0;
+        case 'second':
+          return value / 60;
+        case 'minute':
+          return value;
+        case 'hour':
+          return value * 60;
+        case 'day':
+          return value * 24 * 60;
+        case 'week':
+          return value * 7 * 24 * 60;
+        case 'month':
+          return value * 30 * 24 * 60;
+        case 'year':
+          return value * 365 * 24 * 60;
+        default:
+          return 0;
       }
     }
 
@@ -260,7 +270,7 @@
       // Close dropdown after selection
       dropdownContent.classList.remove("show");
 
-      rows.sort(function (a, b) {
+      rows.sort(function(a, b) {
         switch (sortType) {
           case 'nameAZ':
             return a.cells[1].textContent.localeCompare(b.cells[1].textContent);
@@ -291,7 +301,7 @@
       }
 
       // Add sorted rows back
-      rows.forEach(function (row) {
+      rows.forEach(function(row) {
         tbody.appendChild(row);
       });
     }
@@ -339,7 +349,7 @@
     }
 
     // Sort by oldest users by default when page loads
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
       handleSort('oldest', event);
     });
 
@@ -347,33 +357,33 @@
     let currentForm = null;
 
     function confirmDelete(userId, userName) {
-        const modal = document.getElementById('deleteModal');
-        const userNameSpan = document.getElementById('userName');
-        const confirmBtn = document.getElementById('confirmDeleteBtn');
-        
-        currentForm = event.target.closest('form');
-        userNameSpan.textContent = userName;
-        modal.style.display = 'block';
-        
-        confirmBtn.onclick = function() {
-            if (currentForm) {
-                currentForm.submit();
-            }
+      const modal = document.getElementById('deleteModal');
+      const userNameSpan = document.getElementById('userName');
+      const confirmBtn = document.getElementById('confirmDeleteBtn');
+
+      currentForm = event.target.closest('form');
+      userNameSpan.textContent = userName;
+      modal.style.display = 'block';
+
+      confirmBtn.onclick = function() {
+        if (currentForm) {
+          currentForm.submit();
         }
+      }
     }
 
     function closeModal() {
-        const modal = document.getElementById('deleteModal');
-        modal.style.display = 'none';
-        currentForm = null;
+      const modal = document.getElementById('deleteModal');
+      modal.style.display = 'none';
+      currentForm = null;
     }
 
     // Close modal when clicking outside
     window.onclick = function(event) {
-        const modal = document.getElementById('deleteModal');
-        if (event.target == modal) {
-            closeModal();
-        }
+      const modal = document.getElementById('deleteModal');
+      if (event.target == modal) {
+        closeModal();
+      }
     }
   </script>
 

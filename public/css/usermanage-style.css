@@ -91,7 +91,8 @@
     width: 100%;
     border-collapse: collapse;
     background-color: #2a2a2a;
-    border-radius: 10px;
+    border: none;
+    border-radius: 8px;
     overflow: hidden;
 }
 
