@@ -1,0 +1,223 @@
+/* Edit Book Modal */
+.edit-book-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: editModalFadeIn 0.3s;
+    pointer-events: auto;
+}
+
+.edit-book-modal.active {
+    display: block;
+    pointer-events: auto;
+}
+
+.edit-book-modal.closing {
+    animation: editModalFadeOut 0.3s;
+    pointer-events: none;
+}
+
+.edit-book-modal-content {
+    background-color: #1c1a1a;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    animation: editModalSlideIn 0.3s;
+    pointer-events: auto;
+}
+
+.edit-book-modal.closing .edit-book-modal-content {
+    animation: editModalSlideOut 0.3s;
+}
+
+.edit-book-modal-header {
+    margin-bottom: 20px;
+}
+
+.edit-book-modal-header h2 {
+    margin: 0;
+    color: white;
+    text-transform: uppercase;
+    font-family: sans-serif;
+    font-weight: 800;
+    font-size: 24px;
+}
+
+#editForm label {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    color: white;
+    font-family: sans-serif;
+}
+
+#editForm input,
+#editForm select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #4a4a4a;
+    background-color: rgb(56, 56, 56);
+    color: white;
+    font-size: 14px;
+}
+
+.edit-book-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.edit-book-btn-primary {
+    border: none;
+    background-color: white;
+    color: black;
+    padding: 10px 20px;
+    height: 40px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 12px;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.edit-book-btn-primary:hover {
+    opacity: 0.8;
+}
+
+.edit-book-btn-secondary {
+    border: none;
+    background-color: #383838;
+    color: white;
+    padding: 10px 20px;
+    height: 40px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 12px;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.edit-book-btn-secondary:hover {
+    opacity: 0.8;
+}
+
+/* Visibility Toggle Styles */
+.visibility-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #252525;
+    transition: 0.4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: green;
+    transition: 0.4s;
+}
+
+input:checked + .slider {
+    background-color: white;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.visibility-label {
+    font-size: 16px;
+    color: white;
+}
+
+/* Animation Keyframes */
+@keyframes editModalFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes editModalFadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes editModalSlideIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+@keyframes editModalSlideOut {
+    from {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+    to {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+    }
+}

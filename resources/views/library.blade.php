@@ -86,45 +86,7 @@
     {{-- Mobile Modals --}}
     <div class="mobile-modals-container">
       @foreach ($data as $book)
-        <div class="mobile-modal" data-book-id="{{ $book->id }}">
-          <div class="modal-content">
-            <button class="modal-close"><i class='bx bx-x'></i></button>
-            <div class="modal-book-info">
-              <div class="modal-thumbnail">
-                <div class="thumbnail" data-pdfpath="/assets/{{ $book->file }}">
-                  <div class="loading-indicator">
-                    <i class='bx bx-loader-alt'></i>
-                  </div>
-                </div>
-              </div>
-              <div class="modal-details">
-                <h3>{{ $book->title }}</h3>
-                <p class="modal-author">{{ $book->author }}</p>
-                <p class="modal-category">{{ $book->category->name ?? 'Uncategorized' }}</p>
-                <div class="modal-rating">
-                  <i class='bx bxs-star'></i>
-                  <span>{{ number_format($book->rating ?? 0, 1) }}</span>
-                </div>
-              </div>
-            </div>
-            <div class="modal-buttons">
-              <a class="view-btn" href="{{ route('view', $book->id) }}">
-                <i class='bx bx-book-reader'></i> Read Now
-              </a>
-              <form
-                action="{{ $book->isInReadLaterOf(auth()->user()) ? route('readlater.delete', $book->id) : route('readlater.add', $book->id) }}"
-                method="POST" style="display: contents;">
-                @csrf
-                @if ($book->isInReadLaterOf(auth()->user()))
-                  @method('DELETE')
-                @endif
-                <button type="submit" class="favorite-btn">
-                  <i class='bx {{ $book->isInReadLaterOf(auth()->user()) ? 'bxs-bookmark' : 'bx-bookmark' }}'></i>
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
+        @include('components.book-modal', ['book' => $book, 'showAdminActions' => false])
       @endforeach
     </div>
 
@@ -421,6 +383,59 @@
       });
 
       dropdownContent.appendChild(fragment);
+    }
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const isMobile = window.innerWidth <= 768;
+
+      if (isMobile) {
+        document.querySelectorAll('.pdf-item').forEach(item => {
+          item.addEventListener('click', function(e) {
+            if (e.target.closest('.view-btn') || e.target.closest('.favorite-btn')) {
+              return;
+            }
+
+            const bookId = this.dataset.bookId;
+            const modal = document.querySelector(`.mobile-modal[data-book-id="${bookId}"]`);
+
+            if (modal) {
+              modal.classList.add('active');
+              document.body.style.overflow = 'hidden';
+            }
+          });
+        });
+
+        document.querySelectorAll('.modal-close').forEach(button => {
+          button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            closeAllMobileModals();
+          });
+        });
+
+        document.querySelectorAll('.mobile-modal').forEach(modal => {
+          modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+              closeAllMobileModals();
+            }
+          });
+        });
+      }
+
+      window.addEventListener('resize', function() {
+        const isMobile = window.innerWidth <= 768;
+        if (!isMobile) {
+          closeAllMobileModals();
+        }
+      });
+    });
+
+    function closeAllMobileModals() {
+      document.querySelectorAll('.mobile-modal.active').forEach(modal => {
+        modal.classList.remove('active');
+      });
+      document.body.style.overflow = '';
     }
   </script>
 

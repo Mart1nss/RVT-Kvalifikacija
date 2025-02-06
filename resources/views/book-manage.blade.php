@@ -8,8 +8,8 @@
   <link rel="stylesheet" href="{{ asset('css/navbar-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/allbooks-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/product-style.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/modal-style.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/confirmation-modal-style.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/modal-edit.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/modal-confirmation-delete.css') }}">
   <link rel="stylesheet" href="{{ asset('css/notifications-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/main-style.css') }}">
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
@@ -17,79 +17,13 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf_viewer.min.css"
     integrity="sha512-kQO2X6Ls8Fs1i/pPQaRWkT40U/SELsldCgg4njL8zT0q4AfABNuS+xuy+69PFT21dow9T6OiJF43jan67GX+Kw=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <style>
-    .visibility-toggle {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 10px 0;
-    }
-
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 60px;
-      height: 34px;
-    }
-
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #252525;
-      transition: .4s;
-    }
-
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 26px;
-      width: 26px;
-      left: 4px;
-      bottom: 4px;
-      background-color: green;
-      transition: .4s;
-    }
-
-    input:checked+.slider {
-      background-color: white;
-    }
-
-    input:checked+.slider:before {
-      transform: translateX(26px);
-    }
-
-    .slider.round {
-      border-radius: 34px;
-    }
-
-    .slider.round:before {
-      border-radius: 50%;
-    }
-
-    .visibility-label {
-      font-size: 16px;
-    }
-  </style>
 </head>
-
-
 
 
 @include('components.alert')
 @include('navbar')
 
 <div class="main-container">
-
 
 
   <div class="text-container">
@@ -222,7 +156,7 @@
           <p class="info-category">{{ $book->category->name ?? '' }}</p>
           <div class="button-container">
             <a class="view-btn" href="{{ route('view', $book->id) }}">
-              <i class='bx bx-book-reader'></i> View
+              <i class='bx bx-book-reader'></i> Read
             </a>
             <form action="{{ route('readlater.add', $book->id) }}" method="POST" style="display: contents;">
               @csrf
@@ -243,60 +177,14 @@
   {{-- Mobile Modals --}}
   <div class="mobile-modals-container">
     @foreach ($data as $book)
-      <div class="mobile-modal" data-book-id="{{ $book->id }}">
-        <div class="modal-content">
-          <button class="modal-close"><i class='bx bx-x'></i></button>
-          <div class="modal-book-info">
-            <div class="modal-thumbnail">
-              <div class="thumbnail" data-pdfpath="/assets/{{ $book->file }}">
-                <img src="" alt="Book Cover" style="width: 100%; height: 100%; object-fit: cover;">
-              </div>
-            </div>
-            <div class="modal-details">
-              <h3>{{ $book->title }}</h3>
-              <p class="modal-author">{{ $book->author }}</p>
-              <p class="modal-category">{{ $book->category->name ?? 'Uncategorized' }}</p>
-              <div class="modal-rating">
-                <i class='bx bxs-star'></i>
-                <span>{{ number_format($book->rating ?? 0, 1) }}</span>
-              </div>
-            </div>
-          </div>
-          <div class="modal-buttons">
-            <div class="modal-action-row">
-              <a class="view-btn" href="{{ route('view', $book->id) }}">
-                <i class='bx bx-book-reader'></i> Read Now
-              </a>
-              <div class="action-buttons-group">
-                <form action="{{ route('readlater.add', $book->id) }}" method="POST" style="display: contents;">
-                  @csrf
-                  <button type="submit" class="action-btn">
-                    <i class='bx {{ $book->isInReadLaterOf(auth()->user()) ? 'bxs-bookmark' : 'bx-bookmark' }}'></i>
-                  </button>
-                </form>
-                <button class="action-btn edit-btn"
-                  onclick="openEditModal({{ $book->id }}); closeAllMobileModals();">
-                  <i class='bx bx-edit-alt'></i>
-                </button>
-                <a href="{{ route('download', $book->file) }}" class="action-btn download-btn">
-                  <i class='bx bxs-download'></i>
-                </a>
-                <button class="action-btn delete-btn"
-                  onclick="confirmDelete('{{ $book->title }}', '{{ $book->author }}', {{ $book->id }}); closeAllMobileModals();">
-                  <i class='bx bx-trash'></i>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      @include('components.book-modal', ['book' => $book, 'showAdminActions' => true])
     @endforeach
   </div>
 
   <!-- Edit Modal -->
-  <div id="editModal" class="edit-modal">
-    <div class="edit-modal-content">
-      <div class="edit-modal-header">
+  <div id="editModal" class="edit-book-modal">
+    <div class="edit-book-modal-content">
+      <div class="edit-book-modal-header">
         <h2>Edit Book</h2>
       </div>
       <form id="editForm" method="POST">
@@ -307,7 +195,7 @@
         <label for="author">Author:</label>
         <input type="text" id="author" name="author" required>
         <label for="category_id">Category:</label>
-        <select id="category_id" name="category_id" class="form-control" required>
+        <select id="category_id" name="category_id" required>
           <option value="">Select Category</option>
           @foreach ($categories as $category)
             <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -320,25 +208,25 @@
           </label>
           <span class="visibility-label">Public</span>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="edit-btn-secondary" onclick="closeEditModal()">CANCEL</button>
-          <button type="submit" class="edit-btn-primary">SAVE</button>
+        <div class="edit-book-modal-footer">
+          <button type="button" class="edit-book-btn-secondary" onclick="closeEditModal()">CANCEL</button>
+          <button type="submit" class="edit-book-btn-primary">SAVE</button>
         </div>
       </form>
     </div>
   </div>
 
   <!-- Delete Confirmation Modal -->
-  <div id="deleteModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
+  <div id="deleteModal" class="delete-confirmation-modal">
+    <div class="delete-confirmation-content">
+      <div class="delete-confirmation-header">
         <h2>Delete Book</h2>
       </div>
-      <div class="modal-body">
-        <p>Are you sure you want to delete <span id="deleteBookDetails"></span> book?</p>
-        <p class="confirmation-text">This action cannot be undone.</p>
+      <div class="delete-confirmation-body">
+        <p>Are you sure you want to delete <span id="deleteBookDetails"></span></p>
+        <p class="delete-confirmation-text">This action cannot be undone.</p>
       </div>
-      <div class="modal-footer">
+      <div class="delete-confirmation-footer">
         <button type="button" class="btn-secondary" onclick="closeDeleteModal()">Cancel</button>
         <button type="button" class="btn-delete" id="confirmDeleteBtn" onclick="submitDelete()">Delete</button>
       </div>
@@ -380,7 +268,10 @@
         document.getElementById('edit_is_public').checked = data.is_public;
         document.querySelector('#editForm .visibility-label').textContent = data.is_public ? 'Public' : 'Private';
         document.getElementById('editForm').action = `/update/${id}`;
-        document.getElementById('editModal').style.display = 'block';
+        const modal = document.getElementById('editModal');
+        modal.style.display = 'block';
+        modal.classList.remove('closing');
+        document.body.style.overflow = 'hidden';
       })
       .catch(error => {
         console.error('Error:', error);
@@ -389,14 +280,46 @@
   }
 
   function closeEditModal() {
-    document.getElementById('editModal').style.display = 'none';
+    const modal = document.getElementById('editModal');
+    modal.classList.add('closing');
+    setTimeout(() => {
+      modal.style.display = 'none';
+      modal.classList.remove('closing');
+      document.body.style.overflow = '';
+    }, 300); // Match animation duration
+  }
+
+  function confirmDelete(title, author, id) {
+    currentDeleteForm = document.getElementById('deleteForm' + id);
+    document.getElementById('deleteBookDetails').textContent = `${title} by ${author}`;
+    const modal = document.getElementById('deleteModal');
+    modal.style.display = 'block';
+    modal.classList.remove('closing');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDeleteModal() {
+    const modal = document.getElementById('deleteModal');
+    modal.classList.add('closing');
+    setTimeout(() => {
+      modal.style.display = 'none';
+      modal.classList.remove('closing');
+      document.body.style.overflow = '';
+      currentDeleteForm = null;
+    }, 300); // Match animation duration
+  }
+
+  function submitDelete() {
+    if (currentDeleteForm) {
+      currentDeleteForm.submit();
+    }
   }
 
   // Close modal when clicking outside
   window.onclick = function(event) {
-    const modal = document.getElementById('editModal');
+    const editModal = document.getElementById('editModal');
     const deleteModal = document.getElementById('deleteModal');
-    if (event.target == modal) {
+    if (event.target == editModal) {
       closeEditModal();
     } else if (event.target == deleteModal) {
       closeDeleteModal();
@@ -734,12 +657,21 @@
   function confirmDelete(title, author, id) {
     currentDeleteForm = document.getElementById('deleteForm' + id);
     document.getElementById('deleteBookDetails').textContent = `${title} by ${author}`;
-    document.getElementById('deleteModal').style.display = 'block';
+    const modal = document.getElementById('deleteModal');
+    modal.style.display = 'block';
+    modal.classList.remove('closing');
+    document.body.style.overflow = 'hidden';
   }
 
   function closeDeleteModal() {
-    document.getElementById('deleteModal').style.display = 'none';
-    currentDeleteForm = null;
+    const modal = document.getElementById('deleteModal');
+    modal.classList.add('closing');
+    setTimeout(() => {
+      modal.style.display = 'none';
+      modal.classList.remove('closing');
+      document.body.style.overflow = '';
+      currentDeleteForm = null;
+    }, 300); // Match animation duration
   }
 
   function submitDelete() {
@@ -750,8 +682,11 @@
 
   // Close modal when clicking outside
   window.onclick = function(event) {
-    const modal = document.getElementById('deleteModal');
-    if (event.target == modal) {
+    const editModal = document.getElementById('editModal');
+    const deleteModal = document.getElementById('deleteModal');
+    if (event.target == editModal) {
+      closeEditModal();
+    } else if (event.target == deleteModal) {
       closeDeleteModal();
     }
   }
@@ -1011,9 +946,13 @@
 
   function closeAllMobileModals() {
     document.querySelectorAll('.mobile-modal.active').forEach(modal => {
-      modal.classList.remove('active');
+      modal.classList.add('closing');
+      setTimeout(() => {
+        modal.classList.remove('active');
+        modal.classList.remove('closing');
+        document.body.style.overflow = '';
+      }, 300); // Match animation duration
     });
-    document.body.style.overflow = '';
   }
 </script>
 

@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="{{ asset('css/allbooks-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/notifications-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/favorites-style.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/modal-book-mobile.css') }}">
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.mjs"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf_viewer.min.css"
@@ -70,7 +71,7 @@
         @else
           <p
             style="font-family: sans-serif; font-size: 14px; font-weight: 800; text-transform: uppercase; color: white;">
-            There are no favorites!</p>
+            There are no favorites in your collection!</p>
         @endif
       </div>
     </div>
@@ -108,83 +109,27 @@
         @else
           <p
             style="font-family: sans-serif; font-size: 14px; font-weight: 800; text-transform: uppercase; color: white;">
-            There are no books in read later!</p>
+            There are no books in read later list!</p>
         @endif
       </div>
     </div>
 
     {{-- Mobile Modals --}}
     <div class="mobile-modals-container">
-      {{-- Favorites Modals --}}
-      @foreach ($favorites as $favorite)
-        <div class="mobile-modal" data-book-id="{{ $favorite->product->id }}">
-          <div class="modal-content">
-            <button class="modal-close"><i class='bx bx-x'></i></button>
-            <div class="modal-book-info">
-              <div class="modal-thumbnail">
-                <div class="thumbnail" data-pdfpath="/assets/{{ $favorite->product->file }}"></div>
-              </div>
-              <div class="modal-details">
-                <h3>{{ $favorite->product->title }}</h3>
-                <p class="modal-author">{{ $favorite->product->author }}</p>
-                <p class="modal-category">{{ $favorite->product->category->name ?? 'Uncategorized' }}</p>
-                <div class="modal-rating">
-                  <i class='bx bxs-star'></i>
-                  <span>{{ number_format($favorite->product->rating ?? 0, 1) }}</span>
-                </div>
-              </div>
-            </div>
-            <div class="modal-buttons">
-              <a class="view-btn" href="{{ route('view', $favorite->product->id) }}">
-                <i class='bx bx-book-reader'></i> Read Now
-              </a>
-              <form action="{{ route('my-collection.delete', $favorite->product_id) }}" method="POST"
-                style="display: contents;">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="favorite-btn">
-                  <i class='bx bxs-star'></i>
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
+      @foreach ($favorites as $book)
+        @include('components.book-modal', [
+            'book' => $book->product,
+            'showAdminActions' => false,
+            'source' => 'favorites',
+        ])
       @endforeach
 
-      {{-- Read Later Modals --}}
-      @foreach ($readLater as $item)
-        <div class="mobile-modal" data-book-id="{{ $item->product->id }}">
-          <div class="modal-content">
-            <button class="modal-close"><i class='bx bx-x'></i></button>
-            <div class="modal-book-info">
-              <div class="modal-thumbnail">
-                <div class="thumbnail" data-pdfpath="/assets/{{ $item->product->file }}"></div>
-              </div>
-              <div class="modal-details">
-                <h3>{{ $item->product->title }}</h3>
-                <p class="modal-author">{{ $item->product->author }}</p>
-                <p class="modal-category">{{ $item->product->category->name ?? 'Uncategorized' }}</p>
-                <div class="modal-rating">
-                  <i class='bx bxs-star'></i>
-                  <span>{{ number_format($item->product->rating ?? 0, 1) }}</span>
-                </div>
-              </div>
-            </div>
-            <div class="modal-buttons">
-              <a class="view-btn" href="{{ route('view', $item->product->id) }}">
-                <i class='bx bx-book-reader'></i> Read Now
-              </a>
-              <form action="{{ route('readlater.delete', $item->product_id) }}" method="POST"
-                style="display: contents;">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="favorite-btn">
-                  <i class='bx bxs-bookmark'></i>
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
+      @foreach ($readLater as $book)
+        @include('components.book-modal', [
+            'book' => $book->product,
+            'showAdminActions' => false,
+            'source' => 'readlater',
+        ])
       @endforeach
     </div>
   </div>
