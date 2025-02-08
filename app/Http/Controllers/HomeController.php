@@ -120,6 +120,7 @@ class HomeController extends Controller
         $query = $request->get('query');
         $visibility = $request->get('visibility', 'all');
         $genres = $request->get('genres') ? explode(',', $request->get('genres')) : [];
+        $sort = $request->get('sort', 'newest');
 
         $data = Product::query();
 
@@ -139,15 +140,45 @@ class HomeController extends Controller
             });
         }
 
+        // Apply sorting
+        switch ($sort) {
+            case 'oldest':
+                $data->orderBy('created_at', 'asc');
+                break;
+            case 'title_asc':
+                $data->orderBy('title', 'asc');
+                break;
+            case 'title_desc':
+                $data->orderBy('title', 'desc');
+                break;
+            case 'author_asc':
+                $data->orderBy('author', 'asc');
+                break;
+            case 'author_desc':
+                $data->orderBy('author', 'desc');
+                break;
+            case 'rating_asc':
+                $data->withAvg('reviews', 'review_score')
+                    ->orderBy('reviews_avg_review_score', 'asc');
+                break;
+            case 'rating_desc':
+                $data->withAvg('reviews', 'review_score')
+                    ->orderBy('reviews_avg_review_score', 'desc');
+                break;
+            default: // 'newest'
+                $data->orderBy('created_at', 'desc');
+        }
+
         $data = $data->paginate(15)->withQueryString();
         $categories = Category::all();
-        return view('book-manage', compact('data', 'categories', 'visibility'));
+        return view('book-manage', compact('data', 'categories', 'visibility', 'sort'));
     }
 
     public function bookpage(Request $request)
     {
         $query = $request->get('query');
         $genres = $request->get('genres') ? explode(',', $request->get('genres')) : [];
+        $sort = $request->get('sort', 'newest');
 
         $data = Product::query()
             ->where('is_public', true)
@@ -159,15 +190,44 @@ class HomeController extends Controller
                 return $q->whereHas('category', function ($sq) use ($genres) {
                     $sq->whereIn('name', $genres);
                 });
-            })
-            ->paginate(15)->withQueryString();
+            });
+
+        // Apply sorting
+        switch ($sort) {
+            case 'oldest':
+                $data->orderBy('created_at', 'asc');
+                break;
+            case 'title_asc':
+                $data->orderBy('title', 'asc');
+                break;
+            case 'title_desc':
+                $data->orderBy('title', 'desc');
+                break;
+            case 'author_asc':
+                $data->orderBy('author', 'asc');
+                break;
+            case 'author_desc':
+                $data->orderBy('author', 'desc');
+                break;
+            case 'rating_asc':
+                $data->orderBy('reviews_avg_review_score', 'asc');
+                break;
+            case 'rating_desc':
+                $data->orderBy('reviews_avg_review_score', 'desc');
+                break;
+            default: // 'newest'
+                $data->orderBy('created_at', 'desc');
+        }
+
+        $data = $data->paginate(15)->withQueryString();
 
         $data->each(function ($book) {
             $book->rating = $book->reviews_avg_review_score ?? 0;
         });
 
-        return view('Library', compact('data'));
+        return view('Library', compact('data', 'sort'));
     }
+
 
 
     public function edit($id)
@@ -301,6 +361,60 @@ class HomeController extends Controller
         ]);
     }
 
+    public function ajaxBooks(Request $request)
+    {
+        $query = $request->get('query');
+        $genres = $request->get('genres') ? explode(',', $request->get('genres')) : [];
+        $sort = $request->get('sort', 'newest');
 
+        $data = Product::query()
+            ->where('is_public', true)
+            ->withAvg('reviews', 'review_score');
+
+        if ($query) {
+            $data->where('title', 'like', '%' . $query . '%');
+        }
+
+        if (!empty($genres)) {
+            $data->whereHas('category', function ($q) use ($genres) {
+                $q->whereIn('name', $genres);
+            });
+        }
+
+        // Apply sorting
+        switch ($sort) {
+            case 'oldest':
+                $data->orderBy('created_at', 'asc');
+                break;
+            case 'title_asc':
+                $data->orderBy('title', 'asc');
+                break;
+            case 'title_desc':
+                $data->orderBy('title', 'desc');
+                break;
+            case 'author_asc':
+                $data->orderBy('author', 'asc');
+                break;
+            case 'author_desc':
+                $data->orderBy('author', 'desc');
+                break;
+            case 'rating_asc':
+                $data->orderBy('reviews_avg_review_score', 'asc');
+                break;
+            case 'rating_desc':
+                $data->orderBy('reviews_avg_review_score', 'desc');
+                break;
+            default: // 'newest'
+                $data->orderBy('created_at', 'desc');
+        }
+
+        $data = $data->paginate(15);
+
+        $data->each(function ($book) {
+            $book->rating = $book->reviews_avg_review_score ?? 0;
+        });
+
+        return view('components.book-grid', compact('data'))->render();
+    }
 
 }

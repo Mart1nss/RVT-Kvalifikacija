@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="{{ asset('css/modal-confirmation-delete.css') }}">
   <link rel="stylesheet" href="{{ asset('css/notifications-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/main-style.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/components/pdf-item.css') }}">
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.mjs"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf_viewer.min.css"
@@ -30,69 +31,7 @@
     <h1 class="text-container-title">Upload Book</h1>
   </div>
   <div class="item-container3">
-
-    <div class="upload-div">
-
-      <form class="upload-book-form" action="{{ url('uploadbook') }}" method="post" enctype="multipart/form-data">
-
-        @csrf
-        <div class="form-group" style="margin-bottom: 18px;">
-          <input class="form-control" style="height: 42px;" type="text" name="title" id="titleInput"
-            placeholder="Title">
-          <span class="error-message" id="titleError"></span>
-        </div>
-        <div class="form-group" style="margin-bottom: 18px;">
-          <input class="form-control" style="height: 42px;" type="text" name="author" id="authorInput"
-            placeholder="Author">
-          <span class="error-message" id="authorError"></span>
-        </div>
-        <div class="form-group" style="margin-bottom: 18px;">
-          <select class="form-control" name="category_id" id="categoryInput"
-            style="height: 42px; color:gray; cursor: pointer;">
-            <option value="">Select Category</option>
-            @foreach ($categories as $category)
-              <option value="{{ $category->id }}">{{ $category->name }}</option>
-            @endforeach
-          </select>
-          <span class="error-message" id="categoryError"></span>
-        </div>
-        <div class="form-group" style="margin-bottom: 18px;">
-          <div class="visibility-toggle">
-            <label class="switch">
-              <input type="checkbox" name="is_public" checked>
-              <span class="slider round"></span>
-            </label>
-            <span class="visibility-label">Public</span>
-          </div>
-        </div>
-
-        <p class="max-file-size-text">max file size <span class="highlight-text">10 mb </span>| format <span
-            class="highlight-text">pdf</span></p>
-        <div class="file-input-container">
-          <div class="drop-zone" id="drop-zone">
-            <div class="drop-zone-content">
-              <i class='bx bx-upload'></i>
-              <p>Drag and drop PDF file here or</p>
-              <label for="fileInput" class="custom-file-upload">
-                Choose File
-              </label>
-            </div>
-            <input class="file-input" type="file" name="file" id="fileInput" accept=".pdf">
-          </div>
-          <div class="file-info" id="file-info" style="display: none;">
-            <span id="file-chosen">No file chosen</span>
-            <button type="button" class="clear-file-btn" onclick="clearFileInput()">Clear</button>
-          </div>
-          <span class="error-message" id="fileError"></span>
-        </div>
-
-        <div class="form-btn">
-          <input class="btn-primary" type="submit" value="UPLOAD">
-        </div>
-
-      </form>
-
-    </div>
+    @include('components.book-upload-form')
   </div>
 
   <div class="text-container">
@@ -102,20 +41,39 @@
       <div class="search-container">
         <input type="text" id="search-input" placeholder="Search books...">
       </div>
+      <button class="mobile-filter-btn">
+        <i class='bx bx-filter-alt'></i>
+      </button>
       <div class="genre-filter-container">
         <div class="genre-dropdown">
           <button class="dropdown-btn">Filter by Genres</button>
           <ul class="dropdown-content">
-            <!-- genres will be populated by JavaScript -->
+            <!-- Genres will be populated by JavaScript -->
+            <div class="dropdown-footer">
+              <button type="button" class="clear-filters">Clear</button>
+              <button type="button" class="apply-filters">Apply</button>
+            </div>
           </ul>
         </div>
       </div>
-      <div class="visibility-filter" style="margin-left: 15px; cursor: pointer;">
+      <div class="visibility-filter" style="margin-left: 15px;">
         <select id="visibilityFilter" onchange="applyVisibilityFilter()"
           style="padding: 8px; border-radius: 8px; background: #1c1a1a; color: white; border: none; height: 41px; text-transform: uppercase; font-weight: 800; font-size: 12px;">
           <option value="all" {{ $visibility == 'all' ? 'selected' : '' }}>All Books</option>
           <option value="public" {{ $visibility == 'public' ? 'selected' : '' }}>Public Only</option>
           <option value="private" {{ $visibility == 'private' ? 'selected' : '' }}>Private Only</option>
+        </select>
+      </div>
+      <div class="sort-dropdown">
+        <select id="sortSelect" onchange="applySorting()">
+          <option value="newest" {{ $sort == 'newest' ? 'selected' : '' }}>Newest First</option>
+          <option value="oldest" {{ $sort == 'oldest' ? 'selected' : '' }}>Oldest First</option>
+          <option value="title_asc" {{ $sort == 'title_asc' ? 'selected' : '' }}>Title (A-Z)</option>
+          <option value="title_desc" {{ $sort == 'title_desc' ? 'selected' : '' }}>Title (Z-A)</option>
+          <option value="author_asc" {{ $sort == 'author_asc' ? 'selected' : '' }}>Author (A-Z)</option>
+          <option value="author_desc" {{ $sort == 'author_desc' ? 'selected' : '' }}>Author (Z-A)</option>
+          <option value="rating_asc" {{ $sort == 'rating_asc' ? 'selected' : '' }}>Rating (Low-High)</option>
+          <option value="rating_desc" {{ $sort == 'rating_desc' ? 'selected' : '' }}>Rating (High-Low)</option>
         </select>
       </div>
     </div>
@@ -555,66 +513,128 @@
 
 
 <script>
-  function filterBooks() {
-    const selectedGenres = [];
-    const checkboxes = document.querySelectorAll('.dropdown-content input[type="checkbox"]');
-    checkboxes.forEach(checkbox => {
-      if (checkbox.checked) {
-        selectedGenres.push(checkbox.value);
-      }
-    });
-
-    const currentUrl = new URL(window.location.href);
-    if (selectedGenres.length > 0) {
-      currentUrl.searchParams.set('genres', selectedGenres.join(','));
-    } else {
-      currentUrl.searchParams.delete('genres');
-    }
-    currentUrl.searchParams.delete('page'); // Reset to first page when filtering
-    window.location.href = currentUrl.toString();
-  }
-
-  // Handle dropdown click
+  // Handle dropdown with event delegation
   document.addEventListener('DOMContentLoaded', function() {
     const dropdownBtn = document.querySelector('.dropdown-btn');
     const dropdownContent = document.querySelector('.dropdown-content');
+    const selectedGenres = new Set();
+    let tempSelectedGenres = new Set();
 
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.genre-dropdown')) {
+        dropdownContent.classList.remove('show');
+        // Reset temp selections if not applied
+        tempSelectedGenres = new Set(selectedGenres);
+        updateCheckboxes();
+      }
+    });
+
+    // Toggle dropdown
     dropdownBtn.addEventListener('click', function(e) {
       e.stopPropagation();
       dropdownContent.classList.toggle('show');
     });
 
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(e) {
-      if (!e.target.matches('.dropdown-btn') && !e.target.closest('.dropdown-content')) {
+    // Handle genre selection
+    dropdownContent.addEventListener('click', function(e) {
+      const li = e.target.closest('li');
+      if (li) {
+        const checkbox = li.querySelector('input[type="checkbox"]');
+        checkbox.checked = !checkbox.checked;
+
+        if (checkbox.checked) {
+          tempSelectedGenres.add(checkbox.value);
+        } else {
+          tempSelectedGenres.delete(checkbox.value);
+        }
+
+        updateDropdownButton(tempSelectedGenres);
+      }
+
+      // Handle Apply button click
+      if (e.target.classList.contains('apply-filters')) {
+        selectedGenres.clear();
+        tempSelectedGenres.forEach(genre => selectedGenres.add(genre));
+        applyFilters();
         dropdownContent.classList.remove('show');
+      }
+
+      // Handle Clear button click
+      if (e.target.classList.contains('clear-filters')) {
+        tempSelectedGenres.clear();
+        updateCheckboxes();
+        updateDropdownButton(tempSelectedGenres);
       }
     });
 
-    // Prevent dropdown from closing when clicking inside
-    dropdownContent.addEventListener('click', function(e) {
-      e.stopPropagation();
-    });
-  });
+    // Fetch and populate genres
+    fetch('/get-genres')
+      .then(response => response.json())
+      .then(genres => {
+        const dropdownContent = document.querySelector('.dropdown-content');
+        const fragment = document.createDocumentFragment();
 
-  // Fetch and populate genres
-  fetch('/get-genres')
-    .then(response => response.json())
-    .then(genres => {
-      const dropdownContent = document.querySelector('.dropdown-content');
-      genres.forEach(genre => {
-        if (genre) { // Only add non-null genres
-          const li = document.createElement('li');
-          li.innerHTML = `
-                      <label>
-                          <input type="checkbox" value="${genre}" onchange="filterBooks()">
-                          ${genre}
-                      </label>
-                  `;
-          dropdownContent.appendChild(li);
-        }
+        // Get current genres from URL
+        const urlParams = new URLSearchParams(window.location.href);
+        const currentGenres = urlParams.get('genres') ? urlParams.get('genres').split(',') : [];
+
+        genres.forEach(genre => {
+          if (genre) {
+            const li = document.createElement('li');
+            li.innerHTML = `
+              <label class="genre-checkbox-container">
+                <input type="checkbox" value="${genre}" ${currentGenres.includes(genre) ? 'checked' : ''}>
+                <span class="custom-checkbox"></span>
+                <span class="genre-name">${genre}</span>
+              </label>
+            `;
+            fragment.appendChild(li);
+
+            // Add to selected genres if checked
+            if (currentGenres.includes(genre)) {
+              selectedGenres.add(genre);
+              tempSelectedGenres.add(genre);
+            }
+          }
+        });
+
+        // Insert genres before the footer
+        const footer = dropdownContent.querySelector('.dropdown-footer');
+        dropdownContent.insertBefore(fragment, footer);
+        updateDropdownButton(selectedGenres);
       });
-    });
+
+    function updateCheckboxes() {
+      const checkboxes = document.querySelectorAll('.dropdown-content input[type="checkbox"]');
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = tempSelectedGenres.has(checkbox.value);
+      });
+    }
+
+    function applyFilters() {
+      const currentUrl = new URL(window.location.href);
+      if (selectedGenres.size > 0) {
+        currentUrl.searchParams.set('genres', Array.from(selectedGenres).join(','));
+      } else {
+        currentUrl.searchParams.delete('genres');
+      }
+      currentUrl.searchParams.delete('page'); // Reset to first page when filtering
+      window.location.href = currentUrl.toString();
+    }
+
+    function updateDropdownButton(genres) {
+      const btn = document.querySelector('.dropdown-btn');
+      if (genres.size === 0) {
+        btn.textContent = 'Filter by Genres';
+      } else if (genres.size === 1) {
+        btn.textContent = Array.from(genres)[0];
+      } else {
+        btn.textContent = `${genres.size} Genres Selected`;
+      }
+      btn.innerHTML += '<span style="margin-left: auto;">▼</span>';
+    }
+  });
 </script>
 
 <script>
@@ -954,6 +974,126 @@
       }, 300); // Match animation duration
     });
   }
+</script>
+
+<script>
+  function applySorting() {
+    const sort = document.getElementById('sortSelect').value;
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set('sort', sort);
+    currentUrl.searchParams.delete('page'); // Reset to first page when sorting
+    window.location.href = currentUrl.toString();
+  }
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Mobile filter panel functionality
+    const filterBtn = document.querySelector('.mobile-filter-btn');
+    const filterPanel = document.querySelector('.mobile-filter-panel');
+    const filterClose = document.querySelector('.mobile-filter-close');
+    const mobileSortSelect = document.getElementById('mobileSortSelect');
+    const mobileVisibilityFilter = document.getElementById('mobileVisibilityFilter');
+    const mobileDropdownBtn = filterPanel.querySelector('.dropdown-btn');
+    const mobileDropdownContent = filterPanel.querySelector('.dropdown-content');
+    const selectedGenres = new Set();
+
+    if (filterBtn && filterPanel && filterClose) {
+      filterBtn.addEventListener('click', () => {
+        filterPanel.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+
+      filterClose.addEventListener('click', () => {
+        filterPanel.classList.remove('active');
+        document.body.style.overflow = '';
+      });
+
+      filterPanel.addEventListener('click', (e) => {
+        if (e.target === filterPanel) {
+          filterPanel.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+
+      // Handle mobile genre dropdown
+      if (mobileDropdownBtn) {
+        mobileDropdownBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          mobileDropdownContent.classList.toggle('show');
+        });
+      }
+
+      // Handle genre selection
+      if (mobileDropdownContent) {
+        mobileDropdownContent.addEventListener('change', function(e) {
+          if (e.target.type === 'checkbox') {
+            if (e.target.checked) {
+              selectedGenres.add(e.target.value);
+            } else {
+              selectedGenres.delete(e.target.value);
+            }
+            updateDropdownButton();
+            updateResults();
+          }
+        });
+      }
+
+      // Handle mobile sort selection
+      if (mobileSortSelect) {
+        mobileSortSelect.addEventListener('change', function() {
+          const desktopSort = document.getElementById('sortSelect');
+          if (desktopSort) {
+            desktopSort.value = this.value;
+            applySorting();
+          }
+        });
+      }
+
+      // Handle mobile visibility filter
+      if (mobileVisibilityFilter) {
+        mobileVisibilityFilter.addEventListener('change', function() {
+          const desktopVisibility = document.getElementById('visibilityFilter');
+          if (desktopVisibility) {
+            desktopVisibility.value = this.value;
+            applyVisibilityFilter();
+          }
+        });
+      }
+
+      // Sync desktop visibility with mobile
+      const desktopVisibility = document.getElementById('visibilityFilter');
+      if (desktopVisibility && mobileVisibilityFilter) {
+        desktopVisibility.addEventListener('change', function() {
+          mobileVisibilityFilter.value = this.value;
+        });
+      }
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.genre-dropdown')) {
+          mobileDropdownContent.classList.remove('show');
+        }
+      });
+
+      // Prevent panel close when clicking inside
+      filterPanel.querySelector('.mobile-filter-content').addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+    }
+
+    function updateDropdownButton() {
+      const btn = mobileDropdownBtn;
+      if (selectedGenres.size === 0) {
+        btn.textContent = 'Filter by Genres';
+      } else if (selectedGenres.size === 1) {
+        btn.textContent = Array.from(selectedGenres)[0];
+      } else {
+        btn.textContent = `${selectedGenres.size} Genres Selected`;
+      }
+      btn.innerHTML += '<span style="margin-left: auto;">▼</span>';
+    }
+  });
 </script>
 
 </body>

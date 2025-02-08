@@ -169,4 +169,6 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/readlater/{id}', [ReadLaterController::class, 'delete'])->name('readlater.delete');
 });
 
+Route::get('/ajax/books', [HomeController::class, 'ajaxBooks'])->name('ajax.books');
+
 require __DIR__ . '/auth.php';
