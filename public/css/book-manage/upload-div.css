@@ -1,0 +1,256 @@
+.upload-div {
+    display: block;
+    width: 400px;
+}
+
+@media (max-width: 769px) {
+    .upload-div {
+        width: 100%;
+    }
+}
+
+.upload-text {
+    color: white;
+    text-transform: uppercase;
+    font-weight: 800;
+    margin-bottom: 20px;
+}
+
+.upload-book-form {
+    border: none;
+    background-color: #1c1a1a;
+    padding: 15px;
+    border-radius: 8px;
+    display: block;
+    color: white;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-control {
+    width: 100%;
+    height: 42px;
+    background-color: rgb(37, 37, 37);
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    outline: transparent;
+    text-align: center;
+    color: white;
+}
+
+.form-control:focus {
+    outline: white 1px solid;
+    background-color: rgb(36, 36, 36);
+}
+
+#categoryInput {
+    color: gray;
+    cursor: pointer;
+}
+
+.visibility-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #252525;
+    transition: 0.4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: green;
+    transition: 0.4s;
+}
+
+input:checked + .slider {
+    background-color: white;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.visibility-label {
+    font-size: 16px;
+}
+
+.btn-primary {
+    margin-top: 20px;
+    border: 1px solid white;
+    background-color: white;
+    height: 38px;
+    width: 100%;
+    border-radius: 8px;
+    font-weight: 800;
+    cursor: pointer;
+    font-size: 12px;
+    text-transform: uppercase;
+    transition: all 0.2s;
+}
+
+.file-input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.max-file-size-text {
+    color: white;
+    font-family: sans-serif;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.highlight-text {
+    color: rgb(255, 230, 0);
+}
+
+.drop-zone {
+    border: 2px dashed #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+}
+
+.drop-zone.dragover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: #ffffff;
+}
+
+.drop-zone-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: #ffffff;
+}
+
+.drop-zone-content i {
+    font-size: 2em;
+    color: #ffffff;
+}
+
+.drop-zone-content p {
+    margin: 0;
+    color: #ffffff;
+}
+
+.file-input {
+    display: none;
+}
+
+.custom-file-upload {
+    border: none;
+    background-color: white;
+    color: black;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.custom-file-upload:hover {
+    background-color: #e6e6e6;
+}
+
+.file-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+#file-chosen {
+    color: #ffffff;
+    flex-grow: 1;
+}
+
+.clear-file-btn {
+    padding: 6px 12px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.clear-file-btn:hover {
+    background-color: #c82333;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.file-error {
+    border-color: #dc3545 !important;
+}
+
+#fileError {
+    color: #dc3545;
+    font-size: 0.875em;
+    margin-top: 0.25rem;
+}

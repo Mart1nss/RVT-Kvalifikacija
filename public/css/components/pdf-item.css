@@ -13,6 +13,34 @@
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
+/* Loading indicator styles */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #2a2a2a;
+}
+
+.loading-indicator i {
+    font-size: 2rem;
+    color: white;
+    animation: spin 1s linear infinite;
+}
+
 .thumbnail {
     width: 100%;
     height: 100%;
@@ -125,23 +153,88 @@
     opacity: 0.5;
 }
 
-.favorite-btn {
-    padding: 8px;
-    width: 36px;
+.readlater-btn {
     height: 36px;
+    width: 36px;
+    padding: 8px;
     border: none;
-    border-radius: 8px;
-    cursor: pointer;
     background-color: #363636;
     color: white;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s;
+    cursor: pointer;
 }
 
-.favorite-btn:hover {
+.readlater-btn:hover {
     background-color: #505050;
+}
+
+.admin-actions {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.pdf-item:hover .admin-actions {
+    opacity: 1;
+}
+
+.admin-btn {
+    height: 36px;
+    width: 36px;
+    padding: 8px;
+    border: none;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.admin-btn:hover {
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+.edit-btn {
+    height: 38px;
+    width: 38px;
+    padding: 0;
+    border: none;
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.delete-btn {
+    color: #ff4444;
+}
+
+.download-btn {
+    color: white;
+    text-decoration: none;
+    border: none;
+    padding: 10px;
+    font-family: sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    text-transform: uppercase;
 }
 
 @media (max-width: 768px) {
@@ -162,6 +255,10 @@
         font-size: 12px;
         top: 5px;
         right: 5px;
+    }
+
+    .admin-actions {
+        display: none;
     }
 }
 

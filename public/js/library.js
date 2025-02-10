@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Desktop Dropdown Elements
     const genreDropdownBtn = document.querySelector(
         ".genre-dropdown .dropdown-btn"
     );
@@ -18,14 +17,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const filterInfoRow = document.querySelector(".filter-info-row");
     const bookCountElement = document.getElementById("book-count");
     const activeFiltersElement = document.getElementById("active-filters");
-    const currentSortElement = document.getElementById("current-sort");
 
-    // Shared Variables
     const selectedGenres = new Set();
     let isLoading = false;
     let searchTimeout;
 
-    // Helper Functions
     function updateClearFiltersVisibility() {
         const hasFilters =
             selectedGenres.size > 0 ||
@@ -33,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
             sortSelect.value !== "newest";
         clearFiltersBtn.style.display = hasFilters ? "flex" : "none";
 
-        // Only show filter info row for genres and search
+        // Show filter info row for genres and search
         if (selectedGenres.size > 0 || searchInput.value.trim() !== "") {
             filterInfoRow.style.display = "flex";
         } else {
@@ -44,10 +40,8 @@ document.addEventListener("DOMContentLoaded", function () {
     function updateFilterInfoRow(totalBooks) {
         if (!filterInfoRow) return;
 
-        // Update total count
         bookCountElement.textContent = totalBooks;
 
-        // Update active filters
         activeFiltersElement.innerHTML = "";
         selectedGenres.forEach((genre) => {
             const tag = document.createElement("span");
@@ -56,7 +50,6 @@ document.addEventListener("DOMContentLoaded", function () {
             activeFiltersElement.appendChild(tag);
         });
 
-        // If there's a search query, show the results count
         if (searchInput.value.trim() !== "") {
             const searchTag = document.createElement("span");
             searchTag.className = "filter-tag";
@@ -237,23 +230,28 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
-    // Separate function to attach pagination listeners
     function attachPaginationListeners() {
-        document.querySelectorAll(".pagination-container a").forEach((link) => {
-            link.addEventListener("click", (e) => {
-                e.preventDefault();
-                const pageUrl = new URL(link.href);
-                const pageNum = pageUrl.searchParams.get("page");
-                updateResults(pageNum || 1);
+        document
+            .querySelector(".pagination-container")
+            .addEventListener("click", (e) => {
+                if (e.target.tagName === "A") {
+                    e.preventDefault();
+                    const pageNum = new URL(e.target.href).searchParams.get(
+                        "page"
+                    );
+                    updateResults(pageNum || 1);
+                }
             });
-        });
     }
 
-    // Handle browser back/forward buttons
-    window.addEventListener("popstate", (event) => {
-        const url = new URL(window.location.href);
-        const page = url.searchParams.get("page");
-        updateResults(page);
+    window.addEventListener("popstate", () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        searchInput.value = urlParams.get("query") || "";
+        selectedGenres.clear();
+        (urlParams.get("genres") || "")
+            .split(",")
+            .forEach((g) => selectedGenres.add(g));
+        updateResults(urlParams.get("page") || 1);
     });
 
     // Check for active filters on page load
@@ -276,36 +274,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Genre Dropdown Logic
     if (genreDropdownBtn && genreDropdownContent) {
-        // Toggle dropdown
         genreDropdownBtn.addEventListener("click", (e) => {
             e.stopPropagation();
             genreDropdownContent.classList.toggle("show");
-            // Close sort dropdown if open
             sortDropdownContent?.classList.remove("show");
         });
 
-        // Handle genre selection
         genreDropdownContent.addEventListener("change", (e) => {
             if (e.target.type === "checkbox") {
                 if (e.target.checked) {
-                    selectedGenres.add(e.target.value);
+                    if (!selectedGenres.has(e.target.value)) {
+                        selectedGenres.add(e.target.value);
+                    }
                 } else {
                     selectedGenres.delete(e.target.value);
                 }
                 updateDropdownButton();
                 updateClearFiltersVisibility();
-                updateResults(1); // Reset to first page when filter changes
+                updateResults(1);
             }
         });
     }
 
     // Sort Dropdown Logic
     if (sortDropdownBtn && sortDropdownContent) {
-        // Toggle dropdown
         sortDropdownBtn.addEventListener("click", (e) => {
             e.stopPropagation();
             sortDropdownContent.classList.toggle("show");
-            // Close genre dropdown if open
             genreDropdownContent?.classList.remove("show");
         });
 
@@ -372,11 +367,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function applySorting() {
-    const sort = document.getElementById("sortSelect").value;
-    const currentUrl = new URL(window.location.href);
-    currentUrl.searchParams.set("sort", sort);
-    currentUrl.searchParams.delete("page"); // Reset to first page when sorting
-    window.location.href = currentUrl.toString();
+    updateResults(1);
 }
 
 function debounce(func, wait) {
@@ -389,17 +380,20 @@ function debounce(func, wait) {
 
 $(document).ready(function () {
     const searchBooks = debounce(function (searchTerm) {
-        $(".pdf-item").each(function () {
-            const title = $(this).find(".info-title").text().toLowerCase();
-            const author = $(this).find(".info-author").text().toLowerCase();
-
-            if (title.includes(searchTerm) || author.includes(searchTerm)) {
-                $(this).show();
-            } else {
-                $(this).hide();
-            }
+        const items = document.querySelectorAll(".pdf-item");
+        items.forEach((item) => {
+            const title = item
+                .querySelector(".info-title")
+                .textContent.toLowerCase();
+            const author = item
+                .querySelector(".info-author")
+                .textContent.toLowerCase();
+            item.style.display =
+                title.includes(searchTerm) || author.includes(searchTerm)
+                    ? "block"
+                    : "none";
         });
-    }, 300); // 300ms debounce
+    }, 300);
 
     $("#search-input").on("keyup", function () {
         const searchTerm = $(this).val().toLowerCase();

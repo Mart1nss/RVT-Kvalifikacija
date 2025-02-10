@@ -1,20 +1,20 @@
+<link rel="stylesheet" href="{{ asset('css/book-manage/upload-div.css') }}">
+
 <div class="upload-div">
 
   <form class="upload-book-form" action="{{ url('uploadbook') }}" method="post" enctype="multipart/form-data">
 
     @csrf
-    <div class="form-group" style="margin-bottom: 18px;">
-      <input class="form-control" style="height: 42px;" type="text" name="title" id="titleInput" placeholder="Title">
+    <div class="form-group">
+      <input class="form-control"type="text" name="title" id="titleInput" placeholder="Title">
       <span class="error-message" id="titleError"></span>
     </div>
-    <div class="form-group" style="margin-bottom: 18px;">
-      <input class="form-control" style="height: 42px;" type="text" name="author" id="authorInput"
-        placeholder="Author">
+    <div class="form-group">
+      <input class="form-control"type="text" name="author" id="authorInput" placeholder="Author">
       <span class="error-message" id="authorError"></span>
     </div>
-    <div class="form-group" style="margin-bottom: 18px;">
-      <select class="form-control" name="category_id" id="categoryInput"
-        style="height: 42px; color:gray; cursor: pointer;">
+    <div class="form-group">
+      <select class="form-control" name="category_id" id="categoryInput">
         <option value="">Select Category</option>
         @foreach ($categories as $category)
           <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -22,7 +22,7 @@
       </select>
       <span class="error-message" id="categoryError"></span>
     </div>
-    <div class="form-group" style="margin-bottom: 18px;">
+    <div class="form-group">
       <div class="visibility-toggle">
         <label class="switch">
           <input type="checkbox" name="is_public" checked>
@@ -59,3 +59,20 @@
   </form>
 
 </div>
+
+<script src="{{ asset('js/book-upload.js') }}"></script>
+<script>
+  // 1. Upload Form Visibility Toggle
+  const uploadFormToggle = document.querySelector(
+    '.upload-book-form .visibility-toggle input[type="checkbox"]'
+  );
+  if (uploadFormToggle) {
+    uploadFormToggle.addEventListener("change", function() {
+      const label =
+        this.closest(".visibility-toggle").querySelector(
+          ".visibility-label"
+        );
+      label.textContent = this.checked ? "Public" : "Private";
+    });
+  }
+</script>
