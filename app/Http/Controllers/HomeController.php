@@ -156,12 +156,10 @@ class HomeController extends Controller
                 $data->orderBy('author', 'desc');
                 break;
             case 'rating_asc':
-                $data->withAvg('reviews', 'review_score')
-                    ->orderBy('reviews_avg_review_score', 'asc');
+                $data->orderBy('reviews_avg_review_score', 'asc');
                 break;
             case 'rating_desc':
-                $data->withAvg('reviews', 'review_score')
-                    ->orderBy('reviews_avg_review_score', 'desc');
+                $data->orderBy('reviews_avg_review_score', 'desc');
                 break;
             default: // 'newest'
                 $data->orderBy('created_at', 'desc');
@@ -169,6 +167,14 @@ class HomeController extends Controller
 
         $data = $data->paginate(15)->withQueryString();
         $categories = Category::all();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('components.book-grid', compact('data'))->render(),
+                'pagination' => view('vendor.pagination.tailwind', ['paginator' => $data])->render()
+            ]);
+        }
+
         return view('book-manage', compact('data', 'categories', 'visibility', 'sort'));
     }
 

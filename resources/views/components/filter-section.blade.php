@@ -306,11 +306,26 @@
             itemContainer.innerHTML = newItems.innerHTML;
           }
 
-          // Update pagination
+          // Update pagination - FIXED: Ensure pagination is properly updated
           const paginationContainer = document.querySelector('.pagination-container');
           const newPagination = tempDiv.querySelector('.pagination-container');
-          if (newPagination && paginationContainer) {
-            paginationContainer.innerHTML = newPagination.innerHTML;
+
+          if (paginationContainer) {
+            if (newPagination) {
+              paginationContainer.innerHTML = newPagination.innerHTML;
+              // Re-attach click event listeners to pagination links
+              paginationContainer.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', (e) => {
+                  e.preventDefault();
+                  const pageUrl = new URL(e.target.href);
+                  const pageNum = pageUrl.searchParams.get('page');
+                  this.updateResults(pageNum || 1);
+                });
+              });
+            } else {
+              // If no pagination in response, clear the container
+              paginationContainer.innerHTML = '';
+            }
           }
 
           // Update URL
