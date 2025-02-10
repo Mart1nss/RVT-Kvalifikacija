@@ -31,47 +31,7 @@
 
   <div class="text-container">
     <h1 class="text-container-title">Manage Books</h1>
-
-    <div class="search-filter-container">
-      <div class="search-container">
-        <input type="text" id="search-input" placeholder="Search books...">
-      </div>
-      <button class="mobile-filter-btn">
-        <i class='bx bx-filter-alt'></i>
-      </button>
-      <div class="genre-filter-container">
-        <div class="genre-dropdown">
-          <button class="dropdown-btn">Filter by Genres</button>
-          <ul class="dropdown-content">
-            <!-- Genres -->
-            <div class="dropdown-footer">
-              <button type="button" class="clear-filters">Clear</button>
-              <button type="button" class="apply-filters">Apply</button>
-            </div>
-          </ul>
-        </div>
-      </div>
-      <div class="visibility-filter" style="margin-left: 15px;">
-        <select id="visibilityFilter" onchange="applyVisibilityFilter()"
-          style="padding: 8px; border-radius: 8px; background: #1c1a1a; color: white; border: none; height: 41px; text-transform: uppercase; font-weight: 800; font-size: 12px;">
-          <option value="all" {{ $visibility == 'all' ? 'selected' : '' }}>All Books</option>
-          <option value="public" {{ $visibility == 'public' ? 'selected' : '' }}>Public Only</option>
-          <option value="private" {{ $visibility == 'private' ? 'selected' : '' }}>Private Only</option>
-        </select>
-      </div>
-      <div class="sort-dropdown">
-        <select id="sortSelect" onchange="applySorting()">
-          <option value="newest" {{ $sort == 'newest' ? 'selected' : '' }}>Newest First</option>
-          <option value="oldest" {{ $sort == 'oldest' ? 'selected' : '' }}>Oldest First</option>
-          <option value="title_asc" {{ $sort == 'title_asc' ? 'selected' : '' }}>Title (A-Z)</option>
-          <option value="title_desc" {{ $sort == 'title_desc' ? 'selected' : '' }}>Title (Z-A)</option>
-          <option value="author_asc" {{ $sort == 'author_asc' ? 'selected' : '' }}>Author (A-Z)</option>
-          <option value="author_desc" {{ $sort == 'author_desc' ? 'selected' : '' }}>Author (Z-A)</option>
-          <option value="rating_asc" {{ $sort == 'rating_asc' ? 'selected' : '' }}>Rating (Low-High)</option>
-          <option value="rating_desc" {{ $sort == 'rating_desc' ? 'selected' : '' }}>Rating (High-Low)</option>
-        </select>
-      </div>
-    </div>
+    <x-filter-section :sort="$sort" :isAdmin="true" :visibility="$visibility" />
   </div>
 
   <div style="margin-bottom: 20px;" class="item-container">
@@ -148,7 +108,6 @@
 </div>
 
 <script src="{{ asset('js/book-manage-modals.js') }}"></script>
-<script src="{{ asset('js/book-manage-filters.js') }}"></script>
 <script src="{{ asset('js/library-pdf.js') }}" type="module"></script>
 
 </body>

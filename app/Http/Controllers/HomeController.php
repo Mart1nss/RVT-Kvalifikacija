@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\User;
-use App\Models\Review;
 use App\Models\Product;
-use App\Models\Notification;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -225,7 +223,7 @@ class HomeController extends Controller
             $book->rating = $book->reviews_avg_review_score ?? 0;
         });
 
-        return view('Library', compact('data', 'sort'));
+        return view('library', compact('data', 'sort'));
     }
 
 
@@ -414,7 +412,10 @@ class HomeController extends Controller
             $book->rating = $book->reviews_avg_review_score ?? 0;
         });
 
-        return view('components.book-grid', compact('data'))->render();
+        return response()->json([
+            'html' => view('components.book-grid', compact('data'))->render(),
+            'pagination' => view('vendor.pagination.tailwind', ['paginator' => $data])->render()
+        ]);
     }
 
 }
