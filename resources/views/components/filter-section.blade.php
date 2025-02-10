@@ -11,7 +11,7 @@
     <div class="search-container">
       <input type="text" id="search-input" placeholder="Search books..." x-model="searchQuery" @input="debounceSearch()">
     </div>
-    <button class="mobile-filter-btn">
+    <button class="mobile-filter-btn" @click.stop="openMobileDrawer()">
       <i class='bx bx-filter-alt'></i>
     </button>
     <div class="genre-dropdown">
@@ -84,6 +84,87 @@
       <i class='bx bx-x'></i> Clear Filters
     </button>
   </div>
+
+  <!-- Mobile Filter Drawer -->
+  <div class="mobile-filter-drawer" :class="{ 'show': showMobileDrawer }" @keydown.escape.window="closeMobileDrawer()">
+    <div class="drawer-header">
+      <h2>Filters</h2>
+      <button class="close-drawer-btn" @click.stop="closeMobileDrawer()">
+        <i class='bx bx-x'></i>
+      </button>
+    </div>
+    <div @click.self="closeMobileDrawer">
+    </div>
+
+    <div class="drawer-content">
+      <!-- Genre Accordion -->
+      <div class="accordion-item">
+        <button class="accordion-header" @click="toggleAccordion('genre')">
+          <span>Genres</span>
+          <div class="accordion-tags" x-show="selectedGenres.length > 0">
+            <template x-for="genre in selectedGenres" :key="genre">
+              <span class="accordion-tag" x-text="genre"></span>
+            </template>
+          </div>
+          <i class='bx' :class="currentAccordion === 'genre' ? 'bx-chevron-up' : 'bx-chevron-down'"></i>
+        </button>
+        <div class="accordion-content" :class="{ 'open': currentAccordion === 'genre' }">
+          <template x-for="genre in genres" :key="genre">
+            <label class="genre-checkbox-container">
+              <input type="checkbox" :value="genre" @change="toggleGenre(genre)"
+                :checked="selectedGenres.includes(genre)">
+              <span class="custom-checkbox"></span>
+              <span class="genre-name" x-text="genre"></span>
+            </label>
+          </template>
+        </div>
+      </div>
+
+      <!-- Sort Accordion -->
+      <div class="accordion-item">
+        <button class="accordion-header" @click="toggleAccordion('sort')">
+          <span>Sort By</span>
+          <div class="accordion-tags" x-show="currentSort !== 'newest'">
+            <span class="accordion-tag" x-text="getSortDisplayText()"></span>
+          </div>
+          <i class='bx' :class="currentAccordion === 'sort' ? 'bx-chevron-up' : 'bx-chevron-down'"></i>
+        </button>
+        <div class="accordion-content" :class="{ 'open': currentAccordion === 'sort' }">
+          <template x-for="option in sortOptions" :key="option.value">
+            <div class="sort-option" @click="updateSort(option.value, option.text)">
+              <span class="sort-option-text" x-text="option.text"></span>
+              <i class='bx bx-check' x-show="currentSort === option.value"></i>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- Visibility Accordion (Admin Only) -->
+      <div class="accordion-item" x-show="isAdmin">
+        <button class="accordion-header" @click="toggleAccordion('visibility')">
+          <span>Visibility</span>
+          <div class="accordion-tags" x-show="currentVisibility !== 'all'">
+            <span class="accordion-tag" x-text="getVisibilityDisplayText()"></span>
+          </div>
+          <i class='bx' :class="currentAccordion === 'visibility' ? 'bx-chevron-up' : 'bx-chevron-down'"></i>
+        </button>
+        <div class="accordion-content" :class="{ 'open': currentAccordion === 'visibility' }">
+          <template x-for="option in visibilityOptions" :key="option.value">
+            <div class="visibility-option" @click="updateVisibility(option.value)">
+              <span class="visibility-option-text" x-text="option.text"></span>
+              <i class='bx bx-check' x-show="currentVisibility === option.value"></i>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <div class="drawer-footer">
+      <button class="clear-filters-btn" @click="clearAllFilters" :disabled="!hasActiveFilters">
+        <i class='bx bx-x'></i> Clear Filters
+      </button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -101,6 +182,8 @@
       totalBooks: 0,
       isLoading: false,
       searchTimeout: null,
+      showMobileDrawer: false,
+      currentAccordion: null,
 
       visibilityOptions: [{
           value: 'all',
@@ -160,6 +243,19 @@
           this.showGenreDropdown = false;
           this.showSortDropdown = false;
           this.showVisibilityDropdown = false;
+        });
+
+        // Handle clicking outside the drawer to close it
+        document.addEventListener('click', (e) => {
+          if (this.showMobileDrawer && !e.target.closest('.mobile-filter-drawer') && !e.target.closest(
+              '.mobile-filter-btn')) {
+            this.closeMobileDrawer();
+          }
+        });
+
+        // Cleanup function to ensure body scroll is restored
+        window.addEventListener('beforeunload', () => {
+          document.body.style.overflow = '';
         });
       },
 
@@ -345,6 +441,23 @@
         } finally {
           this.isLoading = false;
         }
+      },
+
+      toggleAccordion(accordion) {
+        this.currentAccordion = this.currentAccordion === accordion ? null : accordion;
+      },
+
+      openMobileDrawer() {
+        document.body.style.overflow = 'hidden';
+        this.showMobileDrawer = true;
+      },
+
+      closeMobileDrawer() {
+        this.showMobileDrawer = false;
+        this.currentAccordion = null;
+        setTimeout(() => {
+          document.body.style.overflow = '';
+        }, 300); // Match the transition duration
       }
     }));
   });
