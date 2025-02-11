@@ -56,11 +56,11 @@
       <div class="sort-dropdown" @click.outside="sortDropdownOpen = false">
         <button class="dropdown-btn" @click="sortDropdownOpen = !sortDropdownOpen">
           <i class='bx bx-sort-alt-2'></i>
-          <span x-text="sortType === 'newest' ? 'Newest First' : 'Oldest First'"></span>
+          <span x-text="sortType === 'newest' ? 'Newest' : 'Oldest'"></span>
         </button>
         <ul class="dropdown-content" :class="{ 'show': sortDropdownOpen }">
-          <li @click="toggleSort('newest')" :class="{ 'selected': sortType === 'newest' }">Newest First</li>
-          <li @click="toggleSort('oldest')" :class="{ 'selected': sortType === 'oldest' }">Oldest First</li>
+          <li @click="toggleSort('newest')" :class="{ 'selected': sortType === 'newest' }">Newest</li>
+          <li @click="toggleSort('oldest')" :class="{ 'selected': sortType === 'oldest' }">Oldest</li>
         </ul>
       </div>
     </div>
@@ -101,18 +101,6 @@
       </div>
     @else
       <div class="item-container">
-        <div class="text-container">
-          <h1>Notes</h1>
-          <div class="sort-dropdown">
-            <button class="sort-button">
-              Sort by <i class='bx bx-sort-alt-2'></i>
-            </button>
-            <div class="sort-options">
-              <a href="#" data-sort="newest" class="active">Newest First</a>
-              <a href="#" data-sort="oldest">Oldest First</a>
-            </div>
-          </div>
-        </div>
         <p style="font-family: sans-serif; font-size: 14px; font-weight: 800; text-transform: uppercase; color: white;">
           You don't have any notes yet.</p>
       </div>
