@@ -120,7 +120,7 @@ class HomeController extends Controller
         $genres = $request->get('genres') ? explode(',', $request->get('genres')) : [];
         $sort = $request->get('sort', 'newest');
 
-        $data = Product::query();
+        $data = Product::query()->withAvg('reviews', 'review_score');
 
         if ($query) {
             $data->where('title', 'like', '%' . $query . '%');
@@ -167,6 +167,10 @@ class HomeController extends Controller
 
         $data = $data->paginate(15)->withQueryString();
         $categories = Category::all();
+
+        $data->each(function ($book) {
+            $book->rating = $book->reviews_avg_review_score ?? 0;
+        });
 
         if ($request->ajax()) {
             return response()->json([
