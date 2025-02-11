@@ -4,7 +4,7 @@
     'visibility' => 'all',
 ])
 
-<link rel="stylesheet" href="{{ asset('css/filter-section.css') }}">
+<link rel="stylesheet" href="{{ asset('css/components/filter-section.css') }}">
 
 <div x-data="filterSection">
   <div class="search-filter-container">

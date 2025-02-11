@@ -70,11 +70,11 @@
         <div class="menu-header">MENU</div>
         <div class="menu-grid">
           <a href="{{ route('home') }}" class="menu-item {{ Request::is('home') ? 'active' : '' }}">
-            <i class='bx bxs-dashboard'></i>
+            <i class='bx bx-category-alt'></i>
             <span>DASHBOARD</span>
           </a>
           <a href="{{ route('library') }}" class="menu-item {{ Request::is('library') ? 'active' : '' }}">
-            <i class='bx bx-book'></i>
+            <i class='bx bx-library'></i>
             <span>LIBRARY</span>
           </a>
           <div class="menu-item">

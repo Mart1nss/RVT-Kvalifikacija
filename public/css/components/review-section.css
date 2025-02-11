@@ -1,0 +1,626 @@
+/* Reviews */
+.reviews-div {
+    background-color: rgb(37, 37, 37);
+    width: 100%;
+    color: white;
+    position: relative;
+    height: min-content;
+    border-radius: 8px;
+    padding: 10px;
+    overflow: hidden;
+    margin-bottom: 50px;
+    min-height: 400px;
+    z-index: 1;
+}
+
+@media (max-width: 769px) {
+    .reviews-div {
+        padding: 10px;
+        flex-wrap: wrap;
+    }
+}
+
+.reviews-header {
+    font-size: 26px;
+    font-family: sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.review-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.review-form .star-rating label:hover,
+.review-form .star-rating label:hover ~ label,
+.review-form .star-rating input[type="radio"]:checked ~ label {
+    color: gold;
+}
+
+.review-form .star-rating label:hover i,
+.review-form .star-rating label:hover ~ label i,
+.review-form .star-rating input[type="radio"]:checked ~ label i {
+    transform: scale(1.1);
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+/* Star Rating Styles */
+.rating-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 0px;
+}
+
+.star-rating-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.rating-error {
+    color: rgb(126, 6, 6);
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: none;
+}
+
+.rating-error.show {
+    display: inline;
+    opacity: 1;
+}
+
+.star-rating {
+    display: flex;
+    flex-direction: row-reverse;
+    align-self: flex-start;
+    justify-content: flex-start;
+    gap: 4px;
+}
+
+.star-rating input[type="radio"] {
+    display: none;
+}
+
+.star-rating label {
+    cursor: pointer;
+    color: #666;
+    transition: all 0.2s ease;
+}
+
+.star-rating label i {
+    font-size: 28px;
+    transition: all 0.2s ease;
+}
+
+.review-input-button {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-right: 0px;
+}
+
+.review-textbox {
+    width: 100%;
+    padding: 16px;
+    padding-bottom: 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: transparent;
+    background-color: #1c1a1a;
+    color: white;
+    font-family: sans-serif;
+    min-height: 120px;
+    max-height: 200px;
+    resize: none;
+}
+
+.char-count {
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    background-color: transparent;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #aaa;
+    pointer-events: none;
+}
+
+.button-review {
+    width: 100%;
+    height: 40px;
+    background-color: rgb(255, 255, 255);
+    border: none;
+    color: rgb(0, 0, 0);
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 13px;
+    font-family: sans-serif;
+    text-transform: uppercase;
+    font-weight: 800;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.button-review:hover {
+    opacity: 0.5;
+}
+
+.filter-buttons {
+    position: relative;
+    z-index: 2;
+}
+
+/* Sort Dropdown Styles */
+.sort-dropdown {
+    position: relative;
+    width: 160px;
+}
+
+.sort-dropdown .dropdown-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 100%;
+    height: 40px;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 8px;
+    background-color: #1c1a1a;
+    color: white;
+    font-size: 12px;
+    font-weight: 800;
+    font-family: sans-serif;
+    text-transform: uppercase;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.sort-dropdown .dropdown-btn:hover {
+    background-color: #2a2a2a;
+}
+
+.sort-dropdown .dropdown-btn i {
+    font-size: 16px;
+}
+
+.sort-dropdown .dropdown-content {
+    position: absolute;
+    top: calc(100% + 5px);
+    min-width: 200px;
+    max-height: 300px;
+    overflow-y: auto;
+    border-radius: 8px;
+    background-color: #1c1a1a;
+    color: white;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    padding: 5px;
+    display: none;
+}
+
+.sort-dropdown .dropdown-content.show {
+    display: block;
+}
+
+.sort-dropdown .dropdown-content a {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: white;
+    font-size: 14px;
+    font-family: sans-serif;
+    transition: background-color 0.2s;
+    border-radius: 8px;
+}
+
+.sort-dropdown .dropdown-content a:hover,
+.sort-dropdown .dropdown-content a.active {
+    background-color: #2a2a2a;
+}
+
+.no-reviews {
+    background-color: #1c1a1a;
+    padding: 40px 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    text-align: center;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.no-reviews i {
+    font-size: 48px;
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+.no-reviews p {
+    color: #ffffff;
+    font-family: sans-serif;
+    margin: 0;
+}
+
+.no-reviews p:first-of-type {
+    font-size: 18px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.no-reviews p:last-of-type {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+/* Review Card Styles */
+.review-card {
+    background-color: #1c1a1a;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+    position: relative;
+    padding-right: 40px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.reviewed-by {
+    font-size: 16px;
+    font-weight: 700;
+    font-family: sans-serif;
+    text-transform: uppercase;
+}
+
+.review-card .star-rating {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+    margin: 8px 0;
+}
+
+.review-card .star {
+    font-size: 14px;
+    color: #666;
+    pointer-events: none;
+    cursor: default;
+}
+
+.review-card .star i {
+    font-size: 16px;
+}
+
+.review-card .star.filled {
+    color: gold;
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+}
+
+.review-card p {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    max-width: 100%;
+    line-height: 1.5;
+}
+
+.review-card .last-updated {
+    font-size: 12px;
+    font-family: sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #808080;
+}
+
+.review-options {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.review-options-btn {
+    background: none;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+    padding: 5px;
+    font-size: 20px;
+    transition: opacity 0.2s;
+}
+
+.review-options-btn:hover {
+    opacity: 1;
+}
+
+.review-options-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #1c1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    min-width: 150px;
+    z-index: 10;
+    display: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.review-options-dropdown.show {
+    display: block;
+}
+
+.review-options-dropdown button {
+    width: 100%;
+    padding: 12px 16px;
+    border: none;
+    background: none;
+    color: white;
+    text-align: left;
+    font-family: sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.review-options-dropdown button:hover {
+    background-color: #2c2c2c;
+}
+
+.review-options-dropdown button i {
+    font-size: 16px;
+    color: rgb(126, 6, 6);
+}
+
+.button-delete {
+    background-color: rgb(126, 6, 6);
+    color: white;
+    border: none;
+    height: 40px;
+    padding: 5px 10px;
+    margin-top: 10px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-family: sans-serif;
+    text-transform: uppercase;
+    font-weight: 800;
+    transition: all 0.15s;
+}
+
+.button-delete:hover {
+    background-color: rgb(80, 80, 80);
+    cursor: pointer;
+}
+
+.button-filter {
+    display: none;
+}
+
+.review-label {
+    color: white;
+    font-weight: 800;
+    font-family: sans-serif;
+    font-size: 18px;
+    text-transform: uppercase;
+}
+
+/* Delete Confirmation Modal */
+.delete-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-modal.show {
+    display: flex;
+}
+
+.delete-modal-content {
+    background-color: #1c1a1a;
+    padding: 24px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    color: white;
+    font-family: sans-serif;
+}
+
+.delete-modal-header {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+}
+
+.delete-modal-body {
+    margin-bottom: 24px;
+    line-height: 1.5;
+    color: #ccc;
+}
+
+.delete-modal-footer {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.delete-modal-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-family: sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.delete-modal-btn:hover {
+    opacity: 0.8;
+}
+
+.delete-modal-btn.cancel {
+    background-color: #2a2a2a;
+    color: white;
+}
+
+.delete-modal-btn.confirm {
+    background-color: rgb(126, 6, 6);
+    color: white;
+}
+
+/* Mobile Sort Options */
+@media (max-width: 768px) {
+    .filter-buttons {
+        margin: 10px 0;
+        position: relative;
+    }
+
+    .sort-dropdown {
+        width: 100%;
+    }
+
+    .sort-dropdown .dropdown-content {
+        position: relative;
+        display: flex;
+        overflow-x: auto;
+        overflow-y: hidden;
+        max-height: none;
+        background: transparent;
+        box-shadow: none;
+        padding: 0;
+        gap: 8px;
+        margin-top: 10px;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE and Edge */
+        -webkit-mask-image: linear-gradient(
+            to right,
+            black 75%,
+            transparent 100%
+        );
+        mask-image: linear-gradient(to right, black 75%, transparent 100%);
+    }
+
+    .sort-dropdown .dropdown-content.scrolled-right {
+        -webkit-mask-image: linear-gradient(
+            to right,
+            transparent 0%,
+            black 25%,
+            black 100%
+        );
+        mask-image: linear-gradient(
+            to right,
+            transparent 0%,
+            black 25%,
+            black 100%
+        );
+    }
+
+    .sort-dropdown .dropdown-content.scrolled-middle {
+        -webkit-mask-image: linear-gradient(
+            to right,
+            transparent 0%,
+            black 25%,
+            black 75%,
+            transparent 100%
+        );
+        mask-image: linear-gradient(
+            to right,
+            transparent 0%,
+            black 25%,
+            black 75%,
+            transparent 100%
+        );
+    }
+
+    .sort-dropdown .dropdown-content::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
+    }
+
+    .sort-dropdown .dropdown-content a {
+        padding: 8px 16px;
+        background-color: #1c1a1a;
+        white-space: nowrap;
+        border-radius: 8px;
+    }
+
+    .sort-dropdown .dropdown-content a.active {
+        background-color: #2a2a2a;
+    }
+
+    .sort-dropdown .dropdown-btn {
+        display: none;
+    }
+
+    /* Hide the dropdown toggle in mobile */
+    .sort-dropdown .dropdown-content {
+        display: flex !important;
+    }
+
+    .char-count {
+        position: absolute;
+        right: 5px;
+        bottom: 58px; /* Position above the submit button */
+        background-color: transparent;
+        padding: 2px 8px;
+        border-radius: 8px;
+        font-size: 12px;
+        color: #aaa;
+        pointer-events: none;
+        z-index: 1;
+    }
+}
+
+@media (min-width: 769px) {
+    .review-input-button {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .review-textbox {
+        height: 40px;
+        min-height: 40px;
+        max-height: 120px;
+        padding: 10px;
+        padding-right: 80px;
+        overflow-y: auto;
+        transition: height 0.2s ease;
+    }
+
+    .char-count {
+        top: 10px;
+        bottom: auto;
+        right: 120px;
+    }
+
+    .button-review {
+        width: auto;
+        padding: 10px 20px;
+        height: 40px;
+    }
+}
