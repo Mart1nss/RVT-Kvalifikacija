@@ -6,6 +6,10 @@ use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Services\AuditLogService;
+use App\Models\SentNotification;
+use App\Notifications\AdminBroadcastNotification;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
@@ -14,12 +18,15 @@ class NotificationController extends Controller
     {
         $request->validate(['message' => 'required']);
 
+        // Store in sent notifications
+        $sentNotification = SentNotification::create([
+            'sender_id' => auth()->id(),
+            'message' => $request->message
+        ]);
+
         $users = User::all();
         foreach ($users as $user) {
-            Notification::create([
-                'user_id' => $user->id,
-                'message' => $request->message
-            ]);
+            $user->notify(new AdminBroadcastNotification($request->message, $sentNotification->id));
         }
 
         AuditLogService::log(
@@ -37,47 +44,44 @@ class NotificationController extends Controller
         return back()->with('success', 'Notification sent!');
     }
 
-
-    public function markAsRead(Request $request, Notification $notification)
+    public function deleteNotification($id)
     {
-        if ($notification->user_id !== auth()->id()) {
-            abort(403);
-        }
+        $notification = auth()->user()->notifications()->findOrFail($id);
+        $notification->delete();
+        return response()->json(['success' => true]);
+    }
 
-        $notification->update(['is_read' => true]);
+    public function deleteAllNotifications()
+    {
+        auth()->user()->notifications()->delete();
+        return response()->json(['success' => true]);
+    }
+
+    public function deleteSentNotification($id)
+    {
+        $sentNotification = SentNotification::findOrFail($id);
+        // Delete all related notifications
+        \DB::table('notifications')
+            ->where('data->sent_notification_id', $id)
+            ->delete();
+        // Delete the sent notification
+        $sentNotification->delete();
+        return response()->json(['success' => true]);
+    }
+
+    public function markAsRead(Request $request)
+    {
+        auth()->user()->unreadNotifications->markAsRead();
 
         if ($request->ajax()) {
             return response()->json(['success' => true]);
         }
-
         return back();
-    }
-
-    public function markAllAsRead(Request $request)
-    {
-        try {
-            auth()->user()->notifications()->where('is_read', false)->update(['is_read' => true]);
-
-            if ($request->ajax()) {
-                return response()->json(['success' => true]);
-            }
-
-            return back();
-        } catch (\Exception $e) {
-            if ($request->ajax()) {
-                return response()->json(['error' => $e->getMessage()], 500);
-            }
-            return back()->with('error', 'Failed to mark notifications as read.');
-        }
     }
 
     public function getCount()
     {
-        try {
-            $count = auth()->user()->notifications()->where('is_read', false)->count();
-            return response()->json(['count' => $count]);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
+        $count = auth()->user()->unreadNotifications()->count();
+        return response()->json(['count' => $count]);
     }
 }

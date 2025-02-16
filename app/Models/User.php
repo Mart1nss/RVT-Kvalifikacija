@@ -6,7 +6,6 @@ namespace App\Models;
 use App\Models\Favorite;
 use App\Models\Review;
 use App\Models\Ticket;
-use App\Models\Notification;
 use App\Models\UserPreference;
 use App\Models\Category;
 use App\Notifications\CustomResetPassword;
@@ -81,11 +80,6 @@ class User extends Authenticatable
     public function isAdmin()
     {
         return $this->usertype === 'admin';
-    }
-
-    public function notifications()
-    {
-        return $this->hasMany(Notification::class);
     }
 
     public function userPreferences()

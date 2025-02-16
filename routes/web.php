@@ -98,10 +98,16 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/notifications/send', [NotificationController::class, 'sendNotification'])
         ->name('admin.send.notification');
 
-    Route::post('/notifications/{notification}/mark-read', [NotificationController::class, 'markAsRead'])
-        ->name('notifications.mark-read');
-    Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
-    Route::get('/notifications/count', [NotificationController::class, 'getCount'])->name('notifications.count');
+    Route::post('/notifications/mark-read', [NotificationController::class, 'markAsRead'])
+        ->name('notifications.markRead');
+    Route::post('/notifications/{id}/delete', [NotificationController::class, 'deleteNotification'])
+        ->name('notifications.delete');
+    Route::post('/notifications/delete-all', [NotificationController::class, 'deleteAllNotifications'])
+        ->name('notifications.deleteAll');
+    Route::get('/notifications/count', [NotificationController::class, 'getCount'])
+        ->name('notifications.count');
+    Route::post('/notifications/sent/{id}/delete', [NotificationController::class, 'deleteSentNotification'])
+        ->name('notifications.sent.delete')->middleware('admin');
 });
 
 // Notes Routes

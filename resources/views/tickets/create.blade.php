@@ -34,11 +34,11 @@
       <form method="POST" action="{{ route('tickets.store') }}">
         @csrf
         <div class="form-group">
-          <label for="title">Title</label>
+          <label for="subject">Subject</label>
           <div class="input-container">
-            <input type="text" id="title" name="title" required maxlength="50"
-              placeholder="Brief description of your issue" oninput="updateCharCount('title', 'titleCount', 50)">
-            <div class="char-count" id="titleCount">0 / 50</div>
+            <input type="text" id="subject" name="subject" required maxlength="50"
+              placeholder="Brief description of your issue" oninput="updateCharCount('subject', 'subjectCount', 50)">
+            <div class="char-count" id="subjectCount">0 / 50</div>
           </div>
         </div>
 
@@ -252,7 +252,7 @@
 
     // Initialize counters
     document.addEventListener('DOMContentLoaded', function() {
-      updateCharCount('title', 'titleCount', 50);
+      updateCharCount('subject', 'subjectCount', 50);
       updateCharCount('description', 'descriptionCount', 5000);
     });
   </script>

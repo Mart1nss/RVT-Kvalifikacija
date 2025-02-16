@@ -20,25 +20,21 @@
       <h1>Ticket #{{ $ticket->ticket_id }}</h1>
       <div class="ticket-actions">
         @if (auth()->user()->isAdmin())
-          @if (!$ticket->assigned_admin_id && $ticket->status !== 'resolved')
+          @if (!$ticket->assigned_admin_id && $ticket->status !== 'closed')
             <form action="{{ route('tickets.assign', $ticket) }}" method="POST" style="display: inline;">
               @csrf
               <button type="submit" class="accept-btn">Accept Ticket</button>
             </form>
-          @elseif($ticket->assigned_admin_id === auth()->id() && $ticket->status !== 'resolved')
+          @elseif($ticket->assigned_admin_id === auth()->id() && $ticket->status !== 'closed')
             <form action="{{ route('tickets.update-status', $ticket) }}" method="POST" class="status-form">
               @csrf
               @method('PATCH')
               <select name="status" class="status-select" onchange="this.form.submit()">
                 <option value="in_progress" {{ $ticket->status === 'in_progress' ? 'selected' : '' }}>In Progress
                 </option>
-                <option value="resolved" {{ $ticket->status === 'resolved' ? 'selected' : '' }}>Resolved</option>
+                <option value="closed" {{ $ticket->status === 'closed' ? 'selected' : '' }}>Closed</option>
               </select>
             </form>
-          @else
-            <span class="status-badge status-{{ $ticket->status }}">
-              {{ ucfirst(str_replace('_', ' ', $ticket->status)) }}
-            </span>
           @endif
         @else
           <span class="status-badge status-{{ $ticket->status }}">
@@ -99,7 +95,7 @@
       @endforeach
     </div>
 
-    @if ($ticket->status !== 'resolved')
+    @if ($ticket->status !== 'closed')
       <div class="response-form">
         <h2>Add Response</h2>
         <form action="{{ route('tickets.respond', $ticket) }}" method="POST">

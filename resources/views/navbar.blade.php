@@ -22,8 +22,8 @@
     <nav class="nav-btn">
       <button id="notification-btn">
         <i class='bx bx-bell'></i>
-        @if ($unreadNotifications->count())
-          <span class="badge">{{ $unreadNotifications->count() }}</span>
+        @if (auth()->user()->unreadNotifications->count() > 0)
+          <span class="badge">{{ auth()->user()->unreadNotifications->count() }}</span>
         @endif
       </button>
 
@@ -34,22 +34,22 @@
         </div>
 
         <div class="notifications-content">
-          @if ($unreadNotifications->isEmpty())
+          @if (auth()->user()->notifications->isEmpty())
             <p class="no-notifications">No Notifications</p>
           @else
-            @foreach ($unreadNotifications as $notification)
+            @foreach (auth()->user()->notifications()->latest()->get() as $notification)
               <div class="notification-item" id="notification-{{ $notification->id }}">
                 <div class="notification-content">
-                  <div class="notification-text">{{ $notification->message }}</div>
-                  @if ($notification->link)
-                    <a href="{{ $notification->link }}" class="goto-link">Go to</a>
+                  <div class="notification-text">{{ $notification->data['message'] }}</div>
+                  @if (isset($notification->data['link']))
+                    <a href="{{ $notification->data['link'] }}" class="goto-link">Go to ticket</a>
                   @endif
                   <div class="notification-time">{{ $notification->created_at->diffForHumans() }}</div>
                 </div>
                 <div class="notification-actions">
-                  <button type="button" class="mark-read" onclick="markAsRead({{ $notification->id }})"
-                    title="Mark as read">
-                    <i class='bx bx-check'></i>
+                  <button type="button" class="mark-read" onclick="deleteNotification('{{ $notification->id }}')"
+                    title="Delete notification">
+                    <i class='bx bx-trash'></i>
                   </button>
                 </div>
               </div>
@@ -58,8 +58,8 @@
         </div>
 
         <div class="notifications-footer">
-          <button class="notif-clear-btn" onclick="clearAllNotifications()"><i style="font-size: 20px;"
-              class='bx bx-x'></i> CLEAR ALL</button>
+          <button class="notif-clear-btn" onclick="deleteAllNotifications()"><i style="font-size: 20px;"
+              class='bx bx-trash'></i> CLEAR ALL</button>
         </div>
       </div>
 
@@ -203,6 +203,17 @@
     let dropdown = document.querySelector('#notifications-dropdown');
     if (dropdown.style.display === 'none') {
       dropdown.style.display = 'block';
+      // Mark notifications as read when opening dropdown
+      $.ajax({
+        url: '/notifications/mark-read',
+        type: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(response) {
+          $('.badge').remove();
+        }
+      });
     } else {
       dropdown.style.display = 'none';
     }
@@ -227,30 +238,39 @@
     event.stopPropagation();
   });
 
-  function markAsRead(notificationId) {
+  function deleteNotification(notificationId) {
     $.ajax({
-      url: '/notifications/' + notificationId + '/mark-read',
+      url: '/notifications/' + notificationId + '/delete',
       type: 'POST',
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       },
       success: function(response) {
-        $('#notification-' + notificationId).fadeOut();
-        updateNotificationCount();
+        $('#notification-' + notificationId).fadeOut(function() {
+          $(this).remove();
+          if ($('.notification-item').length === 0) {
+            $('.notifications-content').html('<p class="no-notifications">No Notifications</p>');
+          }
+        });
       }
     });
   }
 
-  function clearAllNotifications() {
+  function deleteAllNotifications() {
+    if (!confirm('Are you sure you want to delete all notifications?')) {
+      return;
+    }
+
     $.ajax({
-      url: '/notifications/mark-all-read',
+      url: '/notifications/delete-all',
       type: 'POST',
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       },
       success: function(response) {
-        $('.notification-item').fadeOut();
-        updateNotificationCount();
+        $('.notification-item').fadeOut(function() {
+          $('.notifications-content').html('<p class="no-notifications">No Notifications</p>');
+        });
       }
     });
   }
@@ -258,10 +278,13 @@
   function updateNotificationCount() {
     $.get('/notifications/count', function(response) {
       if (response.count > 0) {
-        $('.badge').text(response.count);
+        if ($('.badge').length) {
+          $('.badge').text(response.count);
+        } else {
+          $('#notification-btn').append('<span class="badge">' + response.count + '</span>');
+        }
       } else {
         $('.badge').remove();
-        $('#notifications-dropdown').html('<p class="no-notifications">No Notifications</p>');
       }
     });
   }

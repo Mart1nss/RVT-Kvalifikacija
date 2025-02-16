@@ -58,13 +58,13 @@ class Ticket extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         static::creating(function ($ticket) {
             // Get the latest ticket ID
             $latestTicket = static::orderBy('id', 'desc')->first();
             $nextId = $latestTicket ? intval(substr($latestTicket->ticket_id, 1)) + 1 : 1;
             $ticket->ticket_id = '#' . $nextId;
-            
+
             // Set default status
             if (!$ticket->status) {
                 $ticket->status = self::STATUS_OPEN;

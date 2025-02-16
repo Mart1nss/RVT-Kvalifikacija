@@ -6,35 +6,23 @@ use Illuminate\Http\Request;
 use App\Models\Ticket;
 use App\Models\User;
 use App\Models\Notification;
+use App\Models\TicketResponse;
+use App\Notifications\TicketNotification;
+use App\Services\AuditLogService;
 
 class TicketController extends Controller
 {
     public function index()
     {
-        if (auth()->user()->isAdmin()) {
-            // For admins, show unassigned tickets and tickets assigned to them
-            $tickets = Ticket::with('user')
-                ->where(function($query) {
-                    $query->whereNull('assigned_admin_id')
-                        ->orWhere('assigned_admin_id', auth()->id());
-                })
-                ->where('status', '!=', Ticket::STATUS_RESOLVED)
-                ->latest()
-                ->get();
-
-            // Get resolved tickets for admins
-            $resolvedTickets = Ticket::with(['user', 'resolved_by_user'])
-                ->where('status', Ticket::STATUS_RESOLVED)
-                ->whereNotNull('resolved_at')  // Only get tickets that have actually been resolved
-                ->latest('resolved_at')  // Order by resolved_at date
-                ->get();
-
-            return view('tickets.index', compact('tickets', 'resolvedTickets'));
+        $user = auth()->user();
+        if ($user->isAdmin()) {
+            $tickets = Ticket::where('status', '!=', 'closed')->latest()->get();
+            $resolvedTickets = Ticket::where('status', 'closed')->latest()->get();
         } else {
-            // For users, show only their tickets
-            $tickets = auth()->user()->tickets()->latest()->get();
-            return view('tickets.index', compact('tickets'));
+            $tickets = $user->tickets()->where('status', '!=', 'closed')->latest()->get();
+            $resolvedTickets = $user->tickets()->where('status', 'closed')->latest()->get();
         }
+        return view('tickets.index', compact('tickets', 'resolvedTickets'));
     }
 
     public function create()
@@ -44,123 +32,200 @@ class TicketController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'category' => 'required|string|max:255',
-            'description' => 'required|string'
+        $validatedData = $request->validate([
+            'subject' => 'required|max:255',
+            'category' => 'required',
+            'description' => 'required'
         ]);
 
-        $ticket = auth()->user()->tickets()->create($request->all());
+        $ticket = Ticket::create([
+            'user_id' => auth()->id(),
+            'title' => $validatedData['subject'],
+            'category' => $validatedData['category'],
+            'description' => $validatedData['description'],
+            'status' => 'open'
+        ]);
 
-        // Notify admins about new ticket
+        // Notify all admins about the new ticket
         $admins = User::where('usertype', 'admin')->get();
         foreach ($admins as $admin) {
-            Notification::create([
-                'user_id' => $admin->id,
-                'message' => "New support ticket ({$ticket->ticket_id}) created by {$ticket->user->name}",
-                'link' => route('tickets.show', $ticket)
-            ]);
+            $admin->notify(new TicketNotification(
+                $ticket,
+                'new_ticket',
+                "New support ticket #{$ticket->id} has been created"
+            ));
         }
 
-        return redirect()->route('tickets.show', $ticket)
-            ->with('success', 'Ticket created successfully.');
+        AuditLogService::log(
+            "Created ticket",
+            "ticket",
+            "Created ticket #{$ticket->id}",
+            $ticket->id,
+            "Ticket creation"
+        );
+
+        return redirect()->route('tickets.show', $ticket)->with('success', 'Ticket created successfully.');
     }
 
     public function show(Ticket $ticket)
     {
-        $this->authorize('view', $ticket);
-        return view('tickets.show', compact('ticket'));
-    }
-
-    public function assignTicket(Request $request, Ticket $ticket)
-    {
-        // Check if ticket is already assigned or resolved
-        if ($ticket->assigned_admin_id || $ticket->status === Ticket::STATUS_RESOLVED) {
-            return back()->with('error', 'This ticket cannot be assigned.');
+        if (!auth()->user()->isAdmin() && auth()->id() !== $ticket->user_id) {
+            abort(403);
         }
 
-        // Assign ticket to current admin and set status to in_progress
-        $ticket->assigned_admin_id = auth()->id();
-        $ticket->status = Ticket::STATUS_IN_PROGRESS;
-        $ticket->save();
-
-        // Notify ticket owner
-        Notification::create([
-            'user_id' => $ticket->user_id,
-            'message' => "Your ticket ({$ticket->ticket_id}) has been accepted by " . auth()->user()->name,
-            'link' => route('tickets.show', $ticket)
-        ]);
-
-        return back()->with('success', 'Ticket assigned successfully.');
+        return view('tickets.show', compact('ticket'));
     }
 
     public function updateStatus(Request $request, Ticket $ticket)
     {
-        // Don't allow status updates for resolved tickets
-        if ($ticket->status === Ticket::STATUS_RESOLVED) {
-            return back()->with('error', 'Cannot update status of resolved tickets.');
+        if (!auth()->user()->isAdmin()) {
+            abort(403);
         }
 
-        $request->validate([
-            'status' => ['required', 'in:' . Ticket::STATUS_IN_PROGRESS . ',' . Ticket::STATUS_RESOLVED]
+        $validatedData = $request->validate([
+            'status' => 'required|in:open,in_progress,closed'
         ]);
 
         $oldStatus = $ticket->status;
-        $ticket->status = $request->status;
-        
-        // If status is being set to resolved
-        if ($request->status === Ticket::STATUS_RESOLVED && $oldStatus !== Ticket::STATUS_RESOLVED) {
+
+        // Update the ticket status and related fields
+        $ticket->status = $validatedData['status'];
+        if ($validatedData['status'] === 'closed') {
             $ticket->resolved_at = now();
             $ticket->resolved_by = auth()->id();
-            
-            // Notify ticket owner about resolution
-            Notification::create([
-                'user_id' => $ticket->user_id,
-                'message' => "Your ticket ({$ticket->ticket_id}) has been resolved by " . auth()->user()->name,
-                'link' => route('tickets.show', $ticket)
-            ]);
+        }
+        $ticket->save();
+
+        // If ticket is being accepted (changed to in_progress)
+        if ($validatedData['status'] === 'in_progress' && $oldStatus === 'open') {
+            // Delete new ticket notifications for all admins
+            User::where('usertype', 'admin')->get()->each(function ($admin) use ($ticket) {
+                $admin->notifications()
+                    ->where('type', 'App\Notifications\TicketNotification')
+                    ->where('data->ticket_id', $ticket->id)
+                    ->where('data->type', 'new_ticket')
+                    ->delete();
+            });
+
+            // Notify the ticket creator
+            $ticket->user->notify(new TicketNotification(
+                $ticket,
+                'ticket_accepted',
+                "Your ticket #{$ticket->id} has been accepted"
+            ));
         }
 
-        $ticket->save();
+        // If ticket is being closed
+        if ($validatedData['status'] === 'closed') {
+            $ticket->user->notify(new TicketNotification(
+                $ticket,
+                'ticket_closed',
+                "Your ticket #{$ticket->id} has been closed"
+            ));
+        }
+
+        AuditLogService::log(
+            "Updated ticket status",
+            "ticket",
+            "Updated ticket #{$ticket->id} status to {$validatedData['status']}",
+            $ticket->id,
+            "Ticket status update"
+        );
 
         return back()->with('success', 'Ticket status updated successfully.');
     }
 
     public function addResponse(Request $request, Ticket $ticket)
     {
-        // Check if ticket is resolved
-        if ($ticket->status === Ticket::STATUS_RESOLVED) {
-            return back()->with('error', 'Cannot respond to resolved tickets.');
+        if (!auth()->user()->isAdmin() && auth()->id() !== $ticket->user_id) {
+            abort(403);
         }
 
-        $request->validate([
-            'response' => 'required|string'
+        $validatedData = $request->validate([
+            'response' => 'required'
         ]);
 
-        $ticket->responses()->create([
+        $response = TicketResponse::create([
+            'ticket_id' => $ticket->id,
             'user_id' => auth()->id(),
-            'response' => $request->response,
+            'response' => $validatedData['response'],
             'is_admin_response' => auth()->user()->isAdmin()
         ]);
 
-        // If this is an admin response, notify the ticket owner
+        // If admin responds, notify the ticket creator
         if (auth()->user()->isAdmin()) {
-            Notification::create([
-                'user_id' => $ticket->user_id,
-                'message' => "New admin response on your ticket ({$ticket->ticket_id})",
-                'link' => route('tickets.show', $ticket)
-            ]);
-        } else {
-            // If this is a user response, notify assigned admin if exists
-            if ($ticket->assigned_admin_id) {
-                Notification::create([
-                    'user_id' => $ticket->assigned_admin_id,
-                    'message' => "New user response on ticket {$ticket->ticket_id}",
-                    'link' => route('tickets.show', $ticket)
-                ]);
+            $ticket->user->notify(new TicketNotification(
+                $ticket,
+                'admin_response',
+                "An admin has responded to your ticket #{$ticket->id}"
+            ));
+        }
+        // If user responds, notify the assigned admin or all admins
+        else {
+            $notifyUser = $ticket->assigned_admin_id ? User::find($ticket->assigned_admin_id) : null;
+            if ($notifyUser) {
+                $notifyUser->notify(new TicketNotification(
+                    $ticket,
+                    'user_response',
+                    "User has responded to ticket #{$ticket->id}"
+                ));
+            } else {
+                User::where('usertype', 'admin')->get()->each(function ($admin) use ($ticket) {
+                    $admin->notify(new TicketNotification(
+                        $ticket,
+                        'user_response',
+                        "User has responded to ticket #{$ticket->id}"
+                    ));
+                });
             }
         }
 
+        AuditLogService::log(
+            "Added ticket response",
+            "ticket",
+            "Added response to ticket #{$ticket->id}",
+            $ticket->id,
+            "Ticket response"
+        );
+
         return back()->with('success', 'Response added successfully.');
+    }
+
+    public function assignTicket(Request $request, Ticket $ticket)
+    {
+        if (!auth()->user()->isAdmin()) {
+            abort(403);
+        }
+
+        $ticket->update([
+            'assigned_admin_id' => auth()->id(),
+            'status' => 'in_progress'
+        ]);
+
+        // Delete new ticket notifications for all admins
+        User::where('usertype', 'admin')->get()->each(function ($admin) use ($ticket) {
+            $admin->notifications()
+                ->where('type', 'App\Notifications\TicketNotification')
+                ->where('data->ticket_id', $ticket->id)
+                ->where('data->type', 'new_ticket')
+                ->delete();
+        });
+
+        // Notify the ticket creator
+        $ticket->user->notify(new TicketNotification(
+            $ticket,
+            'ticket_assigned',
+            "Your ticket #{$ticket->id} has been assigned to an admin"
+        ));
+
+        AuditLogService::log(
+            "Assigned ticket",
+            "ticket",
+            "Assigned ticket #{$ticket->id} to admin",
+            $ticket->id,
+            "Ticket assignment"
+        );
+
+        return back()->with('success', 'Ticket assigned successfully.');
     }
 }
