@@ -6,7 +6,7 @@
 }
 
 body {
-    background-color: #1c1a1a;
+    background-color: rgb(13, 13, 13);
     min-width: 375px;
     align-items: center;
     justify-content: center;
@@ -54,7 +54,7 @@ body {
 }
 
 .user-btn {
-    background-color: #252525;
+    background-color: #202020;
     color: white;
     border: none;
     padding: 10px;
@@ -131,7 +131,7 @@ body {
 }
 
 .menu-item {
-    background-color: #363636;
+    background-color: #353535;
     border-radius: 8px;
     padding: 15px;
     height: 85px;
@@ -144,13 +144,12 @@ body {
 }
 
 .menu-item:hover {
-    background-color: #404040;
+    background-color: #424242;
 }
 
 .menu-item.active,
 .menu-section.active {
-    background-color: #404040;
-    border: 1px solid #505050;
+    background-color: #424242;
 }
 
 .menu-item i {
@@ -256,22 +255,26 @@ body {
 }
 
 #notification-btn {
-    background-color: #252525;
+    background-color: #202020;
     color: white;
     border: none;
-    padding: 10px;
+    padding: 9px;
     height: 36px;
     width: 36px;
     border-radius: 20px;
-    font-weight: 800;
-    font-size: 16px;
-    transition: all 0.15s;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
     position: relative;
     cursor: pointer;
 }
 
 #notification-btn:hover {
     background-color: rgb(56, 56, 56);
+}
+
+#notification-btn i {
+    font-size: 18px;
 }
 
 .badge {
@@ -458,7 +461,7 @@ body {
 }
 
 .main-container {
-    background-color: #1c1a1a;
+    background-color: rgb(13, 13, 13);
     display: flex;
     flex-direction: column;
     padding: 0 10px;
@@ -471,13 +474,19 @@ body {
 }
 
 .text-container {
-    background-color: rgb(37, 37, 37);
+    background-color: #202020;
     color: white;
     text-align: left;
     margin-top: 10px;
     padding: 16px;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
+}
+
+@media (max-width: 768px) {
+    .text-container {
+        padding: 12px 8px;
+    }
 }
 
 .text-container-title {
@@ -509,30 +518,8 @@ body {
     font-weight: 800;
 }
 
-.btn-dashboard {
-    background-color: rgb(255, 255, 255);
-    border: none;
-    display: flex;
-    width: 200px;
-    color: rgb(0, 0, 0);
-    padding: 10px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-size: 14px;
-    font-family: sans-serif;
-    text-transform: uppercase;
-    font-weight: 800;
-    transition: all 0.15s;
-}
-
-.btn-dashboard:hover {
-    opacity: 0.5;
-    cursor: pointer;
-}
-
 #dashboardIcon {
-    font-size: 20px;
-    margin-right: 10px;
+    font-size: 16px;
 }
 
 .notif-clear-btn {

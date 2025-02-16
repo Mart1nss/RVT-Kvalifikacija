@@ -11,6 +11,10 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Category::withCount('products')->get();
+
+        // Debug the categories collection
+        \Log::info('Categories with counts:', $categories->toArray());
+
         return view('admin.categories.index', ['categories' => $categories]);
     }
 

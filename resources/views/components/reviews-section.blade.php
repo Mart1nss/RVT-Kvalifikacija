@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="{{ asset('css/components/review-section.css') }}">
+<link rel="stylesheet" href="{{ asset('css/components/buttons.css') }}">
 
 <div id="reviews-div" class="reviews-div" x-data="{
     reviews: @js(
@@ -148,7 +149,7 @@
         <div class="char-count" :class="{ 'text-danger': charCount >= maxChars }">
           <span x-text="charCount"></span> / <span x-text="maxChars"></span>
         </div>
-        <button class="button-review" type="submit">Submit</button>
+        <button class="btn btn-primary btn-sm btn-responsive" type="submit">Submit</button>
       </div>
     </form>
   @else
@@ -161,7 +162,7 @@
   </h3>
   <div class="filter-buttons">
     <div class="sort-dropdown">
-      <button class="dropdown-btn" @click.stop="dropdownOpen = !dropdownOpen">
+      <button class="btn btn-filter btn-md" @click.stop="dropdownOpen = !dropdownOpen">
         <i class='bx bx-sort-alt-2'></i>
         <span x-text="sortOptions[sortOrder]"></span>
       </button>

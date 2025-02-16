@@ -61,7 +61,10 @@
 
   <section id="underPdf" class="container-under-pdf-view">
     <div class="metadata">
-      <h2>{{ $data->title }} by {{ $data->author }}</h2>
+      <div class="book-info">
+        <h2>{{ $data->title }} </h2>
+        <h3 style="color: white; display: block;"> by {{ $data->author }}</h3>
+      </div>
       <div class="action-buttons">
         <form class="favorite-form"
           action="{{ $product->isFavoritedBy(auth()->user()) ? route('my-collection.delete', $product->id) : route('my-collection.add', $product->id) }}"

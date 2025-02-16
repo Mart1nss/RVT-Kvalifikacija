@@ -51,7 +51,7 @@
  @foreach ($preferredBooks as $genre => $books)
    <div class="newest-books-container">
      <div class="carousel-header">
-       <h1 class="h1-text">{{ strtoupper($genre) }} BOOKS</h1>
+       <h1 class="h1-text">{{ strtoupper($genre) }}</h1>
        <div class="carousel-nav">
          <button class="carousel-button prev"><i class='bx bx-chevron-left'></i></button>
          <button class="carousel-button next"><i class='bx bx-chevron-right'></i></button>

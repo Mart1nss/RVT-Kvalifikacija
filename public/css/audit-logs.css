@@ -21,7 +21,7 @@
 }
 
 .sort-dropdown {
-    background-color: #1c1a1a;
+    background-color: rgb(13, 13, 13);
     border: none;
     color: white;
     padding: 10px 16px;
@@ -83,7 +83,7 @@
 }
 
 .log-entry {
-    background: #1c1a1a;
+    background: rgb(13, 13, 13);
     backdrop-filter: blur(10px);
     border-radius: 8px;
     padding: 15px;
@@ -94,7 +94,7 @@
 }
 
 .log-entry:hover {
-    background-color: #303030;
+    background-color: #252525;
 }
 
 .log-header {

@@ -23,7 +23,7 @@
 }
 
 .edit-book-modal-content {
-    background-color: #1c1a1a;
+    background-color: #202020;
     padding: 20px;
     border-radius: 8px;
     width: 90%;
@@ -66,9 +66,10 @@
 #editForm select {
     width: 100%;
     padding: 8px;
+    height: 40px;
     margin-bottom: 15px;
     border-radius: 8px;
-    border: 1px solid #4a4a4a;
+    border: none;
     background-color: rgb(56, 56, 56);
     color: white;
     font-size: 14px;
@@ -96,12 +97,12 @@
 }
 
 .edit-book-btn-primary:hover {
-    opacity: 0.8;
+    opacity: 0.5;
 }
 
 .edit-book-btn-secondary {
     border: none;
-    background-color: #383838;
+    background-color: #202020;
     color: white;
     padding: 10px 20px;
     height: 40px;
@@ -114,7 +115,7 @@
 }
 
 .edit-book-btn-secondary:hover {
-    opacity: 0.8;
+    background-color: rgb(56, 56, 56);
 }
 
 /* Visibility Toggle Styles */
@@ -145,7 +146,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #252525;
+    background-color: #202020;
     transition: 0.4s;
 }
 

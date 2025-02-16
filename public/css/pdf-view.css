@@ -85,7 +85,7 @@
 }
 
 .notes-name {
-    background-color: rgb(37, 37, 37);
+    background-color: #202020;
     height: 55px;
     border-top-right-radius: 10px;
     border-top-left-radius: 10px;
@@ -117,7 +117,7 @@
     height: 93%;
     width: 100%;
     border: none;
-    background-color: rgb(26, 25, 25);
+    background-color: #181818;
     resize: none;
     outline: none;
     @media (max-width: 769px) {
@@ -199,7 +199,7 @@
     display: flex;
     width: 100%;
     padding: 13px 5px;
-    background-color: #252525;
+    background-color: #202020;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     align-items: center;
     justify-content: center;
@@ -293,12 +293,25 @@
     align-items: center;
 }
 
+.book-info {
+    display: flex;
+    flex-direction: column;
+}
+
 .metadata h2 {
     font-weight: 800;
     color: white;
     font-family: sans-serif;
     display: flex;
     font-size: 20px;
+}
+
+.metadata h3 {
+    font-weight: 700;
+    color: white;
+    font-family: sans-serif;
+    display: flex;
+    font-size: 18px;
 }
 
 .favorite-form {
@@ -340,7 +353,7 @@
 .focus-mode-btn {
     display: inline-block;
     border: none;
-    background-color: rgb(37, 37, 37);
+    background-color: #202020;
     color: white;
     border-radius: 8px;
     justify-content: center;
@@ -414,5 +427,3 @@ body.focus-mode .back-button {
 .exit-focus-mode i {
     font-size: 18px;
 }
-
-

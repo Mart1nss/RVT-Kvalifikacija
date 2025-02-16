@@ -1,5 +1,17 @@
+.admin-panel {
+    display: flex;
+    width: 200px;
+    background-color: black;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.admin-panel button {
+    width: 100%;
+}
+
 .item-container {
-    background-color: #252525;
+    background-color: #202020;
     border-bottom-right-radius: 8px;
     border-bottom-left-radius: 8px;
     padding: 16px;
@@ -10,6 +22,10 @@
     .item-container {
         display: block;
     }
+}
+
+#dashboardIcon {
+    font-size: 16px;
 }
 
 #dropdown-1 {
@@ -30,6 +46,13 @@
     padding: 0;
 }
 
+.btn-div {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
 .stats-text {
     color: white;
     font-size: 18px;
@@ -39,13 +62,9 @@
     margin-bottom: 10px;
 }
 
-.btn-div {
-    width: 60%;
-}
-
 .stats-div {
     width: 40%;
-    background-color: #1c1a1a;
+    background-color: rgb(13, 13, 13);
     padding: 10px;
     border-radius: 8px;
     @media (max-width: 769px) {

@@ -6,7 +6,7 @@
 }
 
 body {
-    background-color: #0D0D0D;
+    background-color: rgb(13, 13, 13);
     min-width: 375px;
     align-items: center;
     justify-content: center;
@@ -18,7 +18,7 @@ body {
     left: 0;
     width: 100%;
     padding: 20px 50px;
-    background: #0D0D0D;
+    background: rgb(13, 13, 13);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -32,7 +32,6 @@ h1 {
     font-weight: 700;
     position: relative;
 }
-
 
 nav {
     display: flex;
@@ -52,60 +51,25 @@ nav {
 }
 
 .nav-a .active {
-    border-bottom: 4px solid #ffffff
+    border-bottom: 4px solid #ffffff;
 }
 
 .nav-a a::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 100%;
     left: 0;
     width: 0;
     height: 4px;
     background: #ffffff;
-    transition: 0.2s
+    transition: 0.2s;
 }
 
 .nav-a a:hover::before {
     width: 100%;
 }
 
-.register-btn {
-    border: none;
-    background-color: white;
-    padding: 10px;
-    height: 40px;
-    width: 120px;
-    border-radius: 8px;
-    font-weight: 800;
-    font-size: 12px;
-    text-transform: uppercase;
-    transition: all 0.2s;
-}
-
-.login-btn {
-    border: none;
-    background-color: rgb(37, 37, 37);
-    color: white;
-    padding: 10px;
-    height: 40px;
-    width: 120px;
-    border-radius: 8px;
-    font-weight: 800;
-    margin-left: 20px;
-    font-size: 12px;
-    text-transform: uppercase;
-    transition: all 0.2s;
-}
-
-button:hover {
-    cursor: pointer;
-    opacity: 0.5;
-}
-
-
 @media (max-width: 769px) {
-
     .navbar {
         padding: 0 10px;
         padding-top: 10px;
@@ -129,11 +93,6 @@ button:hover {
         margin-bottom: 1.5%;
     }
 
-    .login-btn {
-        float: left;
-        margin-left: 0;
-    }
-
     .navbar button {
         align-items: center;
         justify-content: center;
@@ -141,12 +100,7 @@ button:hover {
     }
 }
 
-
-
-
-
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css");
-
 
 /* page content */
 
@@ -158,9 +112,8 @@ p {
     color: white;
 }
 
-
 .main-container {
-    background-color: #0D0D0D;
+    background-color: rgb(13, 13, 13);
     padding: 0 50px;
     display: flex;
     flex-direction: column;
@@ -173,9 +126,6 @@ p {
         margin-top: 12px;
     }
 }
-
-
-
 
 .library-preview {
     background-color: #202020;
@@ -197,7 +147,7 @@ p {
 /* Add vignette containers */
 .pdf-carousel::before,
 .pdf-carousel::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     width: 150px;
@@ -206,7 +156,6 @@ p {
     pointer-events: none;
 }
 
-/* Left vignette */
 .pdf-carousel::before {
     left: 0;
     background: linear-gradient(
@@ -217,7 +166,6 @@ p {
     );
 }
 
-/* Right vignette */
 .pdf-carousel::after {
     right: 0;
     background: linear-gradient(
@@ -230,13 +178,11 @@ p {
 
 .carousel-track-container {
     overflow: hidden;
-
 }
 
 .carousel-track {
     display: flex;
     animation: scroll 20s linear infinite;
-   
 }
 
 .pdf-item {
@@ -245,7 +191,6 @@ p {
     box-sizing: border-box;
 }
 
-/* Tablet view */
 @media (max-width: 1024px) {
     .pdf-item {
         flex: 0 0 250px;
@@ -255,11 +200,10 @@ p {
     }
     .pdf-carousel::before,
     .pdf-carousel::after {
-        width: 100px; /* Smaller vignette for tablet */
+        width: 100px; 
     }
 }
 
-/* Mobile view */
 @media (max-width: 768px) {
     .pdf-item {
         flex: 0 0 200px;
@@ -269,22 +213,21 @@ p {
     }
     .pdf-carousel::before,
     .pdf-carousel::after {
-        width: 60px; /* Even smaller vignette for mobile */
+        width: 60px; 
     }
 }
 
-/* Small mobile view */
 @media (max-width: 480px) {
     .pdf-item {
         flex: 0 0 150px;
     }
     .carousel-track {
-        animation: scroll 5s linear infinite; /* Fastest for mobile */
+        animation: scroll 5s linear infinite;
     }
     .pdf-carousel::before,
     .pdf-carousel::after {
-        width: 60px; /* Even smaller vignette for mobile */
-    }   
+        width: 60px; 
+    }
 }
 
 .thumbnail {
@@ -306,8 +249,6 @@ p {
     object-fit: cover;
 }
 
-
-/* Basic scroll animation */
 @keyframes scroll {
     0% {
         transform: translateX(0);
@@ -318,20 +259,14 @@ p {
 }
 
 
-
-
-
-
-
-/* Hero Section */
 .hero {
     text-align: center;
-    padding: 30px 20px; /* Adjust padding as needed */
+    padding: 30px 20px; 
     border-radius: 10px;
 }
 
 .hero-title {
-    font-size: 2rem; /* Responsive font size */
+    font-size: 2rem;
     color: white;
     margin-bottom: 10px;
 }
@@ -342,7 +277,6 @@ p {
     margin-bottom: 20px;
 }
 
-/* Section Styles */
 .section-title {
     font-size: 1.5rem;
     color: white;
@@ -359,8 +293,6 @@ p {
     margin: 0;
 }
 
-
-/* Responsive Adjustments */
 @media (min-width: 769px) {
     .main-container {
         padding: 30px 50px; /* More padding on larger screens */
@@ -381,9 +313,6 @@ p {
 }
 
 
-
-
-/* Benefits Section */
 .benefits {
     margin-top: 20px;
     padding: 0px;
@@ -475,8 +404,6 @@ p {
     .benefits {
         padding: 0px;
     }
-
-
 }
 
 /* Media Query for even smaller screens */
@@ -486,7 +413,6 @@ p {
         min-height: auto; /* Allow height to adjust as needed */
     }
 }
-
 
 .why-choose {
     margin-top: 20px;
@@ -528,7 +454,7 @@ p {
     height: 70px;
     padding: 15px;
     background-color: #202020;
-    box-shadow:rgba(0, 0, 0, 0.2);
+    box-shadow: rgba(0, 0, 0, 0.2);
     color: white;
     border: none;
     text-align: left;

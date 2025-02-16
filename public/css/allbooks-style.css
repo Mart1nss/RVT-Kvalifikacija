@@ -1,5 +1,5 @@
 .item-container {
-    background-color: rgb(37, 37, 37);
+    background-color: #202020;
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
     display: grid;
@@ -41,4 +41,8 @@
     .item-container {
         grid-template-columns: repeat(2, 1fr);
     }
+}
+
+button i {
+    font-size: 16px;
 }

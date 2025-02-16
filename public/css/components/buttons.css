@@ -1,0 +1,88 @@
+/* Base style */
+.btn {
+    border: none;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 12px;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    padding: 10px;
+    height: 40px;
+    cursor: pointer;
+    font-family: sans-serif;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+/* Variants */
+.btn-primary {
+    background-color: white;
+    color: black;
+}
+
+.btn-secondary {
+    background-color: #202020;
+    color: white;
+}
+
+.btn-filter {
+    background-color: rgb(13, 13, 13);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    text-align: left;
+}
+
+.btn-danger {
+    background-color: rgb(126, 6, 6);
+    color: white;
+}
+
+/* Size */
+.btn-sm {
+    width: 120px;
+}
+
+.btn-md {
+    width: 160px;
+}
+
+.btn-full {
+    width: 100%;
+}
+
+.btn-mini {
+    width: 36px;
+    height: 36px;
+    padding: 8px;
+}
+
+.btn-ml {
+    margin-left: 20px;
+}
+
+/* Hover */
+.btn-primary:hover {
+    background-color: #f0f0f0;
+    opacity: 0.5;
+}
+
+.btn-secondary:hover {
+    background-color: rgb(50, 50, 50);
+}
+
+.btn-filter:hover {
+    background-color: rgb(42, 42, 42);
+}
+
+.btn-danger:hover {
+    background-color: rgb(80, 80, 80);
+}
+
+@media screen and (max-width: 768px) {
+    .btn-responsive {
+        width: 100%;
+    }
+}

@@ -5,17 +5,19 @@
 ])
 
 <link rel="stylesheet" href="{{ asset('css/components/filter-section.css') }}">
+<link rel="stylesheet" href="{{ asset('css/components/buttons.css') }}">
 
 <div x-data="filterSection">
   <div class="search-filter-container">
     <div class="search-container">
-      <input type="text" id="search-input" placeholder="Search books..." x-model="searchQuery" @input="debounceSearch()">
+      <input type="text" id="search-input" placeholder="Search books..." x-model="searchQuery"
+        @input="debounceSearch()">
     </div>
     <button class="mobile-filter-btn" @click.stop="openMobileDrawer()">
       <i class='bx bx-filter-alt'></i>
     </button>
     <div class="genre-dropdown">
-      <button class="dropdown-btn" @click.stop="toggleGenreDropdown">
+      <button class="btn btn-filter btn-md" @click.stop="toggleGenreDropdown">
         <i class='bx bx-filter-alt'></i> Genres
       </button>
       <ul class="dropdown-content" :class="{ 'show': showGenreDropdown }" @click.stop>
@@ -34,7 +36,7 @@
 
     <!-- Visibility Filter for Admins -->
     <div class="sort-dropdown" x-show="isAdmin">
-      <button class="dropdown-btn" @click.stop="toggleVisibilityDropdown">
+      <button class="btn btn-filter btn-md" @click.stop="toggleVisibilityDropdown">
         <i class='bx bx-show'></i>
         <span x-text="getVisibilityDisplayText()"></span>
       </button>
@@ -48,7 +50,7 @@
     </div>
 
     <div class="sort-dropdown">
-      <button class="dropdown-btn" @click.stop="toggleSortDropdown">
+      <button class="btn btn-filter btn-md" @click.stop="toggleSortDropdown">
         <i class='bx bx-sort-alt-2'></i>
         <span x-text="getSortDisplayText()"></span>
       </button>

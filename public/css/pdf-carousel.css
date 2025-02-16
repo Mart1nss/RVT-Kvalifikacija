@@ -1,5 +1,5 @@
 .newest-books-container {
-    background-color: rgb(37, 37, 37);
+    background-color: #202020;
     border-radius: 8px;
     padding: 20px;
     margin-top: 20px;
@@ -51,7 +51,7 @@
     flex: 0 0 calc(20% - 16px);
     min-width: 160px;
     position: relative;
-    background-color: #1c1a1a;
+    background-color: rgb(13, 13, 13);
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
@@ -161,7 +161,7 @@
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    background-color: #363636;
+    background-color: #202020;
     color: white;
     display: flex;
     align-items: center;
