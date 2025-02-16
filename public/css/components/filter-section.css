@@ -3,14 +3,14 @@
 .search-filter-container {
     display: flex;
     align-items: center;
-    flex-wrap: wrap; /* Allows items to wrap on smaller screens */
+    flex-wrap: wrap;
     gap: 15px;
     margin-top: 10px;
 }
 
 .search-container {
     position: relative;
-    flex: 1; /* Takes up available space */
+    flex: 1;
 }
 
 .search-container input {
@@ -18,14 +18,14 @@
     padding: 12px 15px;
     border: none;
     border-radius: 8px;
-    background-color: #1c1a1a;
+    background-color: rgb(13, 13, 13);
     color: white;
     font-size: 14px;
-    height: 40px; /* Consistent height with buttons */
+    height: 40px;
 }
 
 .search-container input:focus {
-    outline: none;
+    outline: 1px solid white;
     background-color: #2a2a2a;
 }
 
@@ -33,57 +33,28 @@
 
 .genre-dropdown,
 .sort-dropdown {
-    position: relative; /* For absolute positioning of the dropdown content */
-    width: 160px; /*removed display: block, because width has effect only on block elements, replaced it with position relative*/
-}
-
-.dropdown-btn {
-    display: flex; /* Use flexbox for alignment */
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    width: 100%;
-    height: 40px;
-    padding: 12px 15px;
-    border: none;
-    border-radius: 8px;
-    background-color: #1c1a1a;
-    color: white;
-    font-size: 12px;
-    font-weight: 800;
-    font-family: sans-serif;
-    text-transform: uppercase;
-    text-align: left;
-    cursor: pointer;
-    transition: background-color 0.2s; /* Smoother transition */
-}
-
-.dropdown-btn:hover {
-    background-color: #2a2a2a;
-}
-
-.dropdown-btn i {
-    font-size: 16px;
+    position: relative;
+    width: 160px;
 }
 
 .dropdown-content {
     position: absolute;
     left: -40px;
-    top: calc(100% + 5px); /*  calculate the top position */
+    top: calc(100% + 5px);
     min-width: 200px;
     max-height: 300px;
     overflow-y: auto;
     border-radius: 8px;
-    background-color: #1c1a1a;
+    background-color: rgb(13, 13, 13);
     color: white;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1000;
     padding: 5px;
-    display: none; /* Hidden by default */
+    display: none;
 }
 
 .dropdown-content.show {
-    display: block; /* Show when 'show' class is present */
+    display: block;
 }
 
 .dropdown-content li {
@@ -142,7 +113,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 12px;
-    color: black; /*  removed rgb(0, 0, 0) and replaced it with black */
+    color: black;
 }
 
 .genre-name {
@@ -193,18 +164,18 @@
     padding: 8px 16px;
     border: none;
     border-radius: 8px;
-    background-color: #1c1a1a;
+    background-color: rgb(13, 13, 13);
     color: white;
     font-size: 12px;
     font-weight: 800;
     font-family: sans-serif;
     text-transform: uppercase;
-    transition: background-color 0.2s ease; /*  added ease for smooth transition */
+    transition: background-color 0.2s ease;
     cursor: pointer;
 }
 
 .clear-filters-btn:hover {
-    background-color: #ff3333;
+    background-color: rgb(126, 6, 6);
 }
 
 .clear-filters-btn i {
@@ -218,7 +189,7 @@
     align-items: center;
     gap: 15px;
     margin-top: 15px;
-    padding: 0; /* Reset padding */
+    padding: 0;
     border-radius: 8px;
     background-color: transparent;
     font-family: sans-serif;
@@ -260,7 +231,7 @@
     height: 40px;
     border: none;
     border-radius: 8px;
-    background-color: #1c1a1a;
+    background-color: rgb(13, 13, 13);
     color: white;
     cursor: pointer;
     transition: background-color 0.2s;
@@ -286,7 +257,7 @@
     max-height: 70vh;
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
-    background-color: #1c1a1a;
+    background-color: rgb(13, 13, 13);
     transform: translateY(100%);
     transition: transform 0.3s ease-in-out;
     will-change: transform;
@@ -332,7 +303,7 @@
     border-bottom: 1px solid #2a2a2a;
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
-    background-color: #1c1a1a;
+    background-color: rgb(13, 13, 13);
 }
 
 .drawer-header h2 {
@@ -415,15 +386,15 @@
 }
 
 .accordion-content {
-    max-height: 0; /*  hidden by default */
+    max-height: 0;
     overflow: hidden;
-    background-color: #2a2a2a;
+    background-color: #202020;
     transition: all 0.3s ease-out;
 }
 
 .accordion-content.open {
-    max-height: 250px; /*  limit the expanded height */
-    overflow-y: auto; /*  scrollable if content overflows */
+    max-height: 250px;
+    overflow-y: auto;
     padding: 10px 0;
 }
 
@@ -443,7 +414,7 @@
 }
 /*mobile genre checkboxes*/
 .mobile-filter-drawer .genre-checkbox-container {
-    padding: 16px 20px;
+    padding: 12px 20px;
 }
 .mobile-filter-drawer .custom-checkbox {
     width: 20px;
@@ -459,7 +430,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 20px;
+    padding: 12px 20px;
     cursor: pointer;
     color: white;
     width: 100%;
@@ -485,8 +456,7 @@
     bottom: 0;
     z-index: 2;
     padding: 16px 20px;
-    border-top: 1px solid #2a2a2a;
-    background-color: #1c1a1a;
+    background-color: rgb(13, 13, 13);
 }
 
 .drawer-footer .clear-filters-btn {
@@ -495,7 +465,7 @@
     height: 44px;
     font-size: 14px;
     justify-content: center;
-    background-color: #2a2a2a;
+    background-color: #202020;
 }
 
 /* --- Media Queries --- */

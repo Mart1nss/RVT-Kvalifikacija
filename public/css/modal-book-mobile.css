@@ -32,7 +32,7 @@
 
 /* Modal Content */
 .mobile-modal .modal-content {
-    background: #1c1a1a;
+    background: rgb(13, 13, 13);
     border-radius: 12px;
     padding: 20px;
     position: fixed;
@@ -159,7 +159,7 @@
     height: 44px;
     border: none;
     border-radius: 8px;
-    background: #363636;
+    background: #252525;
     color: white;
     display: flex;
     font-size: 14px;

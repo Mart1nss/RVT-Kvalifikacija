@@ -1,5 +1,5 @@
 .item-container {
-    background-color: rgb(37, 37, 37);
+    background-color: #202020;
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
     display: grid;
@@ -11,7 +11,7 @@
 }
 
 .item-container3 {
-    background-color: rgb(37, 37, 37);
+    background-color: #202020;
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
     display: flex;
@@ -24,7 +24,6 @@
     opacity: 0;
     transition: opacity 0.5s ease-in-out;
 }
-
 
 .confirm-delete {
     background-color: #ff0000;
@@ -100,7 +99,7 @@
 }
 
 .edit-modal-content {
-    background-color: #1c1a1a;
+    background-color: rgb(13, 13, 13);
     margin: 15% auto;
     padding: 20px;
     border: none;

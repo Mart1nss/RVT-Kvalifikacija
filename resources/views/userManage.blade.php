@@ -4,13 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Management</title>
-  <link rel="stylesheet" href="{{ asset('css/navbar-style.css') }}">
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <link rel="stylesheet" href="{{ asset('css/notifications-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/usermanage-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/modal-confirmation-delete.css') }}">
   <link rel="stylesheet" href="{{ asset('css/main-style.css') }}">
-
+  <link rel="stylesheet" href="{{ asset('css/components/buttons.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
+  <!-- Add Alpine.js -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
 <body>
@@ -20,62 +22,81 @@
   @include('navbar')
 
 
-
-  <div class="main-container">
+  <div class="main-container" x-data="userManagement">
     <div class="text-container">
-      <h1 style="color: white; text-transform:uppercase; font-family: sans-serif; font-weight: 800;">User Management
-      </h1>
-    </div>
+      <h1 class="text-container-title">USER MANAGEMENT</h1>
 
-    <div class="item-container">
-      <div class="filter-div">
-        <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names..."
-          title="Type in a name">
 
-        <div class="button-container">
-          <div class="dropdown">
-            <button id="sortButton" class="sort-dropdown" onclick="toggleDropdown(event, 'sortOptions')">
-              <i class='bx bx-sort-alt-2'></i>
-              <span id="currentSort">Default</span>
-            </button>
-            <div id="sortOptions" class="dropdown-content">
-              <a href="#" onclick="handleSort('oldest', event)">Default</a>
-              <a href="#" onclick="handleSort('nameAZ', event)">Name (A-Z)</a>
-              <a href="#" onclick="handleSort('nameZA', event)">Name (Z-A)</a>
-              <a href="#" onclick="handleSort('newest', event)">Newest Users</a>
-              <a href="#" onclick="handleSort('clear', event)">Oldest Users</a>
-              <a href="#" onclick="handleSort('lastOnline', event)">Last Online</a>
-              <a href="#" onclick="handleSort('recentlyOnline', event)">Recently Online</a>
-            </div>
-          </div>
 
-          <div class="dropdown">
-            <button id="filterButton" class="sort-dropdown" onclick="toggleDropdown(event, 'filterOptions')">
-              <i class='bx bx-filter-alt'></i>
-              <span id="currentFilter">All Users</span>
-            </button>
-            <div id="filterOptions" class="dropdown-content">
-              <a href="#" onclick="handleFilter('all', event)">All Users</a>
-              <a href="#" onclick="handleFilter('admin', event)">Admins</a>
-              <a href="#" onclick="handleFilter('user', event)">Users</a>
-            </div>
-          </div>
+      <div class="search-filter-container">
+        <div class="search-container">
+          <input class="myInput" type="text" x-model="searchQuery" @input.debounce.300ms="updateResults"
+            placeholder="Search for names..." title="Type in a name">
+        </div>
+
+        <div class="sort-dropdown">
+          <button class="btn btn-filter btn-md" @click.stop="toggleDropdown('sort')">
+            <i class='bx bx-sort-alt-2'></i>
+            <span x-text="getSortDisplayText()"></span>
+          </button>
+          <ul class="dropdown-content" :class="{ 'show': dropdowns.sort }">
+            <template x-for="option in sortOptions" :key="option.value">
+              <li :class="{ 'selected': currentSort === option.value }" @click="updateSort(option.value)"
+                x-text="option.text">
+              </li>
+            </template>
+          </ul>
+        </div>
+
+        <div class="sort-dropdown">
+          <button class="btn btn-filter btn-md" @click.stop="toggleDropdown('filter')">
+            <i class='bx bx-filter-alt'></i>
+            <span x-text="getFilterDisplayText()"></span>
+          </button>
+          <ul class="dropdown-content" :class="{ 'show': dropdowns.filter }">
+            <template x-for="option in filterOptions" :key="option.value">
+              <li :class="{ 'selected': currentFilter === option.value }" @click="updateFilter(option.value)"
+                x-text="option.text">
+              </li>
+            </template>
+          </ul>
         </div>
       </div>
 
+      <div class="filter-info-row" x-show="showFilterInfo">
+        <span class="total-count"><span x-text="totalUsers"></span> users</span>
+        <div id="active-filters">
+          <template x-if="searchQuery">
+            <span class="filter-tag" x-text="`Results for '${searchQuery}'`"></span>
+          </template>
+          <template x-if="currentFilter !== 'all'">
+            <span class="filter-tag" x-text="getFilterDisplayText()"></span>
+          </template>
+          <template x-if="currentSort !== 'newest'">
+            <span class="filter-tag" x-text="getSortDisplayText()"></span>
+          </template>
+        </div>
+        <button class="clear-filters-btn" @click="clearAllFilters" x-show="hasActiveFilters">
+          <i class='bx bx-x'></i> Clear Filters
+        </button>
+      </div>
+    </div>
+
+
+    <div class="item-container">
       <div class="table-responsive">
         <h2>All Users</h2>
-        <table id="myTable" class="custom-table">
+        <table class="custom-table">
           <thead>
             <tr>
               <th>ID</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>User Type</th>
-              <th>Last Online</th>
-              <th>Created At</th>
-              <th>Updated At</th>
-              <th>Action</th>
+              <th>NAME</th>
+              <th>EMAIL</th>
+              <th>LAST ONLINE</th>
+              <th>CREATED AT</th>
+              <th>UPDATED AT</th>
+              <th>USER TYPE</th>
+              <th>ACTION</th>
             </tr>
           </thead>
           <tbody>
@@ -84,6 +105,9 @@
                 <td>{{ $user->id }}</td>
                 <td>{{ $user->name }}</td>
                 <td>{{ $user->email }}</td>
+                <td>{{ $user->last_online ? $user->last_online->diffForHumans() : 'Never' }}</td>
+                <td>{{ $user->created_at->format('M d, Y') }}</td>
+                <td>{{ $user->updated_at->format('M d, Y') }}</td>
                 <td>
                   <form action="{{ route('users.updateUserType', $user) }}" method="POST">
                     @csrf
@@ -94,12 +118,9 @@
                     </select>
                   </form>
                 </td>
-                <td>{{ $user->last_online ? $user->last_online->diffForHumans() : 'Never' }}</td>
-                <td>{{ $user->created_at->format('M d, Y') }}</td>
-                <td>{{ $user->updated_at->format('M d, Y') }}</td>
                 <td>
-                  <form action="{{ route('users.destroy', $user) }}" method="POST" style="display: inline;"
-                    class="delete-form">
+                  <form action="{{ route('users.destroy', $user) }}" method="POST" class="delete-form"
+                    data-user-id="{{ $user->id }}">
                     @csrf
                     @method('DELETE')
                     <button type="button" class="remove-btn"
@@ -112,6 +133,10 @@
             @endforeach
           </tbody>
         </table>
+
+        <div class="pagination-container">
+          {{ $users->links() }}
+        </div>
       </div>
     </div>
   </div>
@@ -123,266 +148,312 @@
         <h2>Delete User</h2>
       </div>
       <div class="delete-confirmation-body">
-        <p>Are you sure you want to delete user "<span id="userName"></span>"?</p>
+        <p>Are you sure you want to delete user "<span id="deleteUserName"></span>"?</p>
         <p class="delete-confirmation-text">This action cannot be undone.</p>
       </div>
       <div class="delete-confirmation-footer">
-        <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
-        <button type="button" class="btn-delete" id="confirmDeleteBtn">Delete</button>
+        <button type="button" class="btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+        <button type="button" class="btn-delete" id="confirmDeleteBtn" onclick="submitDelete()">Delete</button>
       </div>
     </div>
   </div>
 
   <script>
-    function myFunction() {
-      var input, filter, table, tr, td, i, txtValue;
-      input = document.getElementById("myInput");
-      filter = input.value.toUpperCase();
-      table = document.getElementById("myTable");
-      tr = table.getElementsByTagName("tr");
-      for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td")[1];
-        if (td) {
-          txtValue = td.textContent || td.innerText;
-          if (txtValue.toUpperCase().indexOf(filter) > -1) {
-            tr[i].style.display = "";
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('userManagement', () => ({
+        searchQuery: '',
+        currentSort: 'newest',
+        currentFilter: 'all',
+        showModal: false,
+        totalUsers: {{ $users->total() }},
+        userToDelete: {
+          id: null,
+          name: '',
+          form: null
+        },
+        dropdowns: {
+          sort: false,
+          filter: false
+        },
+        sortOptions: [{
+            value: 'newest',
+            text: 'Newest'
+          },
+          {
+            value: 'oldest',
+            text: 'Oldest'
+          },
+          {
+            value: 'nameAZ',
+            text: 'Name (A-Z)'
+          },
+          {
+            value: 'nameZA',
+            text: 'Name (Z-A)'
+          },
+          {
+            value: 'lastOnline',
+            text: 'Last Online'
+          }
+        ],
+        filterOptions: [{
+            value: 'all',
+            text: 'All Users'
+          },
+          {
+            value: 'admin',
+            text: 'Admins'
+          },
+          {
+            value: 'user',
+            text: 'Users'
+          }
+        ],
+
+        init() {
+          this.initFromUrl();
+
+          // Close dropdowns when clicking outside
+          document.addEventListener('click', () => {
+            this.dropdowns.sort = false;
+            this.dropdowns.filter = false;
+          });
+
+          // Handle pagination clicks
+          document.addEventListener('click', (e) => {
+            const link = e.target.closest('.pagination a');
+            if (link) {
+              e.preventDefault();
+              this.loadPage(link.href);
+            }
+          });
+        },
+
+        get showFilterInfo() {
+          return this.searchQuery ||
+            this.currentFilter !== 'all' ||
+            this.currentSort !== 'newest';
+        },
+
+        get hasActiveFilters() {
+          return this.showFilterInfo;
+        },
+
+        initFromUrl() {
+          const urlParams = new URLSearchParams(window.location.search);
+          this.searchQuery = urlParams.get('query') || '';
+          this.currentSort = urlParams.get('sort') || 'newest';
+          this.currentFilter = urlParams.get('filter') || 'all';
+        },
+
+        toggleDropdown(type) {
+          Object.keys(this.dropdowns).forEach(key => {
+            if (key !== type) this.dropdowns[key] = false;
+          });
+          this.dropdowns[type] = !this.dropdowns[type];
+        },
+
+        getSortDisplayText() {
+          const option = this.sortOptions.find(opt => opt.value === this.currentSort);
+          return option ? option.text : 'Newest';
+        },
+
+        getFilterDisplayText() {
+          const option = this.filterOptions.find(opt => opt.value === this.currentFilter);
+          return option ? option.text : 'All Users';
+        },
+
+        updateSort(value) {
+          this.currentSort = value;
+          this.dropdowns.sort = false;
+          this.updateResults();
+        },
+
+        updateFilter(value) {
+          this.currentFilter = value;
+          this.dropdowns.filter = false;
+          this.updateResults();
+        },
+
+        async loadPage(url) {
+          try {
+            const response = await fetch(url, {
+              headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+              }
+            });
+            if (!response.ok) throw new Error('Network response was not ok');
+
+            const data = await response.json();
+
+            // Update the table content
+            document.querySelector('.table-responsive').innerHTML = data.html;
+
+            // Update URL without reloading
+            const newUrl = new URL(url);
+
+            // Preserve the current filters in the URL
+            if (this.searchQuery && !newUrl.searchParams.has('query')) {
+              newUrl.searchParams.set('query', this.searchQuery);
+            }
+            if (this.currentSort !== 'newest' && !newUrl.searchParams.has('sort')) {
+              newUrl.searchParams.set('sort', this.currentSort);
+            }
+            if (this.currentFilter !== 'all' && !newUrl.searchParams.has('filter')) {
+              newUrl.searchParams.set('filter', this.currentFilter);
+            }
+
+            window.history.pushState({}, '', newUrl);
+
+            // Update total users count
+            this.totalUsers = data.total;
+
+            // Update the pagination links to include current filters
+            const paginationLinks = document.querySelectorAll('.pagination a');
+            paginationLinks.forEach(link => {
+              const linkUrl = new URL(link.href);
+              if (this.searchQuery) {
+                linkUrl.searchParams.set('query', this.searchQuery);
+              }
+              if (this.currentSort !== 'newest') {
+                linkUrl.searchParams.set('sort', this.currentSort);
+              }
+              if (this.currentFilter !== 'all') {
+                linkUrl.searchParams.set('filter', this.currentFilter);
+              }
+              link.href = linkUrl.toString();
+            });
+          } catch (error) {
+            console.error('Error:', error);
+          }
+        },
+
+        async updateResults() {
+          const url = new URL(window.location.href);
+
+          // Clear existing parameters
+          url.searchParams.delete('page'); // Reset to first page when filtering
+
+          if (this.searchQuery) {
+            url.searchParams.set('query', this.searchQuery);
           } else {
-            tr[i].style.display = "none";
+            url.searchParams.delete('query');
           }
-        }
-      }
-    }
 
-    function toggleDropdown(event, dropdownId) {
-      event.stopPropagation();
-      var dropdowns = document.getElementsByClassName("dropdown-content");
-      // Close all other dropdowns
-      for (var i = 0; i < dropdowns.length; i++) {
-        if (dropdowns[i].id !== dropdownId) {
-          dropdowns[i].classList.remove("show");
-        }
-      }
-
-      var dropdownContent = document.getElementById(dropdownId);
-      var currentText = dropdownId === 'sortOptions' ?
-        document.getElementById("currentSort").textContent :
-        document.getElementById("currentFilter").textContent;
-
-      dropdownContent.classList.toggle("show");
-
-      if (dropdownContent.classList.contains("show")) {
-        var options = dropdownContent.getElementsByTagName("a");
-        for (var i = 0; i < options.length; i++) {
-          options[i].classList.remove("active");
-          if (options[i].textContent === currentText) {
-            options[i].classList.add("active");
-          }
-        }
-      }
-    }
-
-    // Close dropdowns if user clicks anywhere on the page
-    document.addEventListener('click', function(event) {
-      var dropdowns = document.getElementsByClassName("dropdown-content");
-      var sortButton = document.getElementById("sortButton");
-      var filterButton = document.getElementById("filterButton");
-
-      for (var i = 0; i < dropdowns.length; i++) {
-        var dropdown = dropdowns[i];
-        if (!sortButton.contains(event.target) &&
-          !filterButton.contains(event.target) &&
-          !dropdown.contains(event.target)) {
-          dropdown.classList.remove("show");
-        }
-      }
-    });
-
-    // Prevent clicks inside dropdowns from bubbling to document
-    document.querySelectorAll('.dropdown-content').forEach(function(dropdown) {
-      dropdown.addEventListener('click', function(event) {
-        event.stopPropagation();
-      });
-    });
-
-    function convertTimeAgoToMinutes(timeAgoText) {
-      if (timeAgoText === 'Never') return Number.MAX_SAFE_INTEGER;
-
-      const matches = timeAgoText.match(/(\d+)\s+(second|minute|hour|day|week|month|year)s?\s+ago/);
-      if (!matches) return 0;
-
-      const value = parseInt(matches[1]);
-      const unit = matches[2];
-
-      switch (unit) {
-        case 'second':
-          return value / 60;
-        case 'minute':
-          return value;
-        case 'hour':
-          return value * 60;
-        case 'day':
-          return value * 24 * 60;
-        case 'week':
-          return value * 7 * 24 * 60;
-        case 'month':
-          return value * 30 * 24 * 60;
-        case 'year':
-          return value * 365 * 24 * 60;
-        default:
-          return 0;
-      }
-    }
-
-    function handleSort(sortType, event) {
-      event.preventDefault();
-      event.stopPropagation();
-
-      var table = document.getElementById("myTable");
-      var rows = Array.from(table.rows).slice(1); // Skip header row
-      var tbody = table.getElementsByTagName("tbody")[0];
-      var currentSortText = document.getElementById("currentSort");
-      var dropdownContent = document.getElementById("sortOptions");
-
-      // Update button text based on selection
-      switch (sortType) {
-        case 'nameAZ':
-          currentSortText.textContent = "Name (A-Z)";
-          break;
-        case 'nameZA':
-          currentSortText.textContent = "Name (Z-A)";
-          break;
-        case 'newest':
-          currentSortText.textContent = "Newest Users";
-          break;
-        case 'lastOnline':
-          currentSortText.textContent = "Last Online";
-          break;
-        case 'recentlyOnline':
-          currentSortText.textContent = "Recently Online";
-          break;
-        case 'clear':
-        case 'oldest':
-          currentSortText.textContent = "Default";
-          sortType = 'oldest';
-          break;
-      }
-
-      // Close dropdown after selection
-      dropdownContent.classList.remove("show");
-
-      rows.sort(function(a, b) {
-        switch (sortType) {
-          case 'nameAZ':
-            return a.cells[1].textContent.localeCompare(b.cells[1].textContent);
-          case 'nameZA':
-            return b.cells[1].textContent.localeCompare(a.cells[1].textContent);
-          case 'newest':
-            return new Date(b.cells[5].textContent) - new Date(a.cells[5].textContent);
-          case 'oldest':
-            return new Date(a.cells[5].textContent) - new Date(b.cells[5].textContent);
-          case 'lastOnline':
-            // Convert time ago text to minutes for proper comparison
-            const aMinutes = convertTimeAgoToMinutes(a.cells[4].textContent);
-            const bMinutes = convertTimeAgoToMinutes(b.cells[4].textContent);
-            return bMinutes - aMinutes; // Larger time ago first
-          case 'recentlyOnline':
-            // Convert time ago text to minutes for proper comparison
-            const aMinutesRecent = convertTimeAgoToMinutes(a.cells[4].textContent);
-            const bMinutesRecent = convertTimeAgoToMinutes(b.cells[4].textContent);
-            return aMinutesRecent - bMinutesRecent; // Smaller time ago first
-          default:
-            return 0;
-        }
-      });
-
-      // Clear the table body
-      while (tbody.firstChild) {
-        tbody.removeChild(tbody.firstChild);
-      }
-
-      // Add sorted rows back
-      rows.forEach(function(row) {
-        tbody.appendChild(row);
-      });
-    }
-
-    function handleFilter(filterType, event) {
-      event.preventDefault();
-      event.stopPropagation();
-
-      var table = document.getElementById("myTable");
-      var rows = table.getElementsByTagName("tr");
-      var currentFilterText = document.getElementById("currentFilter");
-      var dropdownContent = document.getElementById("filterOptions");
-
-      // Update button text based on selection
-      switch (filterType) {
-        case 'admin':
-          currentFilterText.textContent = "Admins";
-          break;
-        case 'user':
-          currentFilterText.textContent = "Users";
-          break;
-        case 'all':
-        default:
-          currentFilterText.textContent = "All Users";
-          break;
-      }
-
-      // Close dropdown after selection
-      dropdownContent.classList.remove("show");
-
-      // Filter rows
-      for (var i = 1; i < rows.length; i++) { // Start from 1 to skip header
-        var userTypeCell = rows[i].getElementsByTagName("td")[3]; // User Type column
-        if (userTypeCell) {
-          var select = userTypeCell.querySelector('select');
-          var userType = select ? select.value : ''; // Get the selected value from the select element
-
-          if (filterType === 'all' || userType === filterType) {
-            rows[i].style.display = "";
+          if (this.currentSort !== 'newest') {
+            url.searchParams.set('sort', this.currentSort);
           } else {
-            rows[i].style.display = "none";
+            url.searchParams.delete('sort');
           }
+
+          if (this.currentFilter !== 'all') {
+            url.searchParams.set('filter', this.currentFilter);
+          } else {
+            url.searchParams.delete('filter');
+          }
+
+          await this.loadPage(url.toString());
+        },
+
+        clearAllFilters() {
+          this.searchQuery = '';
+          this.currentSort = 'newest';
+          this.currentFilter = 'all';
+          this.updateResults();
+        },
+
+        confirmDelete(userId, userName) {
+          this.showModal = true;
+          this.userToDelete = {
+            id: userId,
+            name: userName,
+            form: event.target.closest('form')
+          };
+        },
+
+        closeModal() {
+          this.showModal = false;
+          this.userToDelete = {
+            id: null,
+            name: '',
+            form: null
+          };
+        },
+
+        submitDelete() {
+          if (this.userToDelete.form) {
+            this.userToDelete.form.submit();
+          }
+          this.closeModal();
         }
-      }
-    }
-
-    // Sort by oldest users by default when page loads
-    document.addEventListener('DOMContentLoaded', function() {
-      handleSort('oldest', event);
+      }));
     });
+  </script>
 
-    // Modal functionality
-    let currentForm = null;
+
+  <script>
+    let deleteForm = null;
 
     function confirmDelete(userId, userName) {
-      const modal = document.getElementById('deleteModal');
-      const userNameSpan = document.getElementById('userName');
-      const confirmBtn = document.getElementById('confirmDeleteBtn');
-
-      currentForm = event.target.closest('form');
-      userNameSpan.textContent = userName;
-      modal.style.display = 'block';
-
-      confirmBtn.onclick = function() {
-        if (currentForm) {
-          currentForm.submit();
-        }
-      }
+      // Get the form directly without using route helper
+      deleteForm = document.querySelector(`form.delete-form[data-user-id="${userId}"]`);
+      document.getElementById('deleteUserName').textContent = userName;
+      document.getElementById('deleteModal').style.display = 'block';
     }
 
-    function closeModal() {
-      const modal = document.getElementById('deleteModal');
-      modal.style.display = 'none';
-      currentForm = null;
+    function closeDeleteModal() {
+      document.getElementById('deleteModal').style.display = 'none';
+      deleteForm = null;
+    }
+
+    function submitDelete() {
+      if (deleteForm) {
+        // Submit form using fetch to handle the response
+        fetch(deleteForm.action, {
+            method: 'POST',
+            body: new FormData(deleteForm),
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest'
+            }
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              // Show success alert using the existing alert component
+              const alertContainer = document.querySelector('.alert-container');
+              if (alertContainer) {
+                const successAlert = document.createElement('div');
+                successAlert.className = 'alert alert-success';
+                successAlert.innerHTML = `
+                            <div class="alert-content">
+                                <i class='bx bx-check-circle'></i>
+                                <span>User successfully deleted!</span>
+                            </div>
+                        `;
+                alertContainer.appendChild(successAlert);
+
+                // Remove alert after 3 seconds
+                setTimeout(() => {
+                  successAlert.remove();
+                }, 3000);
+              }
+
+              // Refresh the page to show updated user list
+              window.location.reload();
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+      }
+      closeDeleteModal();
     }
 
     // Close modal when clicking outside
     window.onclick = function(event) {
       const modal = document.getElementById('deleteModal');
-      if (event.target == modal) {
-        closeModal();
+      if (event.target === modal) {
+        closeDeleteModal();
       }
     }
   </script>

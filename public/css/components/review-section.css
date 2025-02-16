@@ -1,6 +1,6 @@
 /* Reviews */
 .reviews-div {
-    background-color: rgb(37, 37, 37);
+    background-color: #202020;
     width: 100%;
     color: white;
     position: relative;
@@ -114,7 +114,7 @@
     border-radius: 8px;
     font-size: 14px;
     outline: transparent;
-    background-color: #1c1a1a;
+    background-color: rgb(13, 13, 13);
     color: white;
     font-family: sans-serif;
     min-height: 120px;
@@ -134,26 +134,6 @@
     pointer-events: none;
 }
 
-.button-review {
-    width: 100%;
-    height: 40px;
-    background-color: rgb(255, 255, 255);
-    border: none;
-    color: rgb(0, 0, 0);
-    border-radius: 8px;
-    text-decoration: none;
-    font-size: 13px;
-    font-family: sans-serif;
-    text-transform: uppercase;
-    font-weight: 800;
-    cursor: pointer;
-    transition: opacity 0.2s;
-}
-
-.button-review:hover {
-    opacity: 0.5;
-}
-
 .filter-buttons {
     position: relative;
     z-index: 2;
@@ -165,32 +145,7 @@
     width: 160px;
 }
 
-.sort-dropdown .dropdown-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    width: 100%;
-    height: 40px;
-    padding: 12px 15px;
-    border: none;
-    border-radius: 8px;
-    background-color: #1c1a1a;
-    color: white;
-    font-size: 12px;
-    font-weight: 800;
-    font-family: sans-serif;
-    text-transform: uppercase;
-    text-align: left;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.sort-dropdown .dropdown-btn:hover {
-    background-color: #2a2a2a;
-}
-
-.sort-dropdown .dropdown-btn i {
+.sort-dropdown .btn-filter i {
     font-size: 16px;
 }
 
@@ -201,7 +156,7 @@
     max-height: 300px;
     overflow-y: auto;
     border-radius: 8px;
-    background-color: #1c1a1a;
+    background-color: rgb(13, 13, 13);
     color: white;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1000;
@@ -231,7 +186,7 @@
 }
 
 .no-reviews {
-    background-color: #1c1a1a;
+    background-color: rgb(13, 13, 13);
     padding: 40px 20px;
     border-radius: 8px;
     margin-top: 20px;
@@ -269,7 +224,7 @@
 
 /* Review Card Styles */
 .review-card {
-    background-color: #1c1a1a;
+    background-color: rgb(13, 13, 13);
     padding: 15px;
     border-radius: 8px;
     margin-top: 15px;
@@ -348,7 +303,7 @@
     position: absolute;
     top: 100%;
     right: 0;
-    background-color: #1c1a1a;
+    background-color: rgb(13, 13, 13);
     border: 1px solid #333;
     border-radius: 8px;
     min-width: 150px;
@@ -400,7 +355,7 @@
     font-family: sans-serif;
     text-transform: uppercase;
     font-weight: 800;
-    transition: all 0.15s;
+    transition: all 0.2s;
 }
 
 .button-delete:hover {
@@ -439,7 +394,7 @@
 }
 
 .delete-modal-content {
-    background-color: #1c1a1a;
+    background-color: #202020;
     padding: 24px;
     border-radius: 8px;
     width: 90%;
@@ -484,13 +439,20 @@
 }
 
 .delete-modal-btn.cancel {
-    background-color: #2a2a2a;
+    background-color: #202020;
     color: white;
+    height: 40px;
 }
 
 .delete-modal-btn.confirm {
     background-color: rgb(126, 6, 6);
     color: white;
+    height: 40px;
+    transition: all 0.2s;
+}
+
+.delete-modal-btn.confirm:hover {
+    background-color: rgb(80, 80, 80);
 }
 
 /* Mobile Sort Options */
@@ -563,7 +525,7 @@
 
     .sort-dropdown .dropdown-content a {
         padding: 8px 16px;
-        background-color: #1c1a1a;
+        background-color: rgb(13, 13, 13);
         white-space: nowrap;
         border-radius: 8px;
     }
@@ -572,11 +534,10 @@
         background-color: #2a2a2a;
     }
 
-    .sort-dropdown .dropdown-btn {
+    .sort-dropdown .btn-filter {
         display: none;
     }
 
-    /* Hide the dropdown toggle in mobile */
     .sort-dropdown .dropdown-content {
         display: flex !important;
     }
@@ -584,7 +545,7 @@
     .char-count {
         position: absolute;
         right: 5px;
-        bottom: 58px; /* Position above the submit button */
+        bottom: 58px;
         background-color: transparent;
         padding: 2px 8px;
         border-radius: 8px;
@@ -618,9 +579,7 @@
         right: 120px;
     }
 
-    .button-review {
-        width: auto;
-        padding: 10px 20px;
-        height: 40px;
+    .btn-sm {
+        width: 100%;
     }
 }

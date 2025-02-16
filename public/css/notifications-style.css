@@ -1,8 +1,14 @@
 .item-container {
-    background-color: rgb(37, 37, 37);
+    background-color: #202020;
     border-bottom-right-radius: 10px;
     border-bottom-left-radius: 10px;
     padding: 16px;
+}
+
+@media (max-width: 768px) {
+    .item-container {
+        padding: 12px 8px;
+    }
 }
 
 .notif-input {
