@@ -4,6 +4,7 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <link rel="stylesheet" href="{{ asset('css/navbar-style.css') }}">
 <link rel="stylesheet" href="{{ asset('css/notifications-style.css') }}">
+<link rel="stylesheet" href="{{ asset('css/main-style.css') }}">
 
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
@@ -48,8 +49,8 @@
                 </div>
                 <div class="notification-actions">
                   <button type="button" class="mark-read" onclick="deleteNotification('{{ $notification->id }}')"
-                    title="Delete notification">
-                    <i class='bx bx-trash'></i>
+                    title="Clear notification">
+                    <i class='bx bx-x'></i>
                   </button>
                 </div>
               </div>
@@ -120,100 +121,39 @@
 
 </div>
 
-<style>
-  .notifications-content {
-    max-height: 300px;
-    overflow-y: auto;
-    padding: 0px;
-  }
-
-  .notifications-footer {
-    background-color: #202020;
-    color: #fff;
-    padding: 10px;
-    border-top: 1px solid #444;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-    text-align: center;
-  }
-
-  .notification-dropdown {
-    padding: 1rem;
-    max-height: 400px;
-    overflow-y: auto;
-  }
-
-  .notification-header {
-    margin-bottom: 1rem;
-    font-size: 1rem;
-    color: #333;
-  }
-
-  .no-notifications {
-    color: #666;
-    text-align: center;
-    padding: 1rem;
-  }
-
-  .notification-item {
-    padding: 0.75rem;
-    border-bottom: 1px solid #eee;
-  }
-
-  .notification-item:last-child {
-    border-bottom: none;
-  }
-
-  .notification-content {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .notification-time {
-    color: #666;
-    font-size: 0.8rem;
-  }
-
-  .notification-actions {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    margin-top: 0.5rem;
-  }
-</style>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
   // User dropdown toggle
-  $('#dropdown-toggle').click(function(e) {
+  document.getElementById('dropdown-toggle').addEventListener('click', function(e) {
     e.stopPropagation();
     // Close notifications dropdown if open
     document.querySelector('#notifications-dropdown').style.display = 'none';
     // Toggle user dropdown
-    $(this).next('.dropdown-menu').toggle();
+    const dropdownMenu = this.nextElementSibling;
+    dropdownMenu.style.display = dropdownMenu.style.display === 'none' ? 'block' : 'none';
   });
 
   // Notifications dropdown toggle
   document.getElementById('notification-btn').addEventListener('click', function(e) {
     e.stopPropagation();
     // Close user dropdown if open
-    $('.dropdown-menu').hide();
+    document.querySelectorAll('.dropdown-menu').forEach(menu => menu.style.display = 'none');
     // Toggle notifications dropdown
     let dropdown = document.querySelector('#notifications-dropdown');
     if (dropdown.style.display === 'none') {
       dropdown.style.display = 'block';
       // Mark notifications as read when opening dropdown
-      $.ajax({
-        url: '/notifications/mark-read',
-        type: 'POST',
-        headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        success: function(response) {
-          $('.badge').remove();
-        }
-      });
+      fetch('/notifications/mark-read', {
+          method: 'POST',
+          headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(response => response.json())
+        .then(() => {
+          const badge = document.querySelector('.badge');
+          if (badge) badge.remove();
+        });
     } else {
       dropdown.style.display = 'none';
     }
@@ -224,7 +164,7 @@
     if (!e.target.closest('#notification-btn') && !e.target.closest('#notifications-dropdown') &&
       !e.target.closest('#dropdown-toggle') && !e.target.closest('.dropdown-menu')) {
       document.querySelector('#notifications-dropdown').style.display = 'none';
-      $('.dropdown-menu').hide();
+      document.querySelectorAll('.dropdown-menu').forEach(menu => menu.style.display = 'none');
     }
   });
 
@@ -234,81 +174,86 @@
   });
 
   // Prevent dropdown from closing when clicking inside user menu
-  $('.dropdown-menu').click(function(event) {
-    event.stopPropagation();
+  document.querySelectorAll('.dropdown-menu').forEach(menu => {
+    menu.addEventListener('click', function(event) {
+      event.stopPropagation();
+    });
   });
 
   function deleteNotification(notificationId) {
-    $.ajax({
-      url: '/notifications/' + notificationId + '/delete',
-      type: 'POST',
-      headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-      },
-      success: function(response) {
-        $('#notification-' + notificationId).fadeOut(function() {
-          $(this).remove();
-          if ($('.notification-item').length === 0) {
-            $('.notifications-content').html('<p class="no-notifications">No Notifications</p>');
+    fetch('/notifications/' + notificationId + '/delete', {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(() => {
+        const notification = document.getElementById('notification-' + notificationId);
+        notification.style.opacity = '0';
+        setTimeout(() => {
+          notification.remove();
+          if (document.querySelectorAll('.notification-item').length === 0) {
+            document.querySelector('.notifications-content').innerHTML =
+              '<p class="no-notifications">No Notifications</p>';
           }
-        });
-      }
-    });
+        }, 300);
+      });
   }
 
   function deleteAllNotifications() {
-    if (!confirm('Are you sure you want to delete all notifications?')) {
-      return;
-    }
-
-    $.ajax({
-      url: '/notifications/delete-all',
-      type: 'POST',
-      headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-      },
-      success: function(response) {
-        $('.notification-item').fadeOut(function() {
-          $('.notifications-content').html('<p class="no-notifications">No Notifications</p>');
+    fetch('/notifications/delete-all', {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const notifications = document.querySelectorAll('.notification-item');
+        notifications.forEach(notification => {
+          notification.style.opacity = '0';
         });
-      }
-    });
+        setTimeout(() => {
+          document.querySelector('.notifications-content').innerHTML =
+            '<p class="no-notifications">No Notifications</p>';
+          // Remove the notification badge if it exists
+          const badge = document.querySelector('.badge');
+          if (badge) badge.remove();
+        }, 300);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
   }
 
   function updateNotificationCount() {
-    $.get('/notifications/count', function(response) {
-      if (response.count > 0) {
-        if ($('.badge').length) {
-          $('.badge').text(response.count);
-        } else {
-          $('#notification-btn').append('<span class="badge">' + response.count + '</span>');
+    fetch('/notifications/count')
+      .then(response => response.json())
+      .then(response => {
+        const notificationBtn = document.getElementById('notification-btn');
+        const existingBadge = document.querySelector('.badge');
+
+        if (response.count > 0) {
+          if (existingBadge) {
+            existingBadge.textContent = response.count;
+          } else {
+            const badge = document.createElement('span');
+            badge.className = 'badge';
+            badge.textContent = response.count;
+            notificationBtn.appendChild(badge);
+          }
+        } else if (existingBadge) {
+          existingBadge.remove();
         }
-      } else {
-        $('.badge').remove();
-      }
-    });
+      });
   }
 
   document.getElementById('back-btn').addEventListener('click', function() {
     window.history.back();
-  });
-
-  // Close both dropdowns when clicking outside
-  document.addEventListener('click', function(e) {
-    if (!e.target.closest('#notification-btn') && !e.target.closest('#notifications-dropdown') &&
-      !e.target.closest('#dropdown-toggle') && !e.target.closest('.dropdown-menu')) {
-      document.querySelector('#notifications-dropdown').style.display = 'none';
-      $('.dropdown-menu').hide();
-    }
-  });
-
-  // Prevent dropdown from closing when clicking inside notifications
-  document.querySelector('#notifications-dropdown').addEventListener('click', function(event) {
-    event.stopPropagation();
-  });
-
-  // Prevent dropdown from closing when clicking inside user menu
-  $('.dropdown-menu').click(function(event) {
-    event.stopPropagation();
   });
 </script>

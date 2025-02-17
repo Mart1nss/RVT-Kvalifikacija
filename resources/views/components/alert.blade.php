@@ -1,4 +1,6 @@
 <!-- Floating Alert Container -->
+<link rel="stylesheet" href="{{ asset('css/components/alert.css') }}">
+
 <div class="alert-container" id="alertContainer">
   @if (session('success'))
     <div class="alert alert-success">

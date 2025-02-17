@@ -1,0 +1,46 @@
+.alert-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    display: none;
+}
+
+.alert {
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-family: sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    animation: slideDown 0.5s ease-out forwards;
+}
+
+.alert-success {
+    background-color: rgb(0, 128, 0);
+    font-family: sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: white;
+}
+
+.alert-danger {
+    background-color: #f44336;
+    font-family: sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: white;
+}
+
+@keyframes slideDown {
+    0% {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

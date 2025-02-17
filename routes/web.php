@@ -91,9 +91,7 @@ Route::delete('/my-collection/{id}', [FavoritesController::class, 'delete'])->na
 
 //Notification Routes
 Route::middleware(['auth'])->group(function () {
-    Route::get('/notifications', function () {
-        return view('notifications');
-    })->name('notifications')->middleware(['auth', 'admin']);
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index')->middleware(['auth', 'admin']);
 
     Route::post('/notifications/send', [NotificationController::class, 'sendNotification'])
         ->name('admin.send.notification');
