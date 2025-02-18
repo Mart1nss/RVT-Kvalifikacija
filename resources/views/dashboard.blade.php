@@ -3,7 +3,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <link rel="stylesheet" href="{{ asset('css/notifications-style.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/components/alert.css') }}">
   <link rel="stylesheet" href="{{ asset('css/adminhome-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/pdf-carousel.css') }}">
   <link rel="stylesheet" href="{{ asset('css/components/buttons.css') }}">
@@ -43,7 +43,7 @@
 
 <div class="main-container">
   <div class="text-container">
-    <h1 class="text-container-title">Dashbaord</h1>
+    <h1 class="text-container-title">Dashboard</h1>
   </div>
 
   <div class="item-container">

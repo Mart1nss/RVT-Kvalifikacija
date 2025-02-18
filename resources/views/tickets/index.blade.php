@@ -25,11 +25,7 @@
     </div>
 
     <div class="item-container">
-      @if (auth()->user()->isAdmin())
-        <h2>Tickets</h2>
-      @else
-        <h2>My Tickets</h2>
-      @endif
+
 
       <div class="tabs">
         <a href="{{ route('tickets.index', ['tab' => 'active']) }}"
@@ -42,6 +38,12 @@
         </a>
       </div>
 
+      @if (auth()->user()->isAdmin())
+        <h2>Tickets</h2>
+      @else
+        <h2>My Tickets</h2>
+      @endif
+
       <div class="table-responsive">
         <table class="custom-table">
           <thead>
@@ -51,8 +53,8 @@
                 <th>User</th>
               @endif
               <th>Title</th>
-              <th class="mobile-hide">Category</th>
-              <th>Status</th>
+              <th>Category</th>
+              <th class="mobile-hide">Status</th>
               <th class="mobile-hide">{{ request()->get('tab') === 'closed' ? 'Resolved' : 'Created' }}</th>
               <th>Action</th>
             </tr>
@@ -64,9 +66,9 @@
                 @if (auth()->user()->isAdmin())
                   <td>{{ $ticket->user ? $ticket->user->name : 'Deleted User' }}</td>
                 @endif
-                <td class="title-cell" title="{{ $ticket->title }}">{{ \Str::limit($ticket->title, 50) }}</td>
-                <td class="mobile-hide">{{ $ticket->category }}</td>
-                <td>
+                <td class="title-cell " title="{{ $ticket->title }}">{{ \Str::limit($ticket->title, 50) }}</td>
+                <td>{{ $ticket->category }}</td>
+                <td class="mobile-hide ">
                   <span class="status-badge status-{{ $ticket->status }}">
                     {{ ucfirst(str_replace('_', ' ', $ticket->status)) }}
                   </span>
@@ -98,32 +100,12 @@
       margin: 0;
     }
 
-
-    .create-btn {
-      background-color: white;
-      color: black;
-      padding: 10px 20px;
-      border: 1px solid white;
-      border-radius: 8px;
-      font-weight: 800;
-      cursor: pointer;
-      text-decoration: none;
-      font-family: sans-serif;
-      font-size: 14px;
-      text-transform: uppercase;
-      transition: all 0.15s;
-    }
-
-    .create-btn:hover {
-      opacity: 0.7;
-    }
-
     .item-container {
       background-color: #202020;
       border-radius: 8px;
       border-top-left-radius: 0px;
       border-top-right-radius: 0px;
-      padding: 16px;
+      padding: 0px 16px 16px 16px;
       width: 100%;
       overflow-x: auto;
     }
@@ -209,13 +191,14 @@
     .tabs {
       display: flex;
       gap: 0;
-      margin-top: 16px;
+
+      background-color: #202020;
       margin-bottom: 16px;
     }
 
     .tab-item {
       padding: 12px 24px;
-      background-color: rgb(13, 13, 13);
+      background-color: #202020;
       color: white;
       text-decoration: none;
       font-family: sans-serif;
@@ -240,6 +223,10 @@
 
     .tab-item.active {
       border-bottom: 2px solid white;
+    }
+
+    .desktop-hide {
+      display: none;
     }
 
     @media (max-width: 768px) {

@@ -45,7 +45,7 @@ class RegisteredUserController extends Controller
                 'email',
                 'max:255',
                 'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/', // Proper email format with @ and domain
-                'unique:'.User::class
+                'unique:' . User::class
             ],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ], [
@@ -63,8 +63,8 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
-
-        return redirect(RouteServiceProvider::HOME);
+        return redirect()->route('login')
+            ->with('success', 'Registration successful! Please login to continue.')
+            ->with('registered_email', $request->email);
     }
 }

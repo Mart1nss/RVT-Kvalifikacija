@@ -8,15 +8,18 @@ use Illuminate\Support\Facades\Auth;
 
 class FavoritesController extends Controller
 {
-
-    public function favorites()
+    public function favorites(Request $request)
     {
         $user = Auth::user();
-        $favorites = $user->favorites()->with('product')->get();
-        $readLater = $user->readLater()->with('product')->get();
+        $tab = $request->get('tab', 'favorites');
 
-        return view('my-collection', compact('favorites', 'readLater'));
+        // Load only the data needed for the active tab
+        $favorites = $tab === 'favorites' ? $user->favorites()->with('product')->get() : collect();
+        $readLater = $tab === 'readlater' ? $user->readLater()->with('product')->get() : collect();
+
+        return view('my-collection', compact('favorites', 'readLater', 'tab'));
     }
+
     public function add($id)
     {
         $user = Auth::user();
@@ -35,7 +38,6 @@ class FavoritesController extends Controller
         $favorite->save();
 
         return redirect()->back()->with('success', 'Book added to favorites!');
-
     }
 
     public function delete($id)
@@ -46,8 +48,7 @@ class FavoritesController extends Controller
 
         $favorite->delete();
 
-        return redirect()->back()->with('success', 'Book removed from favorites!')
-            ->withInput(['tab' => request('current_tab', 'favorites')]);
+        return redirect()->back()->with('success', 'Book removed from favorites!');
     }
 }
 
