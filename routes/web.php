@@ -140,6 +140,7 @@ Route::middleware('auth')->group(function () {
 // Category Management Routes
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+    Route::get('/categories/search', [CategoryController::class, 'search'])->name('categories.search');
     Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
     Route::put('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
     Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');

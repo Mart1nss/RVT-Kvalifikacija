@@ -52,6 +52,15 @@
             !auth()->user()->hasVerifiedEmail())
       window.showAlert('Please verify your email address to access all features.', 'warning');
     @endif
+
+    // Listen for custom alert events
+    window.addEventListener('alert', function(event) {
+      const {
+        type,
+        message
+      } = event.detail;
+      window.showAlert(message, type);
+    });
   });
 
   // Function to show alert programmatically
