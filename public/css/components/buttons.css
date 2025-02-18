@@ -35,6 +35,16 @@
     text-align: left;
 }
 
+.btn-ghost {
+    background-color: transparent;
+    color: white;
+    border: 1px solid #333;
+}
+
+.btn-ghost:hover {
+    background-color: rgb(50, 50, 50);
+}
+
 .btn-danger {
     background-color: rgb(126, 6, 6);
     color: white;

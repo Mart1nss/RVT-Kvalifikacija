@@ -167,7 +167,7 @@
 
 .affected-item {
     font-style: italic;
-    color: #ffd700;
+    color: #ffc107;
 }
 
 /* Accordion styles */
@@ -197,7 +197,7 @@
 }
 
 .change-item i {
-    color: #ffd700;
+    color: #ffc107;
     font-size: 1.1em;
 }
 

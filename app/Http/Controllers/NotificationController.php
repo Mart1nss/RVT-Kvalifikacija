@@ -212,10 +212,10 @@ class NotificationController extends Controller
             }
 
             $notifications->markAsRead();
-            return redirect()->back()->with('success', 'All notifications marked as read!');
+            return response()->json(['success' => true]);
         } catch (\Exception $e) {
             \Log::error('Error marking notifications as read: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Failed to mark notifications as read. Please try again.');
+            return response()->json(['success' => false, 'error' => 'Failed to mark notifications as read'], 500);
         }
     }
 

@@ -90,33 +90,6 @@
     </div>
   </section>
 
-  <!-- NAVIGATE BUTTON -->
-  <script>
-    const notesButton = document.getElementById('toggle-button');
-    const toggleIcon = notesButton.querySelector('.toggle-icon');
-
-    let isAtNotesSection = false;
-
-    notesButton.addEventListener('click', () => {
-      const notesSection = document.getElementById('notes-div');
-
-      if (isAtNotesSection) {
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth'
-        });
-        toggleIcon.classList.replace('bx-book', 'bx-notepad');
-      } else {
-        notesSection.scrollIntoView({
-          behavior: 'smooth'
-        });
-        toggleIcon.classList.replace('bx-notepad', 'bx-book');
-      }
-
-      isAtNotesSection = !isAtNotesSection;
-    });
-  </script>
-
   <!-- NOTE SCRIPT   -->
   <script>
     $(document).ready(function() {
@@ -154,6 +127,35 @@
       }
     });
   </script>
+
+  <!-- NAVIGATE MOBILE BUTTON -->
+  <script>
+    const notesButton = document.getElementById('toggle-button');
+    const toggleIcon = notesButton.querySelector('.toggle-icon');
+
+    let isAtNotesSection = false;
+
+    notesButton.addEventListener('click', () => {
+      const notesSection = document.getElementById('notes-div');
+
+      if (isAtNotesSection) {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+        toggleIcon.classList.replace('bx-book', 'bx-notepad');
+      } else {
+        notesSection.scrollIntoView({
+          behavior: 'smooth'
+        });
+        toggleIcon.classList.replace('bx-notepad', 'bx-book');
+      }
+
+      isAtNotesSection = !isAtNotesSection;
+    });
+  </script>
+
+
 
   <!-- FOCUS MODE SCRIPT -->
   <script>

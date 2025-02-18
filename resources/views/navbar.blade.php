@@ -67,7 +67,7 @@
       <button class="user-btn" id="dropdown-toggle">
         {{ Auth::user()->name }}
       </button>
-      <div class="dropdown-menu">
+      <div class="dropdown-menu" style="display: none;">
         <div class="menu-header">MENU</div>
         <div class="menu-grid">
           <a href="{{ route('home') }}" class="menu-item {{ Request::is('home') ? 'active' : '' }}">

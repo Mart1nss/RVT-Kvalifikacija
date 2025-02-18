@@ -32,8 +32,8 @@ body {
 
 .form-control {
     width: 100%;
-    height: 38px;
-    background-color: rgb(13, 13, 13);
+    height: 40px;
+    background-color: #202020;
     border: none;
     border-radius: 8px;
     font-size: 12px;

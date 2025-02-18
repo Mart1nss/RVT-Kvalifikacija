@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="{{ asset('css/navbar-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/notifications-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/main-style.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/components/buttons.css') }}">
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 
@@ -17,7 +18,7 @@
 
   <div class="main-container">
     <div class="form-header">
-      <h1>Create New Support Ticket</h1>
+      <h1>Create Ticket</h1>
     </div>
 
     @if ($errors->any())
@@ -57,29 +58,25 @@
         <div class="form-group">
           <label for="description">Description</label>
           <div class="input-container">
-            <textarea id="description" name="description" rows="6" required maxlength="5000"
+            <textarea id="description" name="description" rows="6" required maxlength="500"
               placeholder="Please provide detailed information about your issue..."
-              oninput="updateCharCount('description', 'descriptionCount', 5000)"></textarea>
-            <div class="char-count" id="descriptionCount">0 / 5000</div>
+              oninput="updateCharCount('description', 'descriptionCount', 500)"></textarea>
+            <div class="char-count" id="descriptionCount">0 / 500</div>
           </div>
         </div>
 
         <div class="form-actions">
-          <a href="{{ route('tickets.index') }}" class="cancel-btn">Cancel</a>
-          <button type="submit" class="submit-btn">Create Ticket</button>
+          <button onclick="window.location.href = '{{ route('tickets.index') }}'"
+            class="btn btn-ghost btn-md">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-md">Create Ticket</button>
         </div>
       </form>
     </div>
   </div>
 
   <style>
-    body {
-      color: white;
-      font-family: sans-serif;
-    }
-
     .main-container {
-      padding: 0;
+      padding: 0 10px;
       max-width: 1000px;
     }
 
@@ -91,11 +88,18 @@
       color: white;
       text-transform: uppercase;
       font-weight: 800;
+      font-size: 32px;
       margin: 0;
     }
 
+    @media (max-width: 768px) {
+      .form-header h1 {
+        font-size: 28px;
+      }
+    }
+
     .error-container {
-      background-color: #dc3545;
+      background-color: rgb(126, 6, 6);
       padding: 1rem;
       border-radius: 8px;
       margin-bottom: 2rem;
@@ -124,7 +128,7 @@
       display: block;
       margin-bottom: 0.5rem;
       font-weight: bold;
-      color: #aaa;
+      color: white;
       text-transform: uppercase;
       font-size: 0.9rem;
     }
@@ -137,16 +141,11 @@
     .char-count {
       position: absolute;
       right: 10px;
-      top: 10px;
-      background-color: rgb(13, 13, 13);
+      top: 12px;
+      background-color: transparent;
       padding: 2px 8px;
-      border-radius: 4px;
       font-size: 12px;
-      color: #aaa;
-    }
-
-    textarea+.char-count {
-      top: 10px;
+      color: #333;
     }
 
     .form-group input,
@@ -156,8 +155,8 @@
       padding: 0.75rem;
       padding-right: 80px;
       background-color: rgb(13, 13, 13);
-      border: 1px solid #3d3d3d;
-      border-radius: 4px;
+      border: none;
+      border-radius: 8px;
       color: white;
       font-size: 1rem;
     }
@@ -180,8 +179,11 @@
     }
 
     .form-group textarea {
+      width: 100%;
       resize: vertical;
       min-height: 120px;
+      max-height: 200px;
+      display: flex;
     }
 
     .form-actions {
@@ -191,48 +193,15 @@
       margin-top: 2rem;
     }
 
-    .cancel-btn,
-    .submit-btn {
-      padding: 0.75rem 1.5rem;
-      border-radius: 4px;
-      font-weight: bold;
-      text-transform: uppercase;
-      cursor: pointer;
-      font-size: 0.9rem;
-    }
+    @media (max-width: 768px) {
 
-    .cancel-btn {
-      background-color: none;
-      color: white;
-      border: none;
-      text-decoration: none;
-      cursor: pointer;
-    }
+      .form-container {
+        padding: 1rem;
+      }
 
-    .submit-btn {
-      background-color: white;
-      color: black;
-      border: 1px solid white;
-      font-weight: 800;
-      transition: all 0.15s;
-    }
-
-    .submit-btn:hover {
-      opacity: 0.7;
-    }
-
-    /* Placeholder styling */
-    ::placeholder {
-      color: #6c757d;
-      opacity: 1;
-    }
-
-    :-ms-input-placeholder {
-      color: #6c757d;
-    }
-
-    ::-ms-input-placeholder {
-      color: #6c757d;
+      .btn-ghost {
+        width: 100%;
+      }
     }
   </style>
 
@@ -253,7 +222,7 @@
     // Initialize counters
     document.addEventListener('DOMContentLoaded', function() {
       updateCharCount('subject', 'subjectCount', 50);
-      updateCharCount('description', 'descriptionCount', 5000);
+      updateCharCount('description', 'descriptionCount', 500);
     });
   </script>
 </body>

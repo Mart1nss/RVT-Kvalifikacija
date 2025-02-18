@@ -40,6 +40,14 @@
     align-items: center;
 }
 
+.book-count {
+    font-size: 0.8em;
+    color: #888;
+    font-weight: normal;
+    margin-left: 8px;
+    display: inline-block;
+}
+
 .category-edit {
     background-color: rgb(13, 13, 13);
     padding: 15px;

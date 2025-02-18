@@ -12,17 +12,20 @@ use App\Services\AuditLogService;
 
 class TicketController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
-        if ($user->isAdmin()) {
-            $tickets = Ticket::where('status', '!=', 'closed')->latest()->get();
-            $resolvedTickets = Ticket::where('status', 'closed')->latest()->get();
+        $tab = $request->get('tab', 'active');
+
+        $query = $user->isAdmin() ? Ticket::query() : $user->tickets();
+
+        if ($tab === 'active') {
+            $tickets = $query->whereIn('status', ['open', 'in_progress'])->latest()->get();
         } else {
-            $tickets = $user->tickets()->where('status', '!=', 'closed')->latest()->get();
-            $resolvedTickets = $user->tickets()->where('status', 'closed')->latest()->get();
+            $tickets = $query->where('status', 'closed')->latest()->get();
         }
-        return view('tickets.index', compact('tickets', 'resolvedTickets'));
+
+        return view('tickets.index', compact('tickets'));
     }
 
     public function create()
@@ -33,9 +36,9 @@ class TicketController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'subject' => 'required|max:255',
+            'subject' => 'required|max:50',
             'category' => 'required',
-            'description' => 'required'
+            'description' => 'required|max:500'
         ]);
 
         $ticket = Ticket::create([

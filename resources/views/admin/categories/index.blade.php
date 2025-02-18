@@ -3,18 +3,8 @@
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <link rel="stylesheet" href="{{ asset('css/categorymanage-style.css') }}">
-<link rel="stylesheet" href="{{ asset('css/notifications-style.css') }}">
 <link rel="stylesheet" href="{{ asset('css/components/buttons.css') }}">
 <link rel="stylesheet" href="{{ asset('css/modal-confirmation-delete.css') }}">
-<style>
-  .book-count {
-    font-size: 0.8em;
-    color: #888;
-    font-weight: normal;
-    margin-left: 8px;
-    display: inline-block;
-  }
-</style>
 
 <div class="main-container">
   <div class="category-container">

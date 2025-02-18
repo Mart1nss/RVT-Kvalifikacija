@@ -5,9 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ticket Details</title>
-  <link rel="stylesheet" href="{{ asset('css/navbar-style.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/notifications-style.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/alert.css') }}">
   <link rel="stylesheet" href="{{ asset('css/main-style.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/components/buttons.css') }}">
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 
@@ -17,13 +17,13 @@
 
   <div class="main-container">
     <div class="ticket-header">
-      <h1>Ticket #{{ $ticket->ticket_id }}</h1>
+      <h1>Ticket {{ $ticket->ticket_id }}</h1>
       <div class="ticket-actions">
         @if (auth()->user()->isAdmin())
           @if (!$ticket->assigned_admin_id && $ticket->status !== 'closed')
             <form action="{{ route('tickets.assign', $ticket) }}" method="POST" style="display: inline;">
               @csrf
-              <button type="submit" class="accept-btn">Accept Ticket</button>
+              <button type="submit" class="btn btn-primary btn-md">Accept Ticket</button>
             </form>
           @elseif($ticket->assigned_admin_id === auth()->id() && $ticket->status !== 'closed')
             <form action="{{ route('tickets.update-status', $ticket) }}" method="POST" class="status-form">
@@ -82,40 +82,60 @@
 
     <div class="ticket-responses">
       <h2>Responses</h2>
-      @foreach ($ticket->responses()->orderBy('created_at', 'desc')->get() as $response)
-        <div class="response {{ $response->is_admin_response ? 'admin-response' : 'user-response' }}">
-          <div class="response-header">
-            <span class="response-author">{{ $response->user->name }}</span>
-            <span class="response-time">{{ $response->created_at->format('M d, Y H:i') }}</span>
+      <div class="responses-list" id="responses-list">
+        @foreach ($ticket->responses()->orderBy('created_at', 'asc')->get() as $response)
+          <div class="response {{ $response->is_admin_response ? 'admin-response' : 'user-response' }}">
+            <div class="response-header">
+              <span class="response-author">{{ $response->user->name }}</span>
+              <span class="response-time">{{ $response->created_at->format('M d, Y H:i') }}</span>
+            </div>
+            <div class="response-content">
+              {{ $response->response }}
+            </div>
           </div>
-          <div class="response-content">
-            {{ $response->response }}
-          </div>
-        </div>
-      @endforeach
+        @endforeach
+      </div>
     </div>
 
     @if ($ticket->status !== 'closed')
-      <div class="response-form">
-        <h2>Add Response</h2>
-        <form action="{{ route('tickets.respond', $ticket) }}" method="POST">
-          @csrf
-          <textarea name="response" rows="4" required placeholder="Type your response here..."></textarea>
-          <button type="submit" class="submit-btn">Submit Response</button>
-        </form>
-      </div>
+      @php
+        $hasAdminResponse = $ticket->responses()->where('is_admin_response', true)->exists();
+        $isAssignedAdmin = auth()->user()->isAdmin() && $ticket->assigned_admin_id === auth()->id();
+        $canUserRespond = !auth()->user()->isAdmin() && $ticket->status === 'in_progress' && $hasAdminResponse;
+        $canAdminRespond = $isAssignedAdmin && $ticket->status === 'in_progress';
+      @endphp
+
+      @if ($canUserRespond || $canAdminRespond)
+        <div class="response-form">
+          <h2>Add Response</h2>
+          <form action="{{ route('tickets.respond', $ticket) }}" method="POST">
+            @csrf
+            <textarea name="response" rows="4" required placeholder="Type your response here..."></textarea>
+            <button type="submit" class="btn btn-primary btn-md">Submit Response</button>
+          </form>
+        </div>
+      @elseif (!auth()->user()->isAdmin())
+        <div class="waiting-message">
+          <p>Please wait for an admin to accept and respond to your ticket before adding a response.</p>
+        </div>
+      @elseif (auth()->user()->isAdmin() && $ticket->status === 'open')
+        <div class="waiting-message">
+          <p>Please accept the ticket first before adding a response.</p>
+        </div>
+      @elseif (auth()->user()->isAdmin() && $ticket->assigned_admin_id !== auth()->id())
+        <div class="waiting-message">
+          <p>This ticket is assigned to another admin.</p>
+        </div>
+      @endif
     @endif
   </div>
 
   <style>
-    body {
-      color: white;
-      font-family: sans-serif;
-    }
-
     .main-container {
       max-width: 1000px;
       margin: 0 auto;
+      padding: 0 10px;
+      color: white;
     }
 
     .ticket-header {
@@ -127,6 +147,7 @@
 
     .ticket-header h1 {
       color: white;
+      font-size: 32px;
       text-transform: uppercase;
       font-weight: 800;
       margin: 0;
@@ -136,25 +157,6 @@
       display: flex;
       gap: 1rem;
       align-items: center;
-    }
-
-    .accept-btn,
-    .submit-btn {
-      background-color: white;
-      color: black;
-      padding: 8px 16px;
-      border: 1px solid white;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: 800;
-      text-transform: uppercase;
-      font-size: 0.9rem;
-      transition: all 0.15s;
-    }
-
-    .accept-btn:hover,
-    .submit-btn:hover {
-      opacity: 0.7;
     }
 
     .status-select {
@@ -174,7 +176,7 @@
     }
 
     .status-open {
-      background-color: #dc3545;
+      background-color: rgb(126, 6, 6);
     }
 
     .status-in_progress {
@@ -182,8 +184,8 @@
       color: black;
     }
 
-    .status-resolved {
-      background-color: #008000;
+    .status-closed {
+      background-color: rgb(0, 126, 0);
     }
 
     .ticket-info {
@@ -224,11 +226,28 @@
       margin-top: 1rem;
     }
 
-    .response {
+    .ticket-responses {
       background-color: #202020;
       padding: 1.5rem;
       border-radius: 8px;
       margin-bottom: 1rem;
+    }
+
+    .responses-list {
+      display: flex;
+      margin-top: 10px;
+      flex-direction: column;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .response {
+      background-color: #202020;
+      border: 1px solid #333;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin: 6px 0px;
+
     }
 
     .response-content {
@@ -279,20 +298,26 @@
       font-size: 0.9em;
     }
 
+    .response-form {
+      margin-bottom: 20px;
+    }
+
     .response-form textarea {
       width: 100%;
+      margin-top: 10px;
       background-color: #202020;
       color: white;
       padding: 1rem;
-      border: 1px solid #3d3d3d;
-      border-radius: 4px;
+      border: none;
+      border-radius: 8px;
       margin-bottom: 1rem;
       resize: vertical;
     }
 
     .response-form textarea:focus {
-      outline: none;
-      border-color: #4d4d4d;
+      outline: white 1px solid;
+      background-color: rgb(36, 36, 36);
+      border-color: white;
     }
 
     .form-group input:focus,
@@ -301,7 +326,50 @@
       outline: none;
       border-color: #4d4d4d;
     }
+
+    .waiting-message {
+      background-color: #202020;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      text-align: center;
+      border: 1px solid #333;
+    }
+
+    .waiting-message p {
+      color: #aaa;
+      margin: 0;
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .ticket-header h1 {
+        font-size: 28px;
+      }
+
+      .ticket-info {
+        padding: 1rem;
+      }
+
+      .ticket-description {
+        padding: 1rem;
+      }
+
+      .ticket-responses {
+        padding: 1rem;
+      }
+
+    }
   </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const responsesList = document.getElementById('responses-list');
+      if (responsesList) {
+        responsesList.scrollTop = responsesList.scrollHeight;
+      }
+    });
+  </script>
 </body>
 
 </html>
