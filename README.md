@@ -8,9 +8,9 @@ Kā palaist programmu
 
 `npm run dev`
 
-`projekts2024.sql` failu ieliec datubaze
+`database.sql` failu ieliec datubaze
 
-nomaini ".env.example" uz ".env" un no `DB_DATABASE=laravel` uz `DB_DATABASE=projekts2024`
+`DB_DATABASE=laravel` uz `DB_DATABASE=database`
 
 `php artisan key:generate`
 
@@ -23,7 +23,7 @@ nomaini ".env.example" uz ".env" un no `DB_DATABASE=laravel` uz `DB_DATABASE=pro
 Izmantotās tehnoloģijas
 
 PDF.js - pdf failu modificēšana;
-Laravel (PHP) + Breeze;
+Laravel (PHP) + Breeze + livewire;
 MySQL (laragon);
-HMTL, CSS, JS;
+HMTL, CSS, JS (alpine.js);
 Visual Studio Code;
