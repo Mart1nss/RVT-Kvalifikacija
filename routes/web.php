@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\BookController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReviewController;
@@ -47,9 +48,7 @@ Route::get('/', [HomeController::class, 'carousel']);
 Route::get('/testings', [HomeController::class, 'uploadpage'])->middleware(['auth', 'admin'])->name('uploadpage');
 
 //See Books
-Route::get('/library', [HomeController::class, 'bookpage'])
-    ->name('library')
-    ->middleware(['auth']);
+Route::get('/library', [BookController::class, 'library'])->name('library');
 
 Route::get('/get-genres', function () {
     $genres = App\Models\Category::pluck('name');
@@ -64,13 +63,23 @@ Route::get('/assets/{filename}', function ($filename) {
     return response()->file($path);
 });
 
-//Book Manage Routes
-Route::post('/uploadbook', [HomeController::class, 'store'])->middleware(['auth', 'admin']);
-Route::get('/book-manage', [HomeController::class, 'show'])->middleware(['auth', 'admin'])->name('book-manage');
-// Show edit form
-Route::get('/edit/{id}', [HomeController::class, 'edit'])->middleware(['auth', 'admin'])->name('edit');
-// Handle edit request
-Route::match(['post', 'put'], '/update/{id}', [HomeController::class, 'update'])->middleware(['auth', 'admin'])->name('update');
+//Book Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/view/{id}', [BookController::class, 'view'])->name('view');
+    Route::get('/download/{file}', [BookController::class, 'download'])->name('download');
+    Route::get('/ajax/books', [BookController::class, 'ajaxBooks'])->name('ajax.books');
+});
+
+//Admin Book Management Routes
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/book-manage', [BookController::class, 'show'])->name('book-manage');
+    Route::get('/uploadpage', [BookController::class, 'uploadpage'])->name('uploadpage');
+    Route::post('/uploadbook', [BookController::class, 'store']);
+    Route::get('/edit/{id}', [BookController::class, 'edit'])->name('edit');
+    Route::match(['post', 'put'], '/update/{id}', [BookController::class, 'update'])->name('update');
+    Route::delete('/delete/{id}', [BookController::class, 'destroy'])->name('delete');
+    Route::post('/toggle-visibility/{id}', [BookController::class, 'toggleVisibility'])->name('toggle.visibility');
+});
 
 //User Manage Routes
 Route::get('/managepage', [UserController::class, 'index'])->name('user.manage')->middleware(['auth', 'admin']);
@@ -78,10 +87,6 @@ Route::put('/users/{user}', [UserController::class, 'updateUserType'])->name('us
 Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
 // File Routes
-Route::get('/view/{id}', [HomeController::class, 'view'])->name('view')->middleware(['auth']);
-
-Route::get('/download/{file}', [HomeController::class, 'download'])->name('download');
-Route::delete('/delete/{id}', [HomeController::class, 'destroy'])->name('delete');
 Route::get('/redirect-back', [HomeController::class, 'redirectAfterBack'])->name('redirect.back');
 
 //My Collection Routes
@@ -157,8 +162,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/tickets/{ticket}/assign', [TicketController::class, 'assignTicket'])->middleware('admin')->name('tickets.assign');
 });
 
-Route::post('/toggle-visibility/{id}', [HomeController::class, 'toggleVisibility'])->name('toggle.visibility')->middleware('auth');
-
 Route::middleware(['auth'])->group(function () {
     Route::get('/preferences', [PreferenceController::class, 'show'])->name('preferences.show');
     Route::post('/preferences', [PreferenceController::class, 'store'])->name('preferences.store');
@@ -174,6 +177,19 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/readlater/{id}', [ReadLaterController::class, 'delete'])->name('readlater.delete');
 });
 
-Route::get('/ajax/books', [HomeController::class, 'ajaxBooks'])->name('ajax.books');
+// Forum Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/forums', function () {
+        return view('forums.index');
+    })->name('forums.index');
+
+    Route::get('/forums/create', function () {
+        return view('forums.create');
+    })->name('forums.create');
+
+    Route::get('/forums/{forum}', function (App\Models\Forum $forum) {
+        return view('forums.view', ['forum' => $forum]);
+    })->name('forums.view');
+});
 
 require __DIR__ . '/auth.php';

@@ -78,13 +78,14 @@
             <i class='bx bx-library'></i>
             <span>LIBRARY</span>
           </a>
-          <div class="menu-item">
+          <a href="{{ route('forums.index') }}" class="menu-item {{ Request::is('forums') ? 'active' : '' }}">
             <i class='bx bx-conversation'></i>
             <span>FORUMS</span>
-          </div>
+          </a>
           <div class="menu-item">
             <i class='bx bx-bar-chart-alt-2'></i>
-            <span>MY PROGRESS</span>
+            <span>MY PROGRESS<br>
+              (neiet)</span>
           </div>
         </div>
 

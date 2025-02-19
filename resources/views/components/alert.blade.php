@@ -53,13 +53,15 @@
       window.showAlert('Please verify your email address to access all features.', 'warning');
     @endif
 
-    // Listen for custom alert events
-    window.addEventListener('alert', function(event) {
-      const {
-        type,
-        message
-      } = event.detail;
-      window.showAlert(message, type);
+    // Listen for both 'alert' and 'show-alert' events
+    ['alert', 'show-alert'].forEach(eventName => {
+      window.addEventListener(eventName, function(event) {
+        const {
+          type,
+          message
+        } = event.detail;
+        window.showAlert(message, type);
+      });
     });
   });
 
@@ -81,7 +83,6 @@
     }, 3000);
   };
 </script>
-
 
 <script>
   function fadeOutAndRemove(element) {

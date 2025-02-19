@@ -324,7 +324,7 @@
     align-items: center;
     gap: 5px;
     border: none;
-    background-color: rgb(37, 37, 37);
+    background-color: #202020;
     color: white;
     border-radius: 8px;
     padding: 10px 15px;
@@ -404,12 +404,13 @@ body.focus-mode .back-btn-div {
     display: none !important;
 }
 
-body.focus-mode .container {
-    padding-top: 40px;
+body.focus-mode #pdf-toolbar,
+body.focus-mode .notes-div {
+    margin-top: 40px;
 }
 
 body.focus-mode {
-    background-color: #1c1a1a;
+    background-color: rgb(13, 13, 13);
 }
 
 body.focus-mode .navbar {

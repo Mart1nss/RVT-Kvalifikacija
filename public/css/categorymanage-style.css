@@ -288,6 +288,8 @@ textarea {
 #active-filters {
     display: flex;
     flex-wrap: wrap;
+    align-items: left;
+    text-align: left;
     gap: 8px;
     flex: 1;
 }
@@ -298,7 +300,6 @@ textarea {
     background-color: #2a2a2a;
     font-size: 12px;
     display: inline-flex;
-    align-items: center;
     white-space: nowrap;
 }
 

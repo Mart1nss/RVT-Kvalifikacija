@@ -66,15 +66,34 @@
         <h3 style="color: white; display: block;"> by {{ $data->author }}</h3>
       </div>
       <div class="action-buttons">
-        <form class="favorite-form"
-          action="{{ $product->isFavoritedBy(auth()->user()) ? route('my-collection.delete', $product->id) : route('my-collection.add', $product->id) }}"
-          method="POST">
+        <form class="favorite-form" x-data="{ isFavorited: {{ $product->isFavoritedBy(auth()->user()) ? 'true' : 'false' }} }"
+          @submit.prevent="
+            fetch($el.getAttribute('action'), {
+              method: $el.getAttribute('data-method'),
+              headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+              }
+            })
+            .then(response => response.json())
+            .then(data => {
+              isFavorited = !isFavorited;
+              window.dispatchEvent(new CustomEvent('show-alert', {
+                detail: { message: data.message, type: 'success' }
+              }));
+            })
+            .catch(error => {
+              window.dispatchEvent(new CustomEvent('show-alert', {
+                detail: { message: 'An error occurred', type: 'error' }
+              }));
+            })"
+          :action="isFavorited ? '{{ route('my-collection.delete', $product->id) }}' :
+              '{{ route('my-collection.add', $product->id) }}'"
+          :data-method="isFavorited ? 'DELETE' : 'POST'">
           @csrf
-          @if ($product->isFavoritedBy(auth()->user()))
-            @method('DELETE')
-          @endif
+          <input type="hidden" name="_method" :value="isFavorited ? 'DELETE' : 'POST'">
           <button class="favorite-btn" type="submit">
-            <i class='bx bx-star @if ($product->isFavoritedBy(auth()->user())) bx bxs-star @endif'></i>
+            <i class='bx' :class="isFavorited ? 'bxs-star' : 'bx-star'"></i>
             <span>FAVORITE</span>
           </button>
         </form>
@@ -108,7 +127,7 @@
         saveTimeout = setTimeout(function() {
           const noteText = $('#note-area').val();
           saveOrUpdateNote(noteText, productId);
-        }, 1000);
+        }, 500);
       });
 
       function saveOrUpdateNote(noteText, productId) {

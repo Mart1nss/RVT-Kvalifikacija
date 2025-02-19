@@ -7,8 +7,8 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>My Collection</title>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <link rel="stylesheet" href="{{ asset('css/allbooks-style.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/notifications-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/favorites-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/modal-book-mobile.css') }}">
   <link rel="stylesheet" href="{{ asset('css/components/pdf-item.css') }}">

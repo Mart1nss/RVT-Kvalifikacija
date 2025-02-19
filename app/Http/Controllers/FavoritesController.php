@@ -29,6 +29,9 @@ class FavoritesController extends Controller
             ->exists();
 
         if ($exists) {
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Book is already added to favorites!'], 400);
+            }
             return redirect()->back()->with('error', 'Book is already added to favorites!');
         }
 
@@ -37,6 +40,9 @@ class FavoritesController extends Controller
         $favorite->product_id = $id;
         $favorite->save();
 
+        if (request()->wantsJson()) {
+            return response()->json(['message' => 'Book added to favorites!']);
+        }
         return redirect()->back()->with('success', 'Book added to favorites!');
     }
 
@@ -48,6 +54,9 @@ class FavoritesController extends Controller
 
         $favorite->delete();
 
+        if (request()->wantsJson()) {
+            return response()->json(['message' => 'Book removed from favorites!']);
+        }
         return redirect()->back()->with('success', 'Book removed from favorites!');
     }
 }
