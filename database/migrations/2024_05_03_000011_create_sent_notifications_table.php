@@ -11,9 +11,10 @@ return new class extends Migration {
   public function up(): void
   {
     Schema::create('sent_notifications', function (Blueprint $table) {
-      $table->id();
+      $table->bigIncrements('id');
       $table->foreignId('sender_id')->constrained('users')->onDelete('cascade');
       $table->text('message');
+      $table->string('recipient_type')->default('all');
       $table->timestamps();
     });
   }

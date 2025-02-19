@@ -1,4 +1,3 @@
-
 <title>Settings</title>
 
 @include('components.alert')
@@ -33,6 +32,10 @@
     text-transform: uppercase;
     font-size: 14px;
     font-weight: 700;
+  }
+
+  .delete-btn {
+    width: max-content;
   }
 </style>
 

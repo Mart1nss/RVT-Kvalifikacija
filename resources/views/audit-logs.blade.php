@@ -122,7 +122,7 @@
         @endforeach
 
         <div class="pagination-container">
-          {{ $logs->onEachSide(1)->links() }}
+          {{ $logs->onEachSide(1)->links('vendor.pagination.tailwind') }}
         </div>
       </div>
     </div>

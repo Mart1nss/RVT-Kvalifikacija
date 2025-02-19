@@ -222,8 +222,15 @@
     transition: all 0.2s;
 }
 
-.delete-btn {
+.admin-actions .delete-btn {
     color: #ff4444;
+    background-color: rgba(0, 0, 0, 0.8);
+    height: 38px;
+    width: 38px;
+}
+
+.admin-actions .delete-btn:hover {
+    background-color: rgba(0, 0, 0, 0.9);
 }
 
 .download-btn {

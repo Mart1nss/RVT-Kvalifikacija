@@ -2,7 +2,6 @@
 @include('navbar')
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="//unpkg.com/alpinejs" defer></script>
-<script src="{{ asset('js/components/delete-modal.js') }}"></script>
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <link rel="stylesheet" href="{{ asset('css/categorymanage-style.css') }}">
@@ -22,7 +21,6 @@
     <h1
       style="margin-bottom: 20px; font-family: sans-serif; font-weight: 800; text-transform: uppercase; font-size: 32px;">
       Manage Categories</h1>
-
 
     <!-- New Category Form Section -->
     <div class="category-form">
@@ -146,25 +144,15 @@
               <button @click="startEdit(category)" class="btn-edit-cat">
                 <i class='bx bx-edit-alt'></i>
               </button>
-              <button type="button" class="btn-delete-cat"
-                @click="$dispatch('open-delete-modal', {
-                  item: category,
-                  callback: async () => {
-                    try {
-                      await axios.delete(`/categories/${category.id}`);
-                      await fetchCategories();
-                      window.dispatchEvent(new CustomEvent('alert', {
-                        detail: { type: 'success', message: 'Category deleted successfully' }
-                      }));
-                    } catch (error) {
-                      window.dispatchEvent(new CustomEvent('alert', {
-                        detail: { type: 'error', message: error.response?.data?.message || 'Failed to delete category' }
-                      }));
-                    }
-                  }
-                })">
-                <i class='bx bx-trash'></i>
-              </button>
+              <form :id="'deleteForm' + category.id" :action="'/categories/' + category.id" method="POST"
+                style="display: contents;">
+                @csrf
+                @method('DELETE')
+                <button type="button" class="btn-delete-cat"
+                  @click="confirmDelete(category.name, category.products_count + ' books', category.id)">
+                  <i class='bx bx-trash'></i>
+                </button>
+              </form>
             </div>
           </div>
         </template>
@@ -173,9 +161,60 @@
   </div>
 </div>
 
-<x-delete-confirmation-modal title="Delete Category" />
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="delete-confirmation-modal">
+  <div class="delete-confirmation-content">
+    <div class="delete-confirmation-header">
+      <h2>Delete Category</h2>
+    </div>
+    <div class="delete-confirmation-body">
+      <p>Are you sure you want to delete <span id="deleteBookDetails"></span>?</p>
+      <p class="delete-confirmation-text">This action cannot be undone.</p>
+    </div>
+    <div class="delete-confirmation-footer">
+      <button type="button" class="btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+      <button type="button" class="btn-delete" id="confirmDeleteBtn" onclick="submitDelete()">Delete</button>
+    </div>
+  </div>
+</div>
 
 <script>
+  let currentDeleteForm = null;
+
+  function confirmDelete(name, details, id) {
+    currentDeleteForm = document.getElementById("deleteForm" + id);
+    document.getElementById("deleteBookDetails").textContent = `${name} with ${details}`;
+    const modal = document.getElementById("deleteModal");
+    modal.style.display = "block";
+    modal.classList.remove("closing");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeDeleteModal() {
+    const modal = document.getElementById("deleteModal");
+    modal.classList.add("closing");
+    setTimeout(() => {
+      modal.style.display = "none";
+      modal.classList.remove("closing");
+      document.body.style.overflow = "";
+      currentDeleteForm = null;
+    }, 300);
+  }
+
+  function submitDelete() {
+    if (currentDeleteForm) {
+      currentDeleteForm.submit();
+    }
+  }
+
+  // Close modal when clicking outside
+  window.onclick = function(event) {
+    const modal = document.getElementById("deleteModal");
+    if (event.target == modal) {
+      closeDeleteModal();
+    }
+  };
+
   document.addEventListener('alpine:init', () => {
     Alpine.data('categoryManager', () => ({
       categories: [],
@@ -192,7 +231,6 @@
       isLoading: true,
 
       // Data Fetching
-
       async fetchCategories() {
         this.isLoading = true;
         try {
@@ -209,7 +247,6 @@
       },
 
       // Initialization and Event Handlers
-
       init() {
         // Load categories immediately when component initializes
         this.fetchCategories();
@@ -225,7 +262,6 @@
       },
 
       // Dropdown Management
-
       toggleDropdown(type) {
         this.dropdowns[type] = !this.dropdowns[type];
         const other = type === 'filter' ? 'sort' : 'filter';
@@ -233,7 +269,6 @@
       },
 
       // Category Edit Operations
-
       async handleEditSubmit(category) {
         try {
           const response = await axios.put(`/categories/${category.id}`, {
@@ -270,7 +305,6 @@
         }
       },
 
-
       startEdit(category) {
         // Reset any previous errors
         category.error = null;
@@ -285,7 +319,6 @@
       },
 
       // Filter Management
-
       get hasActiveFilters() {
         return this.filters.search ||
           this.filters.status !== 'all' ||
@@ -311,7 +344,6 @@
       },
 
       // Helper Functions for Text Display
-
       getStatusText(status) {
         return {
           'assigned': 'Assigned Books',
@@ -325,41 +357,6 @@
           'count_asc': 'Book Count (Low to High)',
           'count_desc': 'Book Count (High to Low)'
         } [sort] || 'Newest First';
-      },
-
-      async handleNewCategory(event) {
-        try {
-          const formData = new FormData(event.target);
-          const response = await axios.post('/categories', formData);
-
-          if (response.data.category) {
-            // Clear the input
-            this.$refs.categoryInput.value = '';
-            this.charCount = 0;
-
-            // Fetch updated categories list to maintain sort order
-            await this.fetchCategories();
-
-            // Display success message
-            const alertEvent = new CustomEvent('alert', {
-              detail: {
-                type: 'success',
-                message: 'Category created successfully'
-              }
-            });
-            window.dispatchEvent(alertEvent);
-          }
-        } catch (error) {
-          if (error.response && error.response.status === 422) {
-            const alertEvent = new CustomEvent('alert', {
-              detail: {
-                type: 'error',
-                message: error.response.data.errors.name[0]
-              }
-            });
-            window.dispatchEvent(alertEvent);
-          }
-        }
       }
     }));
   });

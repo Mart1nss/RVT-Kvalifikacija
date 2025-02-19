@@ -68,12 +68,10 @@
     </div>
 
     <div class="stats-div">
-      <h1 class="h1-text" style="margin-bottom: 10px;">ANALYTICS</h1>
 
       <div class="stats-card">
         <p class="stats-text">Total Books: {{ $bookCount }}</p>
         <p class="stats-text">Total Users: {{ $userCount }}</p>
-        <p class="stats-text">Currently online: </p>
       </div>
 
     </div>

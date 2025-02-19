@@ -72,12 +72,11 @@
 }
 
 .delete-confirmation-text {
-    color: rgb(255, 68, 68);
     margin-top: 10px;
     text-transform: uppercase;
     font-family: sans-serif;
     font-weight: 800;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .delete-confirmation-details {
@@ -107,6 +106,10 @@
     text-transform: uppercase;
     transition: all 0.2s;
     cursor: pointer;
+}
+
+.btn-delete:hover {
+    background-color: rgb(80, 80, 80);
 }
 
 .btn-secondary {

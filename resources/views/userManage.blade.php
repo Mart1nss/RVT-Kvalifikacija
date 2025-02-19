@@ -135,7 +135,7 @@
         </table>
 
         <div class="pagination-container">
-          {{ $users->links() }}
+          {{ $users->links('vendor.pagination.tailwind') }}
         </div>
       </div>
     </div>

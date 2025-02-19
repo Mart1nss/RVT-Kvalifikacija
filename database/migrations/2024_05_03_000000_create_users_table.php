@@ -11,16 +11,23 @@ return new class extends Migration {
   public function up(): void
   {
     Schema::create('users', function (Blueprint $table) {
+
       $table->bigIncrements('id');
       $table->string('name', 255);
-      $table->string('email', 255)->unique(); // Add unique constraint
+      $table->string('email', 255)->unique();
       $table->timestamp('email_verified_at')->nullable();
       $table->string('password', 255);
-      $table->string('usertype', 255)->default('user'); // Default value
+      $table->string('usertype', 255)->default('user');
       $table->string('remember_token', 100)->nullable();
-      $table->timestamps(); // created_at and updated_at, both nullable
+      $table->timestamps(); 
       $table->timestamp('last_online')->nullable();
-      $table->boolean('has_genre_preference_set')->default(0); // TINYINT(1) maps to boolean
+      $table->boolean('has_genre_preference_set')->default(false); 
+
+      $table->unsignedBigInteger('last_read_book_id')->nullable();
+      $table->foreign('last_read_book_id')
+        ->references('id')
+        ->on('products') 
+        ->onDelete('set null');
     });
   }
 

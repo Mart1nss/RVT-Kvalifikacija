@@ -34,7 +34,7 @@
       </div>
 
       <div class="pagination-container">
-        {{ $data->onEachSide(1)->links() }}
+        {{ $data->onEachSide(1)->links('vendor.pagination.tailwind') }}
       </div>
     </div>
 

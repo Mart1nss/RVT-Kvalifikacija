@@ -152,6 +152,7 @@
 .sort-dropdown .dropdown-content {
     position: absolute;
     top: calc(100% + 5px);
+    right: -40px;
     min-width: 200px;
     max-height: 300px;
     overflow-y: auto;

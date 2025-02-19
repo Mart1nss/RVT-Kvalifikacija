@@ -148,7 +148,7 @@
           @include('partials.notification-cards')
         </div>
         <div class="pagination-container">
-          {{ $notifications->links() }}
+          {{ $notifications->links('vendor.pagination.tailwind') }}
         </div>
       </div>
     </div>

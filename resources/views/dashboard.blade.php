@@ -28,8 +28,8 @@
   <div class="big-item-container">
 
     <div class="item-container">
-      <div class="dashboard-text-container">
-        <h1 class="dashboard-text-container-title">Dashboard</h1>
+      <div class="dashboard-text-container" style=" justify-content: flex-start;">
+        <h1 class="dashboard-text-container-title" style="font-size: 32px; text-transform: uppercase;">Dashboard</h1>
       </div>
       <h1 style="margin-bottom: 20px; color: white; font-family: sans-serif; font-weight: 800; font-size: 18px;">
         Welcome,
