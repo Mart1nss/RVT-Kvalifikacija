@@ -1,4 +1,7 @@
  {{-- Newest Books Carousel --}}
+
+ <link rel="stylesheet" href="{{ asset('css/components/pdf-item.css') }}">
+
  <div class="newest-books-container">
    <div class="carousel-header">
      <h1 class="h1-text">NEWEST</h1>

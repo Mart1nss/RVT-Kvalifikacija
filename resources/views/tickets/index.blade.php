@@ -5,8 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Support Tickets</title>
-  <link rel="stylesheet" href="{{ asset('css/navbar-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/notifications-style.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/components/buttons.css') }}">
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <link rel="stylesheet" href="{{ asset('css/tickets.css') }}">
 </head>
@@ -16,19 +16,35 @@
   @include('navbar')
 
   <div class="main-container">
-    <div class="text-container">
-      <h1>Support Tickets</h1>
+    <div class="text-container" style="display: flex; justify-content: space-between; align-items: center;">
+      <h1 class="text-container-title">Support Tickets</h1>
       @if (!auth()->user()->isAdmin())
-        <a href="{{ route('tickets.create') }}" class="create-btn">Create New Ticket</a>
+        <button onclick="window.location.href = '{{ route('tickets.create') }}'" class="btn btn-primary btn-md">Create
+          Ticket</button>
       @endif
     </div>
 
     <div class="item-container">
-      @if (auth()->user()->isAdmin())
-        <h2>Open Tickets</h2>
-      @endif
-      <div class="table-responsive">
 
+
+      <div class="tabs">
+        <a href="{{ route('tickets.index', ['tab' => 'active']) }}"
+          class="tab-item {{ request()->get('tab', 'active') === 'active' ? 'active' : '' }}">
+          Active
+        </a>
+        <a href="{{ route('tickets.index', ['tab' => 'closed']) }}"
+          class="tab-item {{ request()->get('tab') === 'closed' ? 'active' : '' }}">
+          Closed
+        </a>
+      </div>
+
+      @if (auth()->user()->isAdmin())
+        <h2>Tickets</h2>
+      @else
+        <h2>My Tickets</h2>
+      @endif
+
+      <div class="table-responsive">
         <table class="custom-table">
           <thead>
             <tr>
@@ -37,9 +53,9 @@
                 <th>User</th>
               @endif
               <th>Title</th>
-              <th class="mobile-hide">Category</th>
-              <th>Status</th>
-              <th class="mobile-hide">Created</th>
+              <th>Category</th>
+              <th class="mobile-hide">Status</th>
+              <th class="mobile-hide">{{ request()->get('tab') === 'closed' ? 'Resolved' : 'Created' }}</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -48,16 +64,22 @@
               <tr>
                 <td class="mobile-hide">{{ $ticket->ticket_id }}</td>
                 @if (auth()->user()->isAdmin())
-                  <td>{{ $ticket->user->name }}</td>
+                  <td>{{ $ticket->user ? $ticket->user->name : 'Deleted User' }}</td>
                 @endif
-                <td class="title-cell" title="{{ $ticket->title }}">{{ \Str::limit($ticket->title, 50) }}</td>
-                <td class="mobile-hide">{{ $ticket->category }}</td>
-                <td>
+                <td class="title-cell " title="{{ $ticket->title }}">{{ \Str::limit($ticket->title, 50) }}</td>
+                <td>{{ $ticket->category }}</td>
+                <td class="mobile-hide ">
                   <span class="status-badge status-{{ $ticket->status }}">
                     {{ ucfirst(str_replace('_', ' ', $ticket->status)) }}
                   </span>
                 </td>
-                <td class="mobile-hide">{{ $ticket->created_at->format('M d, Y') }}</td>
+                <td class="mobile-hide">
+                  @if (request()->get('tab') === 'closed')
+                    {{ $ticket->resolved_at ? $ticket->resolved_at->format('M d, Y') : 'N/A' }}
+                  @else
+                    {{ $ticket->created_at->format('M d, Y') }}
+                  @endif
+                </td>
                 <td>
                   <a href="{{ route('tickets.show', $ticket) }}" class="view-btn">View</a>
                 </td>
@@ -66,41 +88,6 @@
           </tbody>
         </table>
       </div>
-
-      @if (auth()->user()->isAdmin())
-        <div class="resolved-tickets mt-5">
-          <h2>Resolved Tickets</h2>
-          <div class="table-responsive">
-            <table class="custom-table">
-              <thead>
-                <tr>
-                  <th class="mobile-hide">Ticket ID</th>
-                  <th>User</th>
-                  <th>Title</th>
-                  <th class="mobile-hide">Category</th>
-                  <th class="mobile-hide">Resolved At</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach ($resolvedTickets as $ticket)
-                  <tr>
-                    <td class="mobile-hide">{{ $ticket->ticket_id }}</td>
-                    <td>{{ $ticket->user->name }}</td>
-                    <td class="title-cell" title="{{ $ticket->title }}">{{ \Str::limit($ticket->title, 50) }}</td>
-                    <td class="mobile-hide">{{ $ticket->category }}</td>
-                    <td class="mobile-hide">{{ $ticket->resolved_at ? $ticket->resolved_at->format('M d, Y') : 'N/A' }}
-                    </td>
-                    <td>
-                      <a href="{{ route('tickets.show', $ticket) }}" class="view-btn">View</a>
-                    </td>
-                  </tr>
-                @endforeach
-              </tbody>
-            </table>
-          </div>
-        </div>
-      @endif
     </div>
   </div>
 
@@ -113,45 +100,12 @@
       margin: 0;
     }
 
-    .text-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .text-container h1 {
-      color: white;
-      text-transform: uppercase;
-      font-family: sans-serif;
-      font-weight: 800;
-      margin: 0;
-    }
-
-    .create-btn {
-      background-color: white;
-      color: black;
-      padding: 10px 20px;
-      border: 1px solid white;
-      border-radius: 8px;
-      font-weight: 800;
-      cursor: pointer;
-      text-decoration: none;
-      font-family: sans-serif;
-      font-size: 14px;
-      text-transform: uppercase;
-      transition: all 0.15s;
-    }
-
-    .create-btn:hover {
-      opacity: 0.7;
-    }
-
     .item-container {
       background-color: #202020;
       border-radius: 8px;
       border-top-left-radius: 0px;
       border-top-right-radius: 0px;
-      padding: 16px;
+      padding: 0px 16px 16px 16px;
       width: 100%;
       overflow-x: auto;
     }
@@ -160,6 +114,19 @@
       width: 100%;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
+    }
+
+    .status-open {
+      background-color: rgb(126, 6, 6);
+    }
+
+    .status-in_progress {
+      background-color: #ffc107;
+      color: black;
+    }
+
+    .status-closed {
+      background-color: rgb(0, 126, 0);
     }
 
     .custom-table {
@@ -221,6 +188,47 @@
       opacity: 0.7;
     }
 
+    .tabs {
+      display: flex;
+      gap: 0;
+
+      background-color: #202020;
+      margin-bottom: 16px;
+    }
+
+    .tab-item {
+      padding: 12px 24px;
+      background-color: #202020;
+      color: white;
+      text-decoration: none;
+      font-family: sans-serif;
+      font-weight: 800;
+      font-size: 14px;
+      text-transform: uppercase;
+      transition: all 0.15s;
+      border-bottom: 2px solid transparent;
+    }
+
+    .tab-item:first-child {
+      border-top-left-radius: 8px;
+    }
+
+    .tab-item:last-child {
+      border-top-right-radius: 8px;
+    }
+
+    .tab-item:hover {
+      opacity: 0.7;
+    }
+
+    .tab-item.active {
+      border-bottom: 2px solid white;
+    }
+
+    .desktop-hide {
+      display: none;
+    }
+
     @media (max-width: 768px) {
       .mobile-hide {
         display: none;
@@ -238,6 +246,8 @@
       .item-container {
         padding: 10px;
         border-radius: 8px;
+        border-top-left-radius: 0px;
+        border-top-right-radius: 0px;
       }
 
       .text-container {
@@ -248,6 +258,18 @@
 
       .create-btn {
         width: 100%;
+        text-align: center;
+      }
+
+      .tabs {
+        margin-top: 12px;
+        margin-bottom: 12px;
+      }
+
+      .tab-item {
+        padding: 8px 16px;
+        font-size: 12px;
+        flex: 1;
         text-align: center;
       }
     }

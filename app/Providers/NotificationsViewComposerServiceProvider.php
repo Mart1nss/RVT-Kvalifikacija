@@ -2,10 +2,9 @@
 
 namespace App\Providers;
 
-use App\Models\Notification;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Auth;
 
 class NotificationsViewComposerServiceProvider extends ServiceProvider
 {
@@ -24,10 +23,7 @@ class NotificationsViewComposerServiceProvider extends ServiceProvider
     {
         View::composer('navbar', function ($view) {
             if (Auth::check()) {
-                $view->with('unreadNotifications', Notification::where('user_id', Auth::id())
-                    ->where('is_read', false)
-                    ->latest()
-                    ->get());
+                $view->with('unreadNotifications', Auth::user()->unreadNotifications);
             }
         });
     }

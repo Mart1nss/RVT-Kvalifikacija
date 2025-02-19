@@ -179,7 +179,7 @@ document.head.appendChild(style);
 
 // Memory management
 let cleanupInterval;
-const MAX_CACHED_THUMBNAILS = 50;
+const MAX_CACHED_THUMBNAILS = 50; 
 
 function startCleanupInterval() {
     cleanupInterval = setInterval(() => {

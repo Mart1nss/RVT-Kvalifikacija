@@ -459,7 +459,7 @@
         this.currentAccordion = null;
         setTimeout(() => {
           document.body.style.overflow = '';
-        }, 300); // Match the transition duration
+        }, 300);
       }
     }));
   });

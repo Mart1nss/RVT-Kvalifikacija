@@ -11,15 +11,12 @@ return new class extends Migration {
   public function up(): void
   {
     Schema::create('notifications', function (Blueprint $table) {
-      $table->bigIncrements('id');
-      $table->bigInteger('user_id')->unsigned()->nullable(); // Foreign key
-      $table->text('message');
-      $table->boolean('is_read')->default(0); // TINYINT(1) -> boolean, default 0
-      $table->timestamps(); // created_at and updated_at (nullable)
-      $table->string('link', 255)->nullable();
-
-      // Foreign Key Constraint - SET NULL
-      $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
+      $table->uuid('id')->primary();
+      $table->string('type');
+      $table->morphs('notifiable');
+      $table->text('data');
+      $table->timestamp('read_at')->nullable();
+      $table->timestamps();
     });
   }
 

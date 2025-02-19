@@ -6,7 +6,6 @@ namespace App\Models;
 use App\Models\Favorite;
 use App\Models\Review;
 use App\Models\Ticket;
-use App\Models\Notification;
 use App\Models\UserPreference;
 use App\Models\Category;
 use App\Notifications\CustomResetPassword;
@@ -30,6 +29,7 @@ class User extends Authenticatable
         'password',
         'last_online',
         'has_genre_preference_set',
+        'last_read_book_id'
     ];
 
     /**
@@ -83,11 +83,6 @@ class User extends Authenticatable
         return $this->usertype === 'admin';
     }
 
-    public function notifications()
-    {
-        return $this->hasMany(Notification::class);
-    }
-
     public function userPreferences()
     {
         return $this->hasMany(UserPreference::class);
@@ -96,6 +91,11 @@ class User extends Authenticatable
     public function preferredCategories()
     {
         return $this->belongsToMany(Category::class, 'user_preferences');
+    }
+
+    public function lastReadBook()
+    {
+        return $this->belongsTo(Product::class, 'last_read_book_id');
     }
 
     public function sendPasswordResetNotification($token)

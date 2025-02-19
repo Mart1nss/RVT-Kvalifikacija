@@ -4,24 +4,33 @@
 
 .tabs-container {
     display: flex;
-    gap: 20px;
-    padding: 0 20px;
+    gap: 0;
+    padding: 0 16px;
     background-color: #202020;
 }
 
 .tab-btn {
-    background: none;
+    background-color: #202020;
     border: none;
-    color: #888;
+    color: white;
     font-size: 16px;
     font-weight: 600;
+    text-decoration: none;
     padding: 10px 20px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     gap: 8px;
     position: relative;
+}
+
+.tab-btn:last-child {
+    border-top-right-radius: 8px;
+}
+
+.tab-btn:hover {
+    opacity: 0.7;
 }
 
 .tab-btn i {
@@ -30,6 +39,7 @@
 
 .tab-btn.active {
     color: white;
+    border-bottom: 2px solid white;
 }
 
 .tab-btn.active::after {
@@ -48,4 +58,21 @@
 
 .tab-content.active {
     display: block;
+}
+
+.empty-message {
+    font-family: sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .tab-btn {
+        padding: 8px 16px;
+        font-size: 12px;
+        flex: 1;
+        justify-content: center;
+    }
 }

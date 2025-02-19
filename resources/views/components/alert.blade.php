@@ -1,4 +1,6 @@
 <!-- Floating Alert Container -->
+<link rel="stylesheet" href="{{ asset('css/components/alert.css') }}">
+
 <div class="alert-container" id="alertContainer">
   @if (session('success'))
     <div class="alert alert-success">
@@ -50,6 +52,17 @@
             !auth()->user()->hasVerifiedEmail())
       window.showAlert('Please verify your email address to access all features.', 'warning');
     @endif
+
+    // Listen for both 'alert' and 'show-alert' events
+    ['alert', 'show-alert'].forEach(eventName => {
+      window.addEventListener(eventName, function(event) {
+        const {
+          type,
+          message
+        } = event.detail;
+        window.showAlert(message, type);
+      });
+    });
   });
 
   // Function to show alert programmatically
@@ -70,7 +83,6 @@
     }, 3000);
   };
 </script>
-
 
 <script>
   function fadeOutAndRemove(element) {

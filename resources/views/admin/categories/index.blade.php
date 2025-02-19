@@ -1,20 +1,21 @@
 @include('components.alert')
 @include('navbar')
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="//unpkg.com/alpinejs" defer></script>
+<script src="{{ asset('js/components/delete-modal.js') }}"></script>
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <link rel="stylesheet" href="{{ asset('css/categorymanage-style.css') }}">
-<link rel="stylesheet" href="{{ asset('css/notifications-style.css') }}">
 <link rel="stylesheet" href="{{ asset('css/components/buttons.css') }}">
 <link rel="stylesheet" href="{{ asset('css/modal-confirmation-delete.css') }}">
-<style>
-  .book-count {
-    font-size: 0.8em;
-    color: #888;
-    font-weight: normal;
-    margin-left: 8px;
-    display: inline-block;
-  }
-</style>
+
+<script>
+  // Set up Axios CSRF token and base URL
+  axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute(
+    'content');
+  axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+  axios.defaults.withCredentials = true;
+</script>
 
 <div class="main-container">
   <div class="category-container">
@@ -22,399 +23,353 @@
       style="margin-bottom: 20px; font-family: sans-serif; font-weight: 800; text-transform: uppercase; font-size: 32px;">
       Manage Categories</h1>
 
+
+    <!-- New Category Form Section -->
     <div class="category-form">
       <h2>Add New Category</h2>
-      <form action="{{ route('categories.store') }}" method="POST">
+      <form action="{{ route('categories.store') }}" method="POST" x-data="{ charCount: 0 }">
         @csrf
         <div class="category-add-container">
           <div class="search-container">
-            <input type="text" name="name" placeholder="Category Name" required>
+            <input type="text" name="name" placeholder="Category Name" maxlength="30" required
+              @input="charCount = $event.target.value.length" class="@error('name') is-invalid @enderror"
+              value="{{ old('name') }}">
+            <div class="char-count" :class="{ 'limit-reached': charCount >= 30 }" x-text="`${charCount} / 30`"></div>
           </div>
           <button type="submit" class="btn btn-primary btn-md">Add Category</button>
         </div>
+        @error('name')
+          <div class="error-message">{{ $message }}</div>
+        @enderror
       </form>
     </div>
 
-    <div class="category-list">
+    <div class="category-list" x-data="categoryManager()" @categories-updated.window="fetchCategories">
       <h2 style="margin-bottom: 16px;">Existing Categories</h2>
+
+      <!-- Search and Filter Controls -->
       <div class="search-filter-container">
         <div class="search-container">
-          <input type="text" class="search-input" id="categorySearch" placeholder="Search categories..."
+          <input type="text" class="search-input" x-model="filters.search" placeholder="Search categories..."
             autocomplete="off">
         </div>
 
         <div class="filter-dropdown">
-          <button class="btn btn-filter btn-md" id="filterBtn">
+          <button class="btn btn-filter btn-md" @click="toggleDropdown('filter')">
             <i class='bx bx-filter-alt'></i> Filter
           </button>
-          <ul class="dropdown-content" id="filterDropdown">
-            <li data-value="all" class="selected">All Categories</li>
-            <li data-value="assigned">Assigned Books</li>
-            <li data-value="not-assigned">Not Assigned Books</li>
+          <ul class="dropdown-content" :class="{ 'show': dropdowns.filter }">
+            <li @click="setFilter('all')" :class="{ 'selected': filters.status === 'all' }">All Categories</li>
+            <li @click="setFilter('assigned')" :class="{ 'selected': filters.status === 'assigned' }">Assigned Books
+            </li>
+            <li @click="setFilter('not-assigned')" :class="{ 'selected': filters.status === 'not-assigned' }">Not
+              Assigned Books</li>
           </ul>
         </div>
 
         <div class="filter-dropdown">
-          <button class="btn btn-filter btn-md" id="sortBtn">
+          <button class="btn btn-filter btn-md" @click="toggleDropdown('sort')">
             <i class='bx bx-sort-alt-2'></i> Sort
           </button>
-          <ul class="dropdown-content" id="sortDropdown">
-            <li data-value="newest" class="selected">Newest</li>
-            <li data-value="oldest">Oldest</li>
-            <li data-value="count_asc">Book Count (Low to High)</li>
-            <li data-value="count_desc">Book Count (High to Low)</li>
+          <ul class="dropdown-content" :class="{ 'show': dropdowns.sort }">
+            <li @click="setSort('newest')" :class="{ 'selected': filters.sort === 'newest' }">Newest</li>
+            <li @click="setSort('oldest')" :class="{ 'selected': filters.sort === 'oldest' }">Oldest</li>
+            <li @click="setSort('count_asc')" :class="{ 'selected': filters.sort === 'count_asc' }">Book Count (Low to
+              High)</li>
+            <li @click="setSort('count_desc')" :class="{ 'selected': filters.sort === 'count_desc' }">Book Count (High
+              to Low)</li>
           </ul>
         </div>
       </div>
 
-      <div class="filter-info-row hidden" id="filterInfoRow">
-        <span class="total-count"><span id="totalCategories">0</span> categories</span>
-        <div id="active-filters"></div>
-        <button class="clear-filters-btn" id="clearFiltersBtn">
+      <!-- Active Filters Display -->
+      <div class="filter-info-row" x-show="hasActiveFilters">
+        <span class="total-count"><span x-text="total"></span> categories</span>
+        <div class="active-filters">
+          <template x-if="filters.search">
+            <span class="filter-tag">Search: <span x-text="filters.search"></span></span>
+          </template>
+          <template x-if="filters.status !== 'all'">
+            <span class="filter-tag" x-text="getStatusText(filters.status)"></span>
+          </template>
+          <template x-if="filters.sort !== 'newest'">
+            <span class="filter-tag" x-text="getSortText(filters.sort)"></span>
+          </template>
+        </div>
+        <button @click="clearFilters" class="clear-filters-btn">
           <i class='bx bx-x'></i> Clear Filters
         </button>
       </div>
 
-      <div id="no-results" class="no-results hidden">
+      <!-- Loading indicator -->
+      <div x-show="isLoading" class="loading-container">
+        <div class="loading-spinner"></div>
+        <p>Loading categories...</p>
+      </div>
+
+      <!-- No results message -->
+      <div x-show="!isLoading && !categories.length" class="no-results">
         No categories found
       </div>
 
-      @foreach ($categories as $category)
-        <div class="category-item" data-category-name="{{ strtolower($category->name) }}"
-          data-book-count="{{ $category->products_count ?? 0 }}" data-created-at="{{ $category->created_at }}">
-          <div class="category-content">
-            <div class="category-display">
-              <h3>
-                {{ $category->name }}
-                <span class="book-count">
-                  ({{ $category->products_count ?? 0 }} books)
-                </span>
-              </h3>
+      <!-- Categories list with edit/delete buttons -->
+      <div x-show="!isLoading && categories.length">
+        <template x-for="category in categories" :key="category.id">
+          <div class="category-item">
+            <div class="category-content">
+              <template x-if="!category.editing">
+                <div class="category-display">
+                  <h3>
+                    <span x-text="category.name"></span>
+                    <span class="book-count" x-text="`(${category.products_count || 0} books)`"></span>
+                  </h3>
+                </div>
+              </template>
+
+              <template x-if="category.editing">
+                <div class="category-edit-form">
+                  <form @submit.prevent="handleEditSubmit(category)" class="edit-form">
+                    <input type="text" x-model="category.editName" class="edit-input"
+                      :class="{ 'is-invalid': category.error }" maxlength="30" required>
+                    <div class="edit-buttons">
+                      <button type="submit" class="btn-category-primary">Save</button>
+                      <button type="button" @click="cancelEdit(category)"
+                        class="btn-category-secondary">Cancel</button>
+                    </div>
+                    <div x-show="category.error" x-text="category.error" class="error-message"></div>
+                  </form>
+                </div>
+              </template>
             </div>
-            <div class="category-edit-form" style="display: none;">
-              <input type="text" class="edit-input" value="{{ $category->name }}" required>
-              <div class="edit-buttons">
-                <button type="button" class="btn-category-primary save-edit"
-                  data-category-id="{{ $category->id }}">Save</button>
-                <button type="button" class="btn-category-secondary cancel-edit">Cancel</button>
-              </div>
-            </div>
-          </div>
-          <div class="btn-container-cat">
-            <button class="btn-edit-cat" onclick="toggleEdit(this, {{ $category->id }})"><i
-                class='bx bx-edit-alt'></i></button>
-            <form action="{{ route('categories.destroy', $category) }}" method="POST" style="display: inline;"
-              class="delete-form">
-              @csrf
-              @method('DELETE')
+
+            <div class="btn-container-cat" x-show="!category.editing">
+              <button @click="startEdit(category)" class="btn-edit-cat">
+                <i class='bx bx-edit-alt'></i>
+              </button>
               <button type="button" class="btn-delete-cat"
-                onclick="confirmDelete({{ $category->id }}, '{{ $category->name }}')">
+                @click="$dispatch('open-delete-modal', {
+                  item: category,
+                  callback: async () => {
+                    try {
+                      await axios.delete(`/categories/${category.id}`);
+                      await fetchCategories();
+                      window.dispatchEvent(new CustomEvent('alert', {
+                        detail: { type: 'success', message: 'Category deleted successfully' }
+                      }));
+                    } catch (error) {
+                      window.dispatchEvent(new CustomEvent('alert', {
+                        detail: { type: 'error', message: error.response?.data?.message || 'Failed to delete category' }
+                      }));
+                    }
+                  }
+                })">
                 <i class='bx bx-trash'></i>
               </button>
-            </form>
+            </div>
           </div>
-        </div>
-      @endforeach
+        </template>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- Delete Confirmation Modal -->
-<div id="deleteModal" class="delete-confirmation-modal">
-  <div class="delete-confirmation-content">
-    <div class="delete-confirmation-header">
-      <h2>Delete Category</h2>
-    </div>
-    <div class="delete-confirmation-body">
-      <p>Are you sure you want to delete "<span id="categoryName"></span>" category ?</p>
-      <p class="delete-confirmation-text">This action cannot be undone.</p>
-    </div>
-    <div class="delete-confirmation-footer">
-      <button type="button" class="btn-category-secondary" onclick="closeModal()">Cancel</button>
-      <button type="button" class="btn-delete" id="confirmDeleteBtn">Delete</button>
-    </div>
-  </div>
-</div>
+<x-delete-confirmation-modal title="Delete Category" />
 
 <script>
-  // Category management functionality
-  function toggleEdit(button, categoryId) {
-    const categoryItem = button.closest('.category-item');
-    const displayDiv = categoryItem.querySelector('.category-display');
-    const editForm = categoryItem.querySelector('.category-edit-form');
-    const editInput = categoryItem.querySelector('.edit-input');
-    const btnContainer = categoryItem.querySelector('.btn-container-cat');
+  document.addEventListener('alpine:init', () => {
+    Alpine.data('categoryManager', () => ({
+      categories: [],
+      filters: {
+        search: '',
+        status: 'all',
+        sort: 'newest'
+      },
+      dropdowns: {
+        filter: false,
+        sort: false
+      },
+      total: 0,
+      isLoading: true,
 
-    if (displayDiv.style.display !== 'none') {
-      displayDiv.style.display = 'none';
-      btnContainer.style.display = 'none';
-      editForm.style.display = 'flex';
-      editInput.focus();
-    }
-  }
+      // Data Fetching
 
-  // Filter and Sort functionality
-  document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('categorySearch');
-    const filterBtn = document.getElementById('filterBtn');
-    const sortBtn = document.getElementById('sortBtn');
-    const filterDropdown = document.getElementById('filterDropdown');
-    const sortDropdown = document.getElementById('sortDropdown');
-    const clearFiltersBtn = document.getElementById('clearFiltersBtn');
-    const filterInfoRow = document.getElementById('filterInfoRow');
-    const activeFilters = document.getElementById('active-filters');
-    const totalCategories = document.getElementById('totalCategories');
-    const noResults = document.getElementById('no-results');
-    const categoryItems = document.querySelectorAll('.category-item');
-
-    let currentFilter = 'all';
-    let currentSort = 'newest';
-    let searchQuery = '';
-
-    // Initialize total count
-    updateTotalCount();
-
-    // Close dropdowns when clicking outside
-    document.addEventListener('click', function(e) {
-      if (!e.target.closest('.filter-dropdown')) {
-        filterDropdown.classList.remove('show');
-        sortDropdown.classList.remove('show');
-      }
-    });
-
-    // Toggle dropdowns
-    filterBtn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      filterDropdown.classList.toggle('show');
-      sortDropdown.classList.remove('show');
-    });
-
-    sortBtn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      sortDropdown.classList.toggle('show');
-      filterDropdown.classList.remove('show');
-    });
-
-    // Filter selection
-    filterDropdown.addEventListener('click', function(e) {
-      const item = e.target.closest('li');
-      if (!item) return;
-
-      currentFilter = item.dataset.value;
-      updateSelectedItem(filterDropdown, currentFilter);
-      filterCategories();
-      updateFilterInfo();
-    });
-
-    // Sort selection
-    sortDropdown.addEventListener('click', function(e) {
-      const item = e.target.closest('li');
-      if (!item) return;
-
-      currentSort = item.dataset.value;
-      updateSelectedItem(sortDropdown, currentSort);
-      sortCategories();
-      updateFilterInfo();
-    });
-
-    // Search functionality
-    let searchTimeout;
-    searchInput.addEventListener('input', function() {
-      clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(() => {
-        searchQuery = this.value.toLowerCase().trim();
-        filterCategories();
-        updateFilterInfo();
-      }, 300);
-    });
-
-    // Clear filters
-    clearFiltersBtn.addEventListener('click', function() {
-      currentFilter = 'all';
-      currentSort = 'newest';
-      searchQuery = '';
-      searchInput.value = '';
-      updateSelectedItem(filterDropdown, 'all');
-      updateSelectedItem(sortDropdown, 'newest');
-      filterCategories();
-      updateFilterInfo();
-    });
-
-    function updateSelectedItem(dropdown, value) {
-      dropdown.querySelectorAll('li').forEach(li => {
-        li.classList.toggle('selected', li.dataset.value === value);
-      });
-    }
-
-    function filterCategories() {
-      let visibleCount = 0;
-      const items = document.querySelectorAll('.category-item');
-
-      items.forEach(item => {
-        const name = item.dataset.categoryName;
-        const bookCount = parseInt(item.dataset.bookCount);
-        let isVisible = true;
-
-        // Apply search filter
-        if (searchQuery && !name.includes(searchQuery)) {
-          isVisible = false;
+      async fetchCategories() {
+        this.isLoading = true;
+        try {
+          const response = await axios.get('/categories/search', {
+            params: this.filters
+          });
+          this.categories = response.data.categories;
+          this.total = response.data.total;
+        } catch (error) {
+          console.error('Error fetching categories:', error);
+        } finally {
+          this.isLoading = false;
         }
+      },
 
-        // Apply category filter
-        if (isVisible && currentFilter !== 'all') {
-          if (currentFilter === 'assigned' && bookCount === 0) {
-            isVisible = false;
-          } else if (currentFilter === 'not-assigned' && bookCount > 0) {
-            isVisible = false;
+      // Initialization and Event Handlers
+
+      init() {
+        // Load categories immediately when component initializes
+        this.fetchCategories();
+
+        this.$watch('filters', debounce(() => this.fetchCategories(), 300));
+
+        document.addEventListener('click', (e) => {
+          if (!e.target.closest('.filter-dropdown')) {
+            this.dropdowns.filter = false;
+            this.dropdowns.sort = false;
+          }
+        });
+      },
+
+      // Dropdown Management
+
+      toggleDropdown(type) {
+        this.dropdowns[type] = !this.dropdowns[type];
+        const other = type === 'filter' ? 'sort' : 'filter';
+        this.dropdowns[other] = false;
+      },
+
+      // Category Edit Operations
+
+      async handleEditSubmit(category) {
+        try {
+          const response = await axios.put(`/categories/${category.id}`, {
+            name: category.editName
+          });
+
+          if (response.data.category) {
+            // Update the category in the list with the response data
+            const index = this.categories.findIndex(c => c.id === category.id);
+            if (index !== -1) {
+              this.categories[index] = {
+                ...this.categories[index],
+                ...response.data.category,
+                editing: false,
+                error: null
+              };
+            }
+            // Display success message
+            const alertEvent = new CustomEvent('alert', {
+              detail: {
+                type: 'success',
+                message: 'Category updated successfully'
+              }
+            });
+            window.dispatchEvent(alertEvent);
+          }
+        } catch (error) {
+          if (error.response && error.response.status === 422) {
+            category.error = error.response.data.errors.name[0];
+          } else {
+            console.error('Error updating category:', error);
+            category.error = 'An error occurred while updating the category.';
           }
         }
+      },
 
-        item.classList.toggle('hidden', !isVisible);
-        if (isVisible) visibleCount++;
-      });
 
-      noResults.classList.toggle('hidden', visibleCount > 0);
-      sortCategories();
-      updateTotalCount();
-    }
+      startEdit(category) {
+        // Reset any previous errors
+        category.error = null;
+        category.editing = true;
+        category.editName = category.name;
+      },
 
-    function sortCategories() {
-      const categoryList = document.querySelector('.category-list');
-      const items = Array.from(document.querySelectorAll('.category-item'));
-      const sortedItems = items.sort((a, b) => {
-        switch (currentSort) {
-          case 'newest':
-            return new Date(b.dataset.createdAt) - new Date(a.dataset.createdAt);
-          case 'oldest':
-            return new Date(a.dataset.createdAt) - new Date(b.dataset.createdAt);
-          case 'count_asc':
-            return parseInt(a.dataset.bookCount) - parseInt(b.dataset.bookCount);
-          case 'count_desc':
-            return parseInt(b.dataset.bookCount) - parseInt(a.dataset.bookCount);
-          default:
-            return 0;
+      cancelEdit(category) {
+        category.editing = false;
+        category.editName = category.name;
+        category.error = null;
+      },
+
+      // Filter Management
+
+      get hasActiveFilters() {
+        return this.filters.search ||
+          this.filters.status !== 'all' ||
+          this.filters.sort !== 'newest';
+      },
+
+      setFilter(status) {
+        this.filters.status = status;
+        this.dropdowns.filter = false;
+      },
+
+      setSort(sort) {
+        this.filters.sort = sort;
+        this.dropdowns.sort = false;
+      },
+
+      clearFilters() {
+        this.filters = {
+          search: '',
+          status: 'all',
+          sort: 'newest'
+        };
+      },
+
+      // Helper Functions for Text Display
+
+      getStatusText(status) {
+        return {
+          'assigned': 'Assigned Books',
+          'not-assigned': 'Not Assigned Books'
+        } [status] || 'All Categories';
+      },
+
+      getSortText(sort) {
+        return {
+          'oldest': 'Oldest First',
+          'count_asc': 'Book Count (Low to High)',
+          'count_desc': 'Book Count (High to Low)'
+        } [sort] || 'Newest First';
+      },
+
+      async handleNewCategory(event) {
+        try {
+          const formData = new FormData(event.target);
+          const response = await axios.post('/categories', formData);
+
+          if (response.data.category) {
+            // Clear the input
+            this.$refs.categoryInput.value = '';
+            this.charCount = 0;
+
+            // Fetch updated categories list to maintain sort order
+            await this.fetchCategories();
+
+            // Display success message
+            const alertEvent = new CustomEvent('alert', {
+              detail: {
+                type: 'success',
+                message: 'Category created successfully'
+              }
+            });
+            window.dispatchEvent(alertEvent);
+          }
+        } catch (error) {
+          if (error.response && error.response.status === 422) {
+            const alertEvent = new CustomEvent('alert', {
+              detail: {
+                type: 'error',
+                message: error.response.data.errors.name[0]
+              }
+            });
+            window.dispatchEvent(alertEvent);
+          }
         }
-      });
-
-      // Reorder elements
-      sortedItems.forEach(item => {
-        categoryList.appendChild(item);
-      });
-    }
-
-    function updateFilterInfo() {
-      const hasActiveFilters = searchQuery || currentFilter !== 'all' || currentSort !== 'newest';
-      filterInfoRow.classList.toggle('hidden', !hasActiveFilters);
-
-      // Update active filters
-      activeFilters.innerHTML = '';
-
-      if (searchQuery) {
-        activeFilters.innerHTML += `<span class="filter-tag">Search: ${searchQuery}</span>`;
       }
-
-      if (currentFilter !== 'all') {
-        const filterText = currentFilter === 'assigned' ? 'Assigned Books' : 'Not Assigned Books';
-        activeFilters.innerHTML += `<span class="filter-tag">${filterText}</span>`;
-      }
-
-      if (currentSort !== 'newest') {
-        const sortText = sortDropdown.querySelector(`[data-value="${currentSort}"]`).textContent;
-        activeFilters.innerHTML += `<span class="filter-tag">Sort: ${sortText}</span>`;
-      }
-    }
-
-    function updateTotalCount() {
-      const visibleItems = document.querySelectorAll('.category-item:not(.hidden)').length;
-      totalCategories.textContent = visibleItems;
-    }
-
-    // Initial sort
-    sortCategories();
+    }));
   });
 
-  // Modal functionality
-  let currentForm = null;
-
-  function confirmDelete(categoryId, categoryName) {
-    const modal = document.getElementById('deleteModal');
-    const categoryNameSpan = document.getElementById('categoryName');
-    const confirmBtn = document.getElementById('confirmDeleteBtn');
-
-    currentForm = event.target.closest('form');
-    categoryNameSpan.textContent = categoryName;
-    modal.style.display = 'block';
-
-    confirmBtn.onclick = function() {
-      if (currentForm) {
-        currentForm.submit();
-      }
-    }
+  // Debounce function to prevent spamming API
+  function debounce(fn, wait) {
+    let timeout;
+    return function(...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => fn.apply(this, args), wait);
+    };
   }
-
-  function closeModal() {
-    const modal = document.getElementById('deleteModal');
-    modal.style.display = 'none';
-    currentForm = null;
-  }
-
-  // Close modal when clicking outside
-  window.onclick = function(event) {
-    const modal = document.getElementById('deleteModal');
-    if (event.target == modal) {
-      closeModal();
-    }
-  }
-
-  // Add event listeners for save and cancel buttons
-  document.querySelectorAll('.cancel-edit').forEach(button => {
-    button.addEventListener('click', function() {
-      const categoryItem = this.closest('.category-item');
-      const displayDiv = categoryItem.querySelector('.category-display');
-      const editForm = categoryItem.querySelector('.category-edit-form');
-      const btnContainer = categoryItem.querySelector('.btn-container-cat');
-
-      displayDiv.style.display = 'block';
-      editForm.style.display = 'none';
-      btnContainer.style.display = 'flex';
-    });
-  });
-
-  document.querySelectorAll('.save-edit').forEach(button => {
-    button.addEventListener('click', function() {
-      const categoryId = this.dataset.categoryId;
-      const categoryItem = this.closest('.category-item');
-      const editInput = categoryItem.querySelector('.edit-input');
-      const newName = editInput.value;
-
-      // Create and submit form
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = `/categories/${categoryId}`;
-
-      const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-
-      const methodInput = document.createElement('input');
-      methodInput.type = 'hidden';
-      methodInput.name = '_method';
-      methodInput.value = 'PUT';
-
-      const csrfInput = document.createElement('input');
-      csrfInput.type = 'hidden';
-      csrfInput.name = '_token';
-      csrfInput.value = csrfToken;
-
-      const nameInput = document.createElement('input');
-      nameInput.type = 'hidden';
-      nameInput.name = 'name';
-      nameInput.value = newName;
-
-      form.appendChild(methodInput);
-      form.appendChild(csrfInput);
-      form.appendChild(nameInput);
-
-      document.body.appendChild(form);
-      form.submit();
-    });
-  });
 </script>
