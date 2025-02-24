@@ -329,23 +329,6 @@ textarea {
     font-size: 18px;
 }
 
-.delete-confirmation-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.delete-confirmation-modal[x-cloak] {
-    display: none;
-}
-
 .error-message {
     color: #dc3545;
     font-size: 0.875rem;
@@ -359,7 +342,7 @@ textarea {
 .char-count {
     position: absolute;
     right: 10px;
-    top: 50%;
+    top: 36%;
     transform: translateY(-50%);
     font-size: 12px;
     color: #888;
@@ -403,3 +386,69 @@ textarea {
         transform: rotate(360deg);
     }
 }
+
+.filter-container {
+    display: flex;
+    gap: 1rem;
+}
+
+.filter-select {
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: none;
+    height: 40px;
+    color: white;
+    background-color: rgb(13, 13, 13);
+    min-width: 160px;
+    cursor: pointer;
+}
+
+.btn-visibility {
+    padding: 8px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    height: 40px;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn-visibility.public {
+    background-color: rgb(0, 126, 0);
+    color: white;
+}
+
+.btn-visibility.private {
+    background-color: #757575;
+    color: white;
+}
+
+.system-badge {
+    background-color: #2196F3;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    margin-left: 8px;
+}
+
+.reassign-section {
+    margin: 16px 0;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.reassign-select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 8px;
+    background: #303030;
+    border: 1px solid #404040;
+    border-radius: 4px;
+    color: white;
+}
+
