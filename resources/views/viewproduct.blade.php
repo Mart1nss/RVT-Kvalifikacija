@@ -42,7 +42,7 @@
     <!-- Initialize PDF Viewer -->
     <script>
       document.addEventListener('DOMContentLoaded', function() {
-        const pdfUrl = "/assets/{{ $data->file }}";
+        const pdfUrl = "/book-thumbnail/{{ $data->file }}";
         initPDFViewer(pdfUrl);
       });
     </script>

@@ -8,6 +8,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Services\AuditLogService;
+use Illuminate\Support\Str;
 
 class BookController extends Controller
 {
@@ -26,9 +27,6 @@ class BookController extends Controller
    * Store a newly uploaded book in the database.
    * Handles file upload, validation, and creates a new book record.
    * Requirements:
-   * - Title and author (max 255 chars)
-   * - Valid category ID
-   * - PDF file (max 10MB)
    *
    * @param Request $request
    * @return \Illuminate\Http\RedirectResponse
@@ -54,8 +52,8 @@ class BookController extends Controller
 
     if ($request->hasFile('file')) {
       $file = $request->file('file');
-      $filename = md5($file->getClientOriginalName()) . '.' . $file->getClientOriginalExtension();
-      $file->move('assets', $filename);
+      $filename = Str::slug($request->title) . '_' . time() . '.' . $file->getClientOriginalExtension();
+      $file->storeAs('books', $filename);
       $product->file = $filename;
     }
 
@@ -378,7 +376,26 @@ class BookController extends Controller
    */
   public function download(Request $request, $file)
   {
-    return response()->download(public_path('assets/' . $file));
+    $path = storage_path('app/books/' . $file);
+    if (!file_exists($path)) {
+      return redirect()->back()->with('error', 'File not found.');
+    }
+    return response()->download($path);
+  }
+
+  /**
+   * Serve a PDF file for thumbnail generation.
+   *
+   * @param string $file
+   * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+   */
+  public function servePdf($file)
+  {
+    $path = storage_path('app/books/' . $file);
+    if (!file_exists($path)) {
+      abort(404);
+    }
+    return response()->file($path, ['Content-Type' => 'application/pdf']);
   }
 
   /**

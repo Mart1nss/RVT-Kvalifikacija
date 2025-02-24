@@ -29,14 +29,16 @@ function initializePdfThumbnails() {
                 if (entry.isIntersecting) {
                     const thumbnailDiv = entry.target;
                     const pdfPath = thumbnailDiv.dataset.pdfpath;
-
+                    // Extract filename from the path
+                    const filename = pdfPath.split('/').pop();
+                    
                     if (
-                        !generatedThumbnails.has(pdfPath) &&
-                        !loadingThumbnails.has(pdfPath) &&
-                        !failedThumbnails.has(pdfPath)
+                        !generatedThumbnails.has(filename) &&
+                        !loadingThumbnails.has(filename) &&
+                        !failedThumbnails.has(filename)
                     ) {
-                        loadingThumbnails.add(pdfPath);
-                        generateThumbnail(pdfPath);
+                        loadingThumbnails.add(filename);
+                        generateThumbnail(filename);
                     }
                 }
             });
@@ -61,12 +63,13 @@ document.addEventListener("DOMContentLoaded", initializePdfThumbnails);
 // Make function available globally
 window.initializePdfThumbnails = initializePdfThumbnails;
 
-async function generateThumbnail(pdfPath) {
+async function generateThumbnail(filename) {
     try {
-        const loadingTask = pdfjsLib.getDocument(pdfPath);
+        const pdfUrl = `/book-thumbnail/${filename}`;
+        const loadingTask = pdfjsLib.getDocument(pdfUrl);
         let timeoutId = setTimeout(() => {
             loadingTask.destroy();
-            handleThumbnailError(pdfPath, new Error("Loading timeout"));
+            handleThumbnailError(filename, new Error("Loading timeout"));
         }, 10000); // 10 second timeout
 
         const pdf = await loadingTask.promise;
@@ -110,8 +113,9 @@ async function generateThumbnail(pdfPath) {
         thumbnailImg.src = canvas.toDataURL("image/jpeg", 0.85);
 
         // Update all instances of this thumbnail
+        const oldPath = `/assets/${filename}`;
         document
-            .querySelectorAll(`.thumbnail[data-pdfpath="${pdfPath}"]`)
+            .querySelectorAll(`.thumbnail[data-pdfpath="${oldPath}"]`)
             .forEach((div) => {
                 div.innerHTML = "";
                 div.appendChild(thumbnailImg.cloneNode(true));
@@ -125,17 +129,18 @@ async function generateThumbnail(pdfPath) {
         pdf.destroy();
         loadingTask.destroy();
 
-        generatedThumbnails.add(pdfPath);
-        loadingThumbnails.delete(pdfPath);
+        generatedThumbnails.add(filename);
+        loadingThumbnails.delete(filename);
     } catch (error) {
-        handleThumbnailError(pdfPath, error);
+        handleThumbnailError(filename, error);
     }
 }
 
-function handleThumbnailError(pdfPath, error) {
+function handleThumbnailError(filename, error) {
     console.error("Error generating thumbnail:", error);
+    const oldPath = `/assets/${filename}`;
     document
-        .querySelectorAll(`.thumbnail[data-pdfpath="${pdfPath}"]`)
+        .querySelectorAll(`.thumbnail[data-pdfpath="${oldPath}"]`)
         .forEach((div) => {
             div.innerHTML = `
           <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #2a2a2a;">
@@ -143,8 +148,8 @@ function handleThumbnailError(pdfPath, error) {
           </div>
         `;
         });
-    loadingThumbnails.delete(pdfPath);
-    failedThumbnails.add(pdfPath);
+    loadingThumbnails.delete(filename);
+    failedThumbnails.add(filename);
 }
 
 // Add styles

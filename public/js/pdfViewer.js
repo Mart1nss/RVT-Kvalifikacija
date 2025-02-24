@@ -28,7 +28,16 @@ document.addEventListener("DOMContentLoaded", function () {
             pdfContainer.innerHTML =
                 '<div class="loading">Loading PDF...</div>';
 
-            pdfDoc = await pdfjsLib.getDocument(url).promise;
+            // Load the PDF with authentication headers
+            const loadingTask = pdfjsLib.getDocument({
+                url: url,
+                withCredentials: true,
+                httpHeaders: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            pdfDoc = await loadingTask.promise;
             pageCountSpan.textContent = pdfDoc.numPages;
 
             // Clear loading indicator
@@ -55,7 +64,10 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (error) {
             console.error("Error loading PDF:", error);
             pdfContainer.innerHTML =
-                '<p class="error">Error loading PDF. Please try again.</p>';
+                '<div class="error" style="text-align: center; padding: 20px; color: #ff4444;">' +
+                '<i class="bx bx-error" style="font-size: 48px; display: block; margin-bottom: 10px;"></i>' +
+                '<p>Error loading PDF. Please try refreshing the page.</p>' +
+                '</div>';
         }
     };
 

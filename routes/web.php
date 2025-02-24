@@ -55,18 +55,11 @@ Route::get('/get-genres', function () {
     return response()->json($genres);
 });
 
-Route::get('/assets/{filename}', function ($filename) {
-    $path = public_path('assets/' . $filename);
-    if (!File::exists($path)) {
-        abort(404);
-    }
-    return response()->file($path);
-});
-
 //Book Routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/view/{id}', [BookController::class, 'view'])->name('view');
     Route::get('/download/{file}', [BookController::class, 'download'])->name('download');
+    Route::get('/book-thumbnail/{file}', [BookController::class, 'servePdf'])->name('book.thumbnail');
     Route::get('/ajax/books', [BookController::class, 'ajaxBooks'])->name('ajax.books');
 });
 
