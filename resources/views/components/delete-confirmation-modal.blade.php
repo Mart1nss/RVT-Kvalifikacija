@@ -10,12 +10,12 @@
       <h2>{{ $title }}</h2>
     </div>
     <div class="delete-confirmation-body">
-      <p>Are you sure you want to delete "<span x-text="itemToDelete?.name"></span>"?</p>
+      <p>Are you sure you want to delete <span class="text-alert" x-text="itemToDelete?.name"></span>?</p>
       <p class="delete-confirmation-text">This action cannot be undone.</p>
     </div>
     <div class="delete-confirmation-footer">
-      <button type="button" class="btn-category-secondary" @click="show = false">Cancel</button>
-      <button type="button" class="btn-delete" @click="confirmDelete">Delete</button>
+      <button type="button" class="btn btn-ghost btn-md" @click="show = false">Cancel</button>
+      <button type="button" class="btn btn-danger btn-md" @click="confirmDelete">Delete</button>
     </div>
   </div>
 </div>

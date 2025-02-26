@@ -15,6 +15,7 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\PreferenceController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\ReadLaterController;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -74,10 +75,20 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/toggle-visibility/{id}', [BookController::class, 'toggleVisibility'])->name('toggle.visibility');
 });
 
-//User Manage Routes
-Route::get('/managepage', [UserController::class, 'index'])->name('user.manage')->middleware(['auth', 'admin']);
-Route::put('/users/{user}', [UserController::class, 'updateUserType'])->name('users.updateUserType');
-Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+// User Management Routes - Using Livewire Components
+// These routes are protected by auth and admin middleware
+// Only authenticated admin users can access these pages
+Route::get('/user-management', function() {
+    // Load the user management view which contains the Livewire component
+    return view('admin.users.user-management');
+})->name('user.management.livewire')->middleware(['auth', 'admin']);
+
+// User Details/Edit Route
+// This route accepts a userId parameter to show details for a specific user
+Route::get('/user/{userId}', function($userId) {
+    // Load the user show view and pass the userId to the Livewire component
+    return view('admin.users.user-show', ['userId' => $userId]);
+})->name('user.show')->middleware(['auth', 'admin']);
 
 // File Routes
 Route::get('/redirect-back', [HomeController::class, 'redirectAfterBack'])->name('redirect.back');

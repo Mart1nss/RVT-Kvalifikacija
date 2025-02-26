@@ -262,16 +262,13 @@
       },
 
       get hasActiveFilters() {
-        return this.selectedGenres.length > 0 ||
-          this.searchQuery.trim() !== '' ||
-          this.currentSort !== 'newest' ||
-          (this.isAdmin && this.currentVisibility !== 'all');
+        return this.selectedGenres.length > 0 || 
+               this.searchQuery !== '' || 
+               (this.isAdmin && this.currentVisibility !== 'all');
       },
 
       get showFilterInfo() {
-        return this.selectedGenres.length > 0 ||
-          this.searchQuery.trim() !== '' ||
-          (this.isAdmin && this.currentVisibility !== 'all');
+        return this.hasActiveFilters || this.totalBooks > 0;
       },
 
       async fetchGenres() {

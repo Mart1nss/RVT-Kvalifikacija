@@ -50,7 +50,7 @@
         Categories</button>
 
       <button style="margin-bottom: 15px;" class="btn btn-primary btn-md"
-        onclick="window.location.href='{{ '/managepage' }}'"><i id="dashboardIcon" class='bx bx-user'></i>
+        onclick="window.location.href='{{ route('user.management.livewire') }}'"><i id="dashboardIcon" class='bx bx-user'></i>
         Manage Users</button>
 
       <button style="margin-bottom: 15px;" class="btn btn-primary btn-md"
