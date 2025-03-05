@@ -17,6 +17,13 @@ class Kernel extends ConsoleKernel
             ->daily()
             ->at('00:00')
             ->appendOutputTo(storage_path('logs/scheduler.log'));
+
+        // Clean orphaned audit logs weekly
+        $schedule->command('audit:clean-orphaned')
+            ->weekly()
+            ->sundays()
+            ->at('01:00')
+            ->appendOutputTo(storage_path('logs/scheduler.log'));
     }
 
     /**

@@ -55,7 +55,7 @@ class TicketController extends Controller
             $admin->notify(new TicketNotification(
                 $ticket,
                 'new_ticket',
-                "New support ticket #{$ticket->id} has been created"
+                ['message' => "New support ticket #{$ticket->id} has been created"]
             ));
         }
 
@@ -114,7 +114,7 @@ class TicketController extends Controller
             $ticket->user->notify(new TicketNotification(
                 $ticket,
                 'ticket_accepted',
-                "Your ticket #{$ticket->id} has been accepted"
+                ['message' => "Your ticket #{$ticket->id} has been accepted"]
             ));
         }
 
@@ -123,7 +123,7 @@ class TicketController extends Controller
             $ticket->user->notify(new TicketNotification(
                 $ticket,
                 'ticket_closed',
-                "Your ticket #{$ticket->id} has been closed"
+                ['message' => "Your ticket #{$ticket->id} has been closed"]
             ));
         }
 
@@ -160,7 +160,7 @@ class TicketController extends Controller
             $ticket->user->notify(new TicketNotification(
                 $ticket,
                 'admin_response',
-                "An admin has responded to your ticket #{$ticket->id}"
+                ['message' => "An admin has responded to your ticket #{$ticket->id}"]
             ));
         }
         // If user responds, notify the assigned admin or all admins
@@ -170,14 +170,14 @@ class TicketController extends Controller
                 $notifyUser->notify(new TicketNotification(
                     $ticket,
                     'user_response',
-                    "User has responded to ticket #{$ticket->id}"
+                    ['message' => "User has responded to ticket #{$ticket->id}"]
                 ));
             } else {
                 User::where('usertype', 'admin')->get()->each(function ($admin) use ($ticket) {
                     $admin->notify(new TicketNotification(
                         $ticket,
                         'user_response',
-                        "User has responded to ticket #{$ticket->id}"
+                        ['message' => "User has responded to ticket #{$ticket->id}"]
                     ));
                 });
             }
@@ -218,7 +218,7 @@ class TicketController extends Controller
         $ticket->user->notify(new TicketNotification(
             $ticket,
             'ticket_assigned',
-            "Your ticket #{$ticket->id} has been assigned to an admin"
+            ['message' => "Your ticket #{$ticket->id} has been assigned to an admin"]
         ));
 
         AuditLogService::log(

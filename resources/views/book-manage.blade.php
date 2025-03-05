@@ -11,7 +11,6 @@
   <link rel="stylesheet" href="{{ asset('css/product-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/modal-edit.css') }}">
   <link rel="stylesheet" href="{{ asset('css/modal-confirmation-delete.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/main-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/components/pdf-item.css') }}">
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>

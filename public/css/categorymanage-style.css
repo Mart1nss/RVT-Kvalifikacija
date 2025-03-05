@@ -392,17 +392,6 @@ textarea {
     gap: 1rem;
 }
 
-.filter-select {
-    padding: 0.5rem;
-    border-radius: 8px;
-    border: none;
-    height: 40px;
-    color: white;
-    background-color: rgb(13, 13, 13);
-    min-width: 160px;
-    cursor: pointer;
-}
-
 .btn-visibility {
     padding: 8px;
     border: none;
@@ -427,7 +416,7 @@ textarea {
 }
 
 .system-badge {
-    background-color: #2196F3;
+    background-color: #666;
     color: white;
     padding: 2px 8px;
     border-radius: 12px;
@@ -451,4 +440,3 @@ textarea {
     border-radius: 4px;
     color: white;
 }
-

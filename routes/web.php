@@ -8,12 +8,10 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FavoritesController;
-use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\PreferenceController;
-use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\ReadLaterController;
 use Illuminate\Support\Facades\Auth;
 
@@ -78,14 +76,14 @@ Route::middleware(['auth', 'admin'])->group(function () {
 // User Management Routes - Using Livewire Components
 // These routes are protected by auth and admin middleware
 // Only authenticated admin users can access these pages
-Route::get('/user-management', function() {
+Route::get('/user-management', function () {
     // Load the user management view which contains the Livewire component
     return view('admin.users.user-management');
 })->name('user.management.livewire')->middleware(['auth', 'admin']);
 
 // User Details/Edit Route
 // This route accepts a userId parameter to show details for a specific user
-Route::get('/user/{userId}', function($userId) {
+Route::get('/user/{userId}', function ($userId) {
     // Load the user show view and pass the userId to the Livewire component
     return view('admin.users.user-show', ['userId' => $userId]);
 })->name('user.show')->middleware(['auth', 'admin']);
@@ -100,21 +98,9 @@ Route::delete('/my-collection/{id}', [FavoritesController::class, 'delete'])->na
 
 //Notification Routes
 Route::middleware(['auth'])->group(function () {
-    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index')->middleware(['auth', 'admin']);
-
-    Route::post('/notifications/send', [NotificationController::class, 'sendNotification'])
-        ->name('admin.send.notification');
-
-    Route::post('/notifications/mark-read', [NotificationController::class, 'markAsRead'])
-        ->name('notifications.markRead');
-    Route::post('/notifications/{id}/delete', [NotificationController::class, 'deleteNotification'])
-        ->name('notifications.delete');
-    Route::post('/notifications/delete-all', [NotificationController::class, 'deleteAllNotifications'])
-        ->name('notifications.deleteAll');
-    Route::get('/notifications/count', [NotificationController::class, 'getCount'])
-        ->name('notifications.count');
-    Route::post('/notifications/sent/{id}/delete', [NotificationController::class, 'deleteSentNotification'])
-        ->name('notifications.sent.delete')->middleware('admin');
+    Route::get('/notifications', function () {
+        return view('notifications');
+    })->name('notifications.index')->middleware(['auth', 'admin']);
 });
 
 // Notes Routes
@@ -148,7 +134,7 @@ Route::middleware('auth')->group(function () {
 
 // Category Management Routes
 Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/categories', function() {
+    Route::get('/categories', function () {
         return view('admin.categories.categories');
     })->name('categories.index');
 });
@@ -171,7 +157,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/preferences/edit', [PreferenceController::class, 'edit'])->name('preferences.edit');
 });
 
-Route::get('/audit-logs', [AuditLogController::class, 'index'])->middleware(['auth', 'admin']);
+// Audit Logs Route - Using Livewire Component
+Route::get('/audit-logs', function () {
+    return view('audit-logs-page');
+})->name('audit.logs')->middleware(['auth', 'admin']);
 
 // Read Later Routes
 Route::middleware(['auth'])->group(function () {
