@@ -45,7 +45,6 @@
   <div class="main-container">
     <section class="hero">
       <h2 class="hero-title">Discover the Power of Knowledge to Transform Your Life</h2>
-      <p class="hero-subtitle">Start Elevating Today</p>
       <button onclick="window.location.href = '{{ route('register') }}'" class="btn btn-primary btn-sm">Get
         Started</button>
     </section>
@@ -53,7 +52,7 @@
     <section class="library-preview">
       <div class="text-container">
         <h3 class="section-title">Inside the Library</h3>
-        <p class="section-subtitle">Gain access to over 100 e-books</p>
+        <p class="section-subtitle">Gain access to over 100 self improvement e-books</p>
       </div>
       <div class="pdf-carousel">
         <div class="carousel-track-container">
@@ -63,7 +62,97 @@
                 <div class="thumbnail" data-pdfpath="/assets/{{ $book->file }}"></div>
               </div>
             @endforeach
+            <!-- Duplicate books for continuous scrolling -->
+            @foreach ($data as $book)
+              <div class="pdf-item">
+                <div class="thumbnail" data-pdfpath="/assets/{{ $book->file }}"></div>
+              </div>
+            @endforeach
           </div>
+        </div>
+      </div>
+    </section>
+
+    
+
+    <section class="why-choose">
+      <h3 class="section-title">Why Choose Elevate Reads?</h3>
+      <div class="benefits-container">
+        <div class="benefit-item">
+          <div class="benefit-icon">
+            <i class='bx bxs-book-reader'></i>
+          </div>
+          <div class="benefit-content">
+            <h4>Curated Knowledge</h4>
+            <p>We select only the most impactful and transformative books.</p>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">
+            <i class='bx bxs-devices'></i>
+          </div>
+          <div class="benefit-content">
+            <h4>Anytime, Anywhere Access</h4>
+            <p>Read on any device with our responsive platform. Your library travels with you, accessible 24/7.</p>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">
+            <i class='bx bxs-user-plus'></i>
+          </div>
+          <div class="benefit-content">
+            <h4>Personalized Experience</h4>
+            <p>Discover recommendations tailored to your interests and reading habits.</p>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">
+            <i class='bx bxs-time-five'></i>
+          </div>
+          <div class="benefit-content">
+            <h4>Save Valuable Time</h4>
+            <p>Access essential knowledge without wading through endless content. Find what you need quickly.</p>
+          </div>
+        </div>
+        <div class="cta-container">
+          <button onclick="window.location.href = '{{ route('register') }}'" class="btn btn-primary btn-lg">Get Started Today</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="feature-spotlight">
+      <h3 class="section-title">Interactive Features</h3>
+      
+      <div class="feature-container notebook-feature">
+        <div class="feature-content">
+          <h4>Virtual Notebook</h4>
+          <p>Take notes while reading with your personal virtual notebook. Every book comes with a dedicated note-taking space, allowing you to highlight key insights and save important thoughts without leaving the page.</p>
+          <p>All your notes are organized by book and easily accessible in one central location, making review and study effortless.</p>
+        </div>
+        <div class="feature-image">
+          <img src="https://placehold.co/200x300" alt="Virtual Notebook">
+        </div>
+      </div>
+      
+      <div class="feature-container forum-feature">
+        <div class="feature-image">
+          <img src="https://placehold.co/500x300" alt="Community Forums">
+        </div>
+        <div class="feature-content">
+          <h4>Community Forums</h4>
+          <p>Connect with fellow readers in our vibrant community forums. Create discussions, share insights, and gain new perspectives on your favorite books.</p>
+          <p>Ask questions, participate in deep conversations, and build connections with like-minded individuals passionate about personal growth and learning.</p>
+        </div>
+      </div>
+      
+      <div class="feature-container progress-feature">
+        <div class="feature-content">
+          <h4>Personal Progress Tracking</h4>
+          <p>Monitor your reading journey with detailed progress statistics. Track the number of books you've read, reviews you've written, forums you've participated in, and much more.</p>
+          <p>Gain insights into your reading habits with metrics on your most-read genres, favorite authors, average reading time, and login patterns — helping you optimize your learning experience.</p>
+        </div>
+        <div class="feature-image">
+          <img src="https://placehold.co/500x300" alt="Progress Tracking">
         </div>
       </div>
     </section>
@@ -140,15 +229,11 @@
       </div>
     </section>
 
-    <section class="why-choose">
-      <h3 class="section-title">Why Choose Elevate Reads?</h3>
-      <ul class="why-choose-list">
-        hz
-        <button onclick="window.location.href = '{{ route('register') }}'" class="btn btn-primary btn-sm">Get
-          Started</button>
-      </ul>
-
-    </section>
+    <div class="cta-container">
+      <p class="hero-subtitle">Start Elevating Today</p>
+      <button onclick="window.location.href = '{{ route('register') }}'" class="btn btn-primary btn-sm">Get
+        Started</button>
+    </div>
 
     <section class="faq-section">
       <h3 class="section-title">Frequently Asked Questions</h3>
@@ -174,8 +259,7 @@
           <div class="accordion-content">
             <div class="content-wrapper">
               <p>Once you've registered and logged in, you can access our entire library of eBooks through
-                your
-                dashboard. You can read them online or download them for offline access.</p>
+                your dashboard. You can read them online.</p>
             </div>
           </div>
         </div>
@@ -205,19 +289,6 @@
         </div>
         <div class="accordion-item">
           <button class="accordion-header">
-            Is there a subscription fee?
-            <i class='bx bx-chevron-down'></i>
-          </button>
-          <div class="accordion-content">
-            <div class="content-wrapper">
-              <p>We offer both free and premium content. While some eBooks are available for free, others
-                may
-                require a one-time purchase or be part of a subscription plan. </p>
-            </div>
-          </div>
-        </div>
-        <div class="accordion-item">
-          <button class="accordion-header">
             Can I suggest topics or authors for future eBooks?
             <i class='bx bx-chevron-down'></i>
           </button>
@@ -225,7 +296,7 @@
             <div class="content-wrapper">
               <p>Absolutely! We value your input and encourage you to suggest topics or authors you'd like
                 to
-                see in our library. You can send us your suggestions through our contact form.</p>
+                see in our library. You can send us your suggestions through forums or support page.</p>
             </div>
           </div>
         </div>
@@ -237,8 +308,7 @@
           <div class="accordion-content">
             <div class="content-wrapper">
               <p>If you have any questions or need assistance, you can reach out to our support team
-                through
-                our contact form or email. We're here to help!</p>
+                through support page in menu.</p>
             </div>
           </div>
         </div>
@@ -246,6 +316,21 @@
     </section>
 
   </div>
+
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div class="footer-logo">
+        <h2>ELEVATE READS</h2>
+      </div>
+      <div class="footer-links">
+        <a href="#" class="policy-link">Privacy Policy</a>
+        <a href="#" class="policy-link">Terms of Service</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; <span id="currentYear"></span> Elevate Reads. All Rights Reserved.</p>
+    </div>
+  </footer>
 
   <script src="{{ asset('js/pdfThumbnails.js') }}" type="module"></script>
 
@@ -266,6 +351,8 @@
         }
       });
     });
+
+    document.getElementById('currentYear').textContent = new Date().getFullYear();
   </script>
 
 </body>
