@@ -9,7 +9,7 @@
     font-weight: 800;
     font-size: 12px;
     text-transform: uppercase;
-    background-color: rgb(13, 13, 13);
+    background-color: #202020;
     cursor: pointer;
     transition: all 0.2s;
   }
@@ -35,7 +35,6 @@
   .modal-content {
     background-color: #202020;
     color: white;
-    padding: 20px;
     border-radius: 8px;
     width: 90%;
     max-width: 500px;
@@ -54,28 +53,17 @@
   .modal-content p {
     color: rgb(128, 128, 128);
     font-family: sans-serif;
-    font-size: 14px;
-    margin-bottom: 20px;
-  }
-
-  #password {
-    width: 100%;
-    height: 38px;
-    background-color: rgb(13, 13, 13);
-    border: none;
-    border-radius: 8px;
     font-size: 16px;
-    outline: transparent;
-    color: white;
-    padding-left: 20px;
-    margin: 10px 0;
+    margin-bottom: 10px;
+    padding: 10px 20px;
   }
 
   .button-group {
     display: flex;
     gap: 10px;
     justify-content: flex-end;
-    margin-top: 20px;
+    margin-top: 10px;
+    padding: 10px 20px;
   }
 
   .cancel-btn {
@@ -116,25 +104,15 @@
     background-color: rgb(80, 80, 80);
   }
 
-  .validation-errors {
-    background-color: rgba(255, 0, 0, 0.1);
-    color: rgb(255, 0, 0);
-    padding: 10px;
-    border-radius: 8px;
-    margin-top: 5px;
-    font-family: sans-serif;
-    font-weight: 800;
-    font-size: 12px;
-    text-transform: uppercase;
-    white-space: normal;
-    word-wrap: break-word;
-    line-height: 1.4;
-    list-style-type: none;
-    display: block;
+  .header-text {
+    background-color: rgb(126, 6, 6);
+    padding: 10px 20px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
   }
 
-  [x-cloak] {
-    display: none !important;
+  .div-content-2 {
+    padding: 10px 20px;
   }
 </style>
 
@@ -144,8 +122,8 @@
       {{ __('Delete Account') }}
     </h2>
 
-    <p class="mt-1 text-sm text-gray-600">
-      {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.') }}
+    <p>
+      {{ __('Delete your account.') }}
     </p>
   </header>
 
@@ -158,15 +136,15 @@
         @csrf
         @method('delete')
 
-        <h2>
+        <h2 class="header-text">
           {{ __('Are you sure you want to delete your account?') }}
         </h2>
 
-        <p>
+        <p class="content-text">
           {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.') }}
         </p>
 
-        <div class="mt-6">
+        <div class="div-content-2">
           <x-input-label for="password" value="{{ __('Password') }}" class="sr-only" />
 
           <x-text-input id="password" name="password" type="password" placeholder="{{ __('Password') }}" />

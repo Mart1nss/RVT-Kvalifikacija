@@ -1,3 +1,4 @@
+/* ===== GENERAL STYLES ===== */
 * {
     padding: 0;
     margin: 0;
@@ -8,11 +9,17 @@
 body {
     background-color: rgb(13, 13, 13);
     min-width: 375px;
-    align-items: center;
-    justify-content: center;
-    font-family: sans-serif;
 }
 
+p {
+    font-weight: 800;
+    margin-left: 20px;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: white;
+}
+
+/* ===== NAVBAR ===== */
 .navbar {
     top: 0;
     left: 0;
@@ -38,36 +45,6 @@ nav {
     align-items: center;
 }
 
-.nav-a a {
-    position: relative;
-    color: white;
-    text-decoration: none;
-    margin-left: 30px;
-    font-family: sans-serif;
-    font-weight: 700;
-    cursor: pointer;
-    font-size: 17px;
-    text-transform: uppercase;
-}
-
-.nav-a .active {
-    border-bottom: 4px solid #ffffff;
-}
-
-.nav-a a::before {
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 0;
-    height: 4px;
-    background: #ffffff;
-    transition: 0.2s;
-}
-
-.nav-a a:hover::before {
-    width: 100%;
-}
 
 @media (max-width: 769px) {
     .navbar {
@@ -100,18 +77,8 @@ nav {
     }
 }
 
-@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css");
 
-/* page content */
-
-p {
-    font-weight: 800;
-    margin-left: 20px;
-    font-size: 12px;
-    text-transform: uppercase;
-    color: white;
-}
-
+/* ===== MAIN CONTAINER ===== */
 .main-container {
     background-color: rgb(13, 13, 13);
     padding: 0 50px;
@@ -120,13 +87,96 @@ p {
     width: 100%;
     height: min-content;
     padding-bottom: 30px;
+}
 
-    @media (max-width: 769px) {
+@media (max-width: 769px) {
+    .main-container {
         padding: 0 10px;
         margin-top: 12px;
     }
 }
 
+@media (min-width: 769px) {
+    .main-container {
+        padding: 30px 50px;
+    }
+}
+
+/* ===== HERO SECTION ===== */
+.hero {
+    text-align: center;
+    padding: 30px 20px; 
+    border-radius: 10px;
+}
+
+.hero-title {
+    font-size: 2rem;
+    color: white;
+    margin-bottom: 10px;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    color: #eee;
+    margin-bottom: 20px;
+}
+
+@media (min-width: 769px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 1.6rem;
+    }
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+}
+
+/* ===== SECTION SHARED STYLES ===== */
+.section-title {
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 10px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    text-align: center;
+}
+
+.section-subtitle,
+.section-text {
+    font-size: 1rem;
+    color: #eee;
+    margin: 0;
+    text-align: center;
+}
+
+@media (min-width: 769px) {
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .section-subtitle,
+    .section-text {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .section-title {
+        font-size: 1.3rem;
+    }
+    .section-subtitle,
+    .section-text {
+        font-size: 0.9rem;
+    }
+}
+
+/* ===== PDF CAROUSEL SECTION ===== */
 .library-preview {
     background-color: #202020;
     border-radius: 8px;
@@ -144,7 +194,7 @@ p {
     overflow: hidden;
 }
 
-/* Add vignette containers */
+/* Vignette containers */
 .pdf-carousel::before,
 .pdf-carousel::after {
     content: "";
@@ -178,55 +228,62 @@ p {
 
 .carousel-track-container {
     overflow: hidden;
+    padding: 0;
 }
 
 .carousel-track {
     display: flex;
-    animation: scroll 20s linear infinite;
+    animation: scroll 10s linear infinite;
+    width: fit-content;
+}
+
+.carousel-track::after {
+    content: none;
 }
 
 .pdf-item {
-    flex: 0 0 300px;
-    padding: 0 10px;
+    flex: 0 0 250px;
+    padding: 0 6px;
     box-sizing: border-box;
 }
 
 @media (max-width: 1024px) {
     .pdf-item {
-        flex: 0 0 250px;
+        flex: 0 0 220px;
     }
     .carousel-track {
-        animation: scroll 30s linear infinite;
+        animation: scroll 10s linear infinite;
     }
     .pdf-carousel::before,
     .pdf-carousel::after {
-        width: 100px; 
+        width: 80px; 
     }
 }
 
 @media (max-width: 768px) {
     .pdf-item {
-        flex: 0 0 200px;
+        flex: 0 0 180px;
     }
     .carousel-track {
-        animation: scroll 20s linear infinite;
+        animation: scroll 10s linear infinite;
     }
     .pdf-carousel::before,
     .pdf-carousel::after {
-        width: 60px; 
+        width: 50px; 
     }
 }
 
 @media (max-width: 480px) {
     .pdf-item {
-        flex: 0 0 150px;
+        flex: 0 0 130px; 
+        padding: 0 3px;
     }
     .carousel-track {
-        animation: scroll 5s linear infinite;
+        animation: scroll 10s linear infinite;
     }
     .pdf-carousel::before,
     .pdf-carousel::after {
-        width: 60px; 
+        width: 30px;
     }
 }
 
@@ -258,80 +315,27 @@ p {
     }
 }
 
-
-.hero {
-    text-align: center;
-    padding: 30px 20px; 
-    border-radius: 10px;
-}
-
-.hero-title {
-    font-size: 2rem;
-    color: white;
-    margin-bottom: 10px;
-}
-
-.hero-subtitle {
-    font-size: 1.2rem;
-    color: #eee;
-    margin-bottom: 20px;
-}
-
-.section-title {
-    font-size: 1.5rem;
-    color: white;
-    margin-bottom: 10px;
-    justify-content: center;
-    align-items: center;
-    display: flex;
-}
-
-.section-subtitle,
-.section-text {
-    font-size: 1rem;
-    color: #eee;
-    margin: 0;
-}
-
-@media (min-width: 769px) {
-    .main-container {
-        padding: 30px 50px; /* More padding on larger screens */
-    }
-
-    .hero-title {
-        font-size: 2.5rem;
-    }
-
-    .section-title {
-        font-size: 1.8rem;
-    }
-
-    .section-subtitle,
-    .section-text {
-        font-size: 1.1rem;
-    }
-}
-
-
+/* ===== BENEFITS SECTION ===== */
 .benefits {
     margin-top: 20px;
     padding: 0px;
-    max-width: 1000px;
-    margin-left: auto; /* Center the section */
-    margin-right: auto; /* Center the section */
+    max-width: 1014px;
+    margin-left: auto;
+    margin-right: auto;
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center content inside .benefits */
+    align-items: center;
 }
 
 /* Genre Cards */
 .genre-cards {
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
+    padding: 0px;
+    gap: 14px;
     width: 100%;
-    margin-top: 30px; /* Adjust spacing from the list above */
-    justify-content: center; /* Center the cards */
+    margin-top: 30px;
+    justify-content: center;
 }
 
 .genre-card {
@@ -339,39 +343,43 @@ p {
     border: none;
     border-radius: 8px;
     padding: 20px;
-    width: calc(33% - 10px); /* Three cards per row on larger screens */
+    width: calc(33% - 10px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
-    min-height: 250px; /* Set a minimum height for all cards */
+    min-height: 250px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.genre-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 .genre-title {
     display: flex;
-    align-items: center; /* Vertically align icon and title */
-    color: rgb(0, 0, 0);
-    margin-bottom: 10px;
-    gap: 10px; /* Add some space between icon and title */
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 15px;
 }
 
 .icon-container {
-    width: 40px;
-    height: 40px;
+    min-width: 50px;
+    min-height: 50px;
+    width: 50px;
+    height: 50px;
     background-color: rgb(255, 255, 255);
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    /* Remove margin-bottom as it's now handled by gap in .genre-title */
+    flex-shrink: 0;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .icon-container i {
-    font-size: 22px;
-}
-
-.genre-icon {
-    color: #333;
-    font-size: 20px;
+    font-size: 26px;
 }
 
 .genre-title-text {
@@ -379,54 +387,304 @@ p {
     font-weight: 800;
     font-family: sans-serif;
     text-transform: uppercase;
-    margin-bottom: 0; /* Remove default margin */
+    margin-bottom: 0;
     font-size: 18px;
+    word-break: break-word;
+    hyphens: auto;
+    width: 100%;
 }
 
 .genre-description {
-    color: white;
+    color: #cccccc;
     text-transform: none;
     font-size: 16px;
     flex-grow: 1;
     margin-left: 0;
+    line-height: 1.4;
 }
 
-/* Media Query for smaller screens (e.g., mobile) */
 @media (max-width: 768px) {
     .genre-card {
-        width: calc(50% - 20px); /* Two cards per row on smaller screens */
-        min-height: 220px; /* Adjust min-height for smaller screens */
+        width: calc(50% - 20px);
+        min-height: 220px;
+        padding: 15px;
     }
     .genre-title {
-        margin-bottom: 5px; /* Reduce margin on smaller screens */
+        margin-bottom: 10px;
     }
-
+    .genre-title-text {
+        font-size: 16px;
+    }
+    .icon-container {
+        min-width: 45px;
+        min-height: 45px;
+        width: 45px;
+        height: 45px;
+        margin-bottom: 10px;
+    }
+    .icon-container i {
+        font-size: 22px;
+    }
+    .genre-description {
+        font-size: 14px;
+    }
     .benefits {
         padding: 0px;
     }
 }
 
-/* Media Query for even smaller screens */
 @media (max-width: 500px) {
     .genre-card {
-        width: 100%; /* One card per row on very small screens */
-        min-height: auto; /* Allow height to adjust as needed */
+        width: 100%;
+        min-height: auto;
+    }
+    .genre-title-text {
+        font-size: 15px;
+    }
+    .genre-description {
+        font-size: 13px;
     }
 }
 
+/* ===== WHY CHOOSE SECTION ===== */
 .why-choose {
+    margin-top: 20px;
+    background-color: transparent;
+    border-radius: 8px;
+    padding: 30px 20px;
+}
+
+.benefits-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px;
     margin-top: 20px;
 }
 
-.why-choose-list {
-    justify-content: center;
+.benefit-item {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: white;
+    align-items: flex-start;
+    padding: 16px;
+    border-radius: 8px;
+    background-color: #202020;
+    width: 100%;
+    max-width: 500px;
+    transition: all 0.2s;
 }
 
-/* FAQ Accordion Styles */
+.benefit-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.benefit-icon {
+    background-color: #333;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.benefit-icon i {
+    color: white;
+    font-size: 24px;
+}
+
+.benefit-content h4 {
+    color: white;
+    margin-bottom: 5px;
+    font-size: 18px;
+}
+
+.benefit-content p {
+    color: #aaa;
+    font-size: 14px;
+    text-transform: none;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.cta-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+    .benefit-item {
+        max-width: 100%;
+    }
+    
+    .benefit-icon {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .benefit-icon i {
+        font-size: 20px;
+    }
+    
+    .benefit-content h4 {
+        font-size: 16px;
+    }
+    
+    .benefit-content p {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .why-choose {
+        padding: 20px 15px;
+    }
+    
+    .benefit-icon {
+        width: 35px;
+        height: 35px;
+        margin-right: 10px;
+    }
+    
+    .benefit-icon i {
+        font-size: 18px;
+    }
+    
+    .benefit-content h4 {
+        font-size: 15px;
+    }
+    
+    .benefit-content p {
+        font-size: 12px;
+    }
+}
+
+/* ===== FEATURE SPOTLIGHT SECTION ===== */
+.feature-spotlight {
+    margin-top: 40px;
+}
+
+.feature-container {
+    background-color: #202020;
+    border-radius: 8px;
+    margin-top: 25px;
+    padding: 30px;
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.feature-container:nth-child(odd) {
+    flex-direction: row-reverse;
+}
+
+.feature-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.feature-content h4 {
+    color: white;
+    font-size: 22px;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.feature-content p {
+    color: #cccccc;
+    font-size: 16px;
+    margin: 0 0 15px 0;
+    text-transform: none;
+    line-height: 1.5;
+    font-weight: 400;
+}
+
+.feature-image {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.feature-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 900px) {
+    .feature-container, 
+    .feature-container:nth-child(odd) {
+        flex-direction: column;
+        padding: 25px;
+        gap: 20px;
+    }
+    
+    .feature-content {
+        order: 1;
+    }
+    
+    .feature-image {
+        order: 2;
+    }
+    
+    .feature-content h4 {
+        font-size: 20px;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+    
+    .feature-content p {
+        font-size: 15px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 600px) {
+    .feature-container {
+        padding: 20px;
+    }
+    
+    .feature-content h4 {
+        font-size: 18px;
+    }
+    
+    .feature-content p {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .feature-spotlight {
+        margin-top: 30px;
+    }
+    
+    .feature-container {
+        padding: 15px;
+        gap: 15px;
+    }
+    
+    .feature-content h4 {
+        font-size: 16px;
+    }
+    
+    .feature-content p {
+        font-size: 13px;
+    }
+}
+
+/* ===== FAQ SECTION ===== */
 .faq-section {
     margin-bottom: 30px;
     margin-top: 30px;
@@ -443,7 +701,7 @@ p {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     border-radius: 8px;
     margin-bottom: 10px;
-    overflow: hidden; /* This is important to hide content properly */
+    overflow: hidden;
 }
 
 .accordion-header {
@@ -458,7 +716,8 @@ p {
     color: white;
     border: none;
     text-align: left;
-    font-weight: 800;
+    font-weight: 700;
+    font-size: 18px;
     padding-left: 15px;
     cursor: pointer;
 }
@@ -474,31 +733,122 @@ p {
 
 .accordion-content {
     background-color: #1c1a1a;
-    color: #eee;
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease;
+    transition: max-height 0.2s;
 }
 
 .accordion-content p {
+    color: #cccccc;
     text-transform: none;
+    margin-bottom: 0;
+    font-weight: 400;
+    font-size: 16px;
 }
 
 .accordion-content .content-wrapper {
-    padding: 15px;
-    height: max-content;
-}
-
-.accordion-content p {
-    margin-bottom: 0;
+    padding: 16px;
+    height: max-content ;
 }
 
 @media (max-width: 768px) {
     .accordion-header {
         height: 50px;
+        font-size: 16px;
+        padding: 10px 15px;
     }
+    .accordion-content p {
+        font-size: 14px;
+    }
+}
 
-    .accordion-content .content-wrapper {
-        height: max-content;
+@media (max-width: 480px) {
+    .accordion-header {
+        font-size: 15px;
+        padding: 8px 12px;
+    }
+    .accordion-content p {
+        font-size: 13px;
+    }
+}
+
+/* ===== FOOTER ===== */
+.site-footer {
+    background-color: #202020;
+    padding: 20px 50px 20px;
+    color: white;
+    width: 100%;
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.footer-logo {
+    margin-bottom: 20px;
+}
+
+.footer-logo h2 {
+    font-size: 24px;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.footer-logo p {
+    display: none;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+.footer-links a {
+    color: #AAAAAA;
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.2s;
+}
+
+.footer-links a:not(.policy-link) {
+    display: none;
+}
+
+.footer-links a:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+.policy-link {
+    font-weight: 600;
+}
+
+.footer-bottom {
+    border-top: 1px solid #333;
+    padding-top: 20px;
+    text-align: center;
+}
+
+.footer-bottom p {
+    margin: 0;
+    font-size: 14px;
+    text-transform: none;
+    font-weight: 400;
+    color: #aaa;
+}
+
+@media (max-width: 768px) {
+    .site-footer {
+        padding: 30px 20px 15px;
+    }
+    
+    .footer-bottom {
+        margin-top: 15px;
     }
 }
