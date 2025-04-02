@@ -18,7 +18,11 @@
              <i class='bx bxs-star'></i>
              <span>{{ number_format($book->rating ?? 0, 1) }}</span>
            </div>
-           <div class="thumbnail" data-pdfpath="/assets/{{ $book->file }}">
+           <div class="thumbnail">
+             <img src="{{ asset('book-thumbnails/' . str_replace('.pdf', '.jpg', $book->file)) }}"
+               alt="{{ $book->title }}" loading="lazy"
+               onload="this.parentElement.querySelector('.loading-indicator').style.display='none';"
+               style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
              <div class="loading-indicator">
                <i class='bx bx-loader-alt'></i>
              </div>
@@ -68,7 +72,11 @@
                <i class='bx bxs-star'></i>
                <span>{{ number_format($book->rating ?? 0, 1) }}</span>
              </div>
-             <div class="thumbnail" data-pdfpath="/assets/{{ $book->file }}">
+             <div class="thumbnail">
+               <img src="{{ asset('book-thumbnails/' . str_replace('.pdf', '.jpg', $book->file)) }}"
+                 alt="{{ $book->title }}" loading="lazy"
+                 onload="this.parentElement.querySelector('.loading-indicator').style.display='none';"
+                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
                <div class="loading-indicator">
                  <i class='bx bx-loader-alt'></i>
                </div>
@@ -113,6 +121,3 @@
      @endforeach
    @endforeach
  </div>
-
- {{-- PDF Thumbnail Generation Script --}}
- <script type="module" src="{{ asset('js/library-pdf.js') }}"></script>

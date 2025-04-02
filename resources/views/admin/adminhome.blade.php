@@ -5,7 +5,6 @@
 <link rel="stylesheet" href="{{ asset('css/components/buttons.css') }}">
 <script src="{{ asset('js/pdf-carousel.js') }}" defer></script>
 <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.mjs"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf_viewer.min.css">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <title>Dashboard</title>
 
@@ -50,7 +49,8 @@
         Categories</button>
 
       <button style="margin-bottom: 15px;" class="btn btn-primary btn-md"
-        onclick="window.location.href='{{ route('user.management.livewire') }}'"><i id="dashboardIcon" class='bx bx-user'></i>
+        onclick="window.location.href='{{ route('user.management.livewire') }}'"><i id="dashboardIcon"
+          class='bx bx-user'></i>
         Manage Users</button>
 
       <button style="margin-bottom: 15px;" class="btn btn-primary btn-md"

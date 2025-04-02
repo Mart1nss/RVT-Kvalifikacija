@@ -124,40 +124,27 @@ class BookController extends Controller
         exec($command, $output, $return_var);
 
         if ($return_var === 0 && file_exists($thumbnailPath)) {
-          // Optimize the thumbnail size if needed
+          // Optimize the thumbnail size if needed (using Imagick)
           if (extension_loaded('imagick')) {
             $this->resizeThumbnail($thumbnailPath);
           }
-          return true;
+          return true; // Ghostscript succeeded
         }
+        // If Ghostscript failed ($return_var !== 0), fall through to placeholder
       }
 
-      // Try using direct Imagick if available
-      if (extension_loaded('imagick')) {
-        try {
-          $imagick = new \Imagick();
-          $imagick->setResolution(150, 150);
-          $imagick->readImage($pdfPath . '[0]');
-          $imagick->setImageFormat('jpg');
-          $imagick->setImageCompression(\Imagick::COMPRESSION_JPEG);
-          $imagick->setImageCompressionQuality(85);
-          $imagick->resizeImage(400, 0, \Imagick::FILTER_LANCZOS, 1);
-          $imagick->writeImage($thumbnailPath);
-          $imagick->clear();
-          $imagick->destroy();
-
-          return true;
-        } catch (\Exception $e) {
-          // Fall through to next method if this fails
-        }
-      }
-
-      // If all PDF methods failed, use enhanced placeholder
+      // Fallback: If Ghostscript is not found or failed, use enhanced placeholder
       return $this->generateEnhancedThumbnail($thumbnailPath, $title, $author);
     } catch (\Exception $e) {
       // Log error but don't fail the upload
       \Log::error('Failed to generate thumbnail: ' . $e->getMessage());
-      return false;
+      // Attempt placeholder generation even on general error
+      try {
+        return $this->generateEnhancedThumbnail($thumbnailPath, $title, $author);
+      } catch (\Exception $placeholderEx) {
+        \Log::error('Failed to generate placeholder thumbnail after main error: ' . $placeholderEx->getMessage());
+        return false; // Both generation and placeholder failed
+      }
     }
   }
 
@@ -262,8 +249,8 @@ class BookController extends Controller
   }
 
   /**
-   * Resize a thumbnail image to standard dimensions
-   * 
+   * Resize a thumbnail image to standard dimensions using Imagick
+   *
    * @param string $thumbnailPath
    * @return bool
    */
@@ -304,115 +291,6 @@ class BookController extends Controller
       return true;
     } catch (\Exception $e) {
       \Log::error('Failed to resize thumbnail: ' . $e->getMessage());
-      return false;
-    }
-  }
-
-  /**
-   * Generate a placeholder thumbnail using GD library
-   * 
-   * @param string $thumbnailPath
-   * @param string $bookTitle
-   * @param string $bookAuthor
-   * @return bool
-   */
-  private function generatePlaceholderThumbnail($thumbnailPath, $bookTitle = null, $bookAuthor = null)
-  {
-    try {
-      // Create a more appealing placeholder image
-      $width = 400;
-      $height = 566; // Standard book aspect ratio
-
-      // Create the base image
-      $img = imagecreatetruecolor($width, $height);
-
-      // Define colors
-      $bgColor = imagecolorallocate($img, 50, 60, 70); // Dark blue-gray
-      $accentColor = imagecolorallocate($img, 100, 120, 140); // Lighter blue-gray
-      $textColor = imagecolorallocate($img, 230, 230, 230); // Light gray
-      $overlayColor = imagecolorallocate($img, 30, 40, 50); // Darker blue for overlay
-
-      // Fill the background
-      imagefill($img, 0, 0, $bgColor);
-
-      // Draw a nice pattern
-      for ($i = 0; $i < $height; $i += 20) {
-        // Draw horizontal lines with a pattern
-        imageline($img, 0, $i, $width, $i, $accentColor);
-      }
-
-      // Create a central area for the text
-      imagefilledrectangle(
-        $img,
-        $width / 4,
-        $height / 3,
-        $width * 3 / 4,
-        $height * 2 / 3,
-        $overlayColor
-      );
-
-      // Add border around the central area
-      imagerectangle(
-        $img,
-        $width / 4,
-        $height / 3,
-        $width * 3 / 4,
-        $height * 2 / 3,
-        $accentColor
-      );
-
-      // Use provided title and author or placeholders
-      $title = $bookTitle ?? 'PDF Document';
-      $author = $bookAuthor ?? '';
-
-      // Shorten title if too long
-      $displayTitle = (strlen($title) > 20) ? substr($title, 0, 17) . '...' : $title;
-
-      // Add PDF icon or text
-      $pdfText = 'PDF DOCUMENT';
-      $titleFont = 4; // Larger built-in font
-      $authorFont = 2; // Smaller built-in font
-      $pdfFont = 5; // Largest built-in font
-
-      // Calculate text dimensions
-      $pdfTextWidth = imagefontwidth($pdfFont) * strlen($pdfText);
-      $titleWidth = imagefontwidth($titleFont) * strlen($displayTitle);
-      $authorWidth = $author ? imagefontwidth($authorFont) * strlen($author) : 0;
-
-      // Center the text
-      $pdfX = ($width - $pdfTextWidth) / 2;
-      $pdfY = $height / 3 + 15;
-
-      $titleX = ($width - $titleWidth) / 2;
-      $titleY = $pdfY + 30;
-
-      $authorX = ($width - $authorWidth) / 2;
-      $authorY = $titleY + 25;
-
-      // Draw the text
-      imagestring($img, $pdfFont, $pdfX, $pdfY, $pdfText, $textColor);
-      imagestring($img, $titleFont, $titleX, $titleY, $displayTitle, $textColor);
-
-      if ($author) {
-        imagestring($img, $authorFont, $authorX, $authorY, $author, $textColor);
-      }
-
-      // Add a subtle pattern to the bottom
-      for ($i = 0; $i < $width; $i += 10) {
-        imageline($img, $i, $height - 20, $i + 5, $height, $accentColor);
-      }
-
-      // Add a small border
-      imagerectangle($img, 0, 0, $width - 1, $height - 1, $accentColor);
-
-      // Save the placeholder with good quality
-      imagejpeg($img, $thumbnailPath, 90);
-      imagedestroy($img);
-
-      return true;
-    } catch (\Exception $e) {
-      // Log error but don't fail the upload
-      \Log::error('Failed to generate placeholder thumbnail: ' . $e->getMessage());
       return false;
     }
   }

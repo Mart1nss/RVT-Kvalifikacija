@@ -15,6 +15,9 @@ class FilterSection extends Component
   public $genres = [];
   public $totalBooks = 0;
 
+  // Add listeners for total books updates
+  protected $listeners = ['updateTotalBooks'];
+
   // Query string parameters
   protected $queryString = [
     'search' => ['except' => ''],
@@ -58,8 +61,14 @@ class FilterSection extends Component
 
   public function fetchGenres()
   {
-    // Get all unique category names
-    $this->genres = Category::pluck('name')->toArray();
+    // Get categories based on visibility and admin status
+    $query = Category::query();
+
+    if (!$this->isAdmin) {
+      $query->where('is_public', true);
+    }
+
+    $this->genres = $query->pluck('name')->toArray();
   }
 
   public function updatedSearch()
@@ -99,12 +108,13 @@ class FilterSection extends Component
 
   public function clearAllFilters()
   {
-    $this->search = '';
-    $this->selectedGenres = [];
-    $this->sort = 'newest';
+    $this->reset(['search', 'selectedGenres', 'sort']);
     if ($this->isAdmin) {
-      $this->visibility = 'all';
+      $this->reset('visibility');
     }
+
+    // Force UI refresh for checkboxes
+    $this->dispatch('filter-cleared');
 
     $this->emitFilterUpdated();
   }
@@ -117,6 +127,11 @@ class FilterSection extends Component
       'sort' => $this->sort,
       'visibility' => $this->visibility
     ]);
+  }
+
+  public function updateTotalBooks($count)
+  {
+    $this->totalBooks = $count;
   }
 
   public function getSortDisplayText()

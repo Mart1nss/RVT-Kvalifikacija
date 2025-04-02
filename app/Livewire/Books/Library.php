@@ -75,6 +75,9 @@ class Library extends Component
   {
     $query = Product::query()
       ->where('is_public', true)
+      ->whereHas('category', function ($q) {
+        $q->where('is_public', true);
+      })
       ->withAvg('reviews', 'review_score');
 
     // Apply search filter
@@ -129,10 +132,14 @@ class Library extends Component
   public function render()
   {
     $books = $this->getBooks();
+    $totalBooks = $books->total();
+
+    // Dispatch the updated count to the filter section
+    $this->dispatch('updateTotalBooks', $totalBooks);
 
     return view('livewire.books.library', [
       'books' => $books,
-      'totalBooks' => $books->total()
+      'totalBooks' => $totalBooks
     ]);
   }
 }

@@ -10,14 +10,8 @@ class FavoritesController extends Controller
 {
     public function favorites(Request $request)
     {
-        $user = Auth::user();
         $tab = $request->get('tab', 'favorites');
-
-        // Load only the data needed for the active tab
-        $favorites = $tab === 'favorites' ? $user->favorites()->with('product')->get() : collect();
-        $readLater = $tab === 'readlater' ? $user->readLater()->with('product')->get() : collect();
-
-        return view('my-collection', compact('favorites', 'readLater', 'tab'));
+        return view('my-collection', compact('tab'));
     }
 
     public function add($id)

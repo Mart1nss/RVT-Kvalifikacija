@@ -72,7 +72,7 @@
     color: white;
 }
 
-#deleteBookDetails {
+.delete-confirmation-body span {
     color: #ffd700;
     font-weight: 800;
 }

@@ -9,7 +9,8 @@
 
     <div class="filter-container">
       <!-- Genre Filter Dropdown -->
-      <div class="genre-dropdown" x-data="{ open: false }">
+      <div class="genre-dropdown" x-data="{ open: false }"
+        @filter-cleared.window="$el.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = false)">
         <button @click.prevent="open = !open" class="filter-select genre-button">
           Genres {{ count($selectedGenres) > 0 ? '(' . count($selectedGenres) . ')' : '' }}
           <i class='bx bx-chevron-down'></i>
@@ -26,7 +27,7 @@
 
       <!-- Visibility Filter for Admins -->
       @if ($isAdmin)
-        <select wire:model.live="visibility" class="filter-select">
+        <select wire:model.live="visibility" class="filter-select" @filter-cleared.window="$el.value = 'all'">
           @foreach ($visibilityOptions as $option)
             <option value="{{ $option['value'] }}">{{ $option['text'] }}</option>
           @endforeach

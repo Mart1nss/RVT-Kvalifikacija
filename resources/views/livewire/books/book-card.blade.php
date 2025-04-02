@@ -50,55 +50,10 @@
   </div>
 
   <style>
-    .readlater-btn.loading {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
-
     .book-thumbnail {
       width: 100%;
       height: 100%;
       object-fit: cover;
-    }
-
-    /* Fix admin actions hover functionality */
-    .pdf-item {
-      position: relative;
-    }
-
-    .pdf-item:hover .admin-actions {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .admin-actions {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      display: flex;
-      gap: 5px;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s ease, visibility 0.3s ease;
-      z-index: 10;
-    }
-
-    .admin-btn {
-      background-color: rgba(0, 0, 0, 0.7);
-      color: white;
-      border: none;
-      border-radius: 4px;
-      width: 30px;
-      height: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    .admin-btn:hover {
-      background-color: rgba(0, 0, 0, 0.9);
     }
   </style>
 </div>

@@ -52,7 +52,7 @@ Route::get('/get-genres', function () {
 // Book Routes - Using Livewire Components
 Route::get('/library', function () {
     return view('books.library');
-})->name('library');
+})->middleware('auth')->name('library');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/view/{id}', [BookController::class, 'view'])->name('view');

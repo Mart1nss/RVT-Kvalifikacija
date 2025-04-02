@@ -34,6 +34,17 @@
     {{ $books->onEachSide(1)->links('vendor.pagination.tailwind') }}
   </div>
 
+  {{-- Mobile Modals --}}
+  <div class="mobile-modals-container">
+    @foreach ($books as $book)
+      @include('components.book-modal', [
+          'book' => $book,
+          'showAdminActions' => true,
+          'source' => 'library',
+      ])
+    @endforeach
+  </div>
+
   <!-- Edit Modal -->
   <div class="edit-book-modal" style="{{ $showEditModal ? 'display: block;' : 'display: none;' }}">
     <div class="edit-book-modal-content">
@@ -41,10 +52,11 @@
         <h2>Edit Book</h2>
       </div>
 
-      <form wire:submit.prevent="updateBook">
+      <form wire:submit.prevent="updateBook"
+        @if ($editingBookId) wire:key="edit-form-{{ $editingBookId }}" @endif>
         <div class="form-group">
           <label for="title">Title:</label>
-          <input type="text" id="title" value="{{ $title }}" wire:model="title" required>
+          <input type="text" id="title" wire:model.live="title" value="{{ $title }}" required>
           @error('title')
             <span class="error">{{ $message }}</span>
           @enderror
@@ -52,7 +64,7 @@
 
         <div class="form-group">
           <label for="author">Author:</label>
-          <input type="text" id="author" value="{{ $author }}" wire:model="author" required>
+          <input type="text" id="author" wire:model.live="author" value="{{ $author }}" required>
           @error('author')
             <span class="error">{{ $message }}</span>
           @enderror
@@ -60,7 +72,7 @@
 
         <div class="form-group">
           <label for="category_id">Category:</label>
-          <select id="category_id" wire:model="category_id" required>
+          <select id="category_id" wire:model.live="category_id" required>
             <option value="">Select Category</option>
             @foreach ($categories as $category)
               <option value="{{ $category->id }}" {{ $category_id == $category->id ? 'selected' : '' }}>
@@ -75,7 +87,7 @@
 
         <div class="visibility-toggle">
           <label class="switch">
-            <input type="checkbox" wire:model="is_public" {{ $is_public ? 'checked' : '' }}>
+            <input type="checkbox" wire:model.live="is_public" {{ $is_public ? 'checked' : '' }}>
             <span class="slider round"></span>
           </label>
           <span class="visibility-label">{{ $is_public ? 'Public' : 'Private' }}</span>
@@ -130,7 +142,6 @@
     .delete-confirmation-content {
       background-color: #202020;
       margin: 0;
-      padding: 20px;
       border-radius: 8px;
       max-width: 500px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -165,32 +176,6 @@
 
     .edit-book-modal-header {
       margin-bottom: 15px;
-    }
-
-    .edit-book-modal-footer {
-      margin-top: 20px;
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-    }
-
-    .edit-book-btn-primary,
-    .edit-book-btn-secondary {
-      padding: 8px 15px;
-      border-radius: 4px;
-      border: none;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .edit-book-btn-primary {
-      background-color: #4c90fe;
-      color: white;
-    }
-
-    .edit-book-btn-secondary {
-      background-color: #555;
-      color: white;
     }
   </style>
 </div>

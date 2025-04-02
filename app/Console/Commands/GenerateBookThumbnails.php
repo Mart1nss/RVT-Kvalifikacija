@@ -105,39 +105,26 @@ class GenerateBookThumbnails extends Command
         exec($command, $output, $return_var);
 
         if ($return_var === 0 && file_exists($thumbnailPath)) {
-          // Optimize the thumbnail size if needed
+          // Optimize the thumbnail size if needed (using Imagick)
           if (extension_loaded('imagick')) {
             $this->resizeThumbnail($thumbnailPath);
           }
-          return true;
+          return true; // Ghostscript succeeded
         }
+        // If Ghostscript failed ($return_var !== 0), fall through to placeholder
       }
 
-      // Try using direct Imagick if Ghostscript failed
-      if (extension_loaded('imagick')) {
-        try {
-          $imagick = new \Imagick();
-          $imagick->setResolution(150, 150);
-          $imagick->readImage($pdfPath . '[0]');
-          $imagick->setImageFormat('jpg');
-          $imagick->setImageCompression(\Imagick::COMPRESSION_JPEG);
-          $imagick->setImageCompressionQuality(85);
-          $imagick->resizeImage(400, 0, \Imagick::FILTER_LANCZOS, 1);
-          $imagick->writeImage($thumbnailPath);
-          $imagick->clear();
-          $imagick->destroy();
-
-          return true;
-        } catch (\Exception $e) {
-          // If Imagick fails, continue to fallback
-        }
-      }
-
-      // Fallback to enhanced placeholder thumbnail
+      // Fallback: If Ghostscript is not found or failed, use enhanced placeholder
       return $this->generateEnhancedThumbnail($book, $thumbnailPath);
     } catch (\Exception $e) {
       Log::error('Failed to generate thumbnail for book ' . $book->title . ': ' . $e->getMessage());
-      return false;
+      // Attempt placeholder generation even on general error
+      try {
+        return $this->generateEnhancedThumbnail($book, $thumbnailPath);
+      } catch (\Exception $placeholderEx) {
+        Log::error('Failed to generate placeholder thumbnail after main error for book ' . $book->title . ': ' . $placeholderEx->getMessage());
+        return false; // Both generation and placeholder failed
+      }
     }
   }
 
@@ -239,8 +226,8 @@ class GenerateBookThumbnails extends Command
   }
 
   /**
-   * Resize a thumbnail image to standard dimensions
-   * 
+   * Resize a thumbnail image to standard dimensions using Imagick
+   *
    * @param string $thumbnailPath
    * @return bool
    */

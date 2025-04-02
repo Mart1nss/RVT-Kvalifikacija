@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="{{ asset('css/notifications-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/components/pdf-item.css') }}">
   <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/modal-book-mobile.css') }}">
   @livewireStyles
 </head>
 
@@ -22,8 +23,6 @@
   <div class="main-container">
     @livewire('books.library')
   </div>
-
-  <script src="{{ asset('js/library-pdf.js') }}" type="module"></script>
 
   <script>
     document.addEventListener('livewire:initialized', () => {
@@ -39,6 +38,27 @@
             type
           }
         }));
+      });
+    });
+
+    // Add mobile book modal functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      // Click event for book cards (mobile view)
+      document.querySelector('.item-container').addEventListener('click', function(e) {
+        // Find closest pdf-item if clicked on a book card or its child
+        const pdfItem = e.target.closest('.pdf-item');
+        if (pdfItem && window.innerWidth <= 768) {
+          const bookId = pdfItem.dataset.bookId;
+          if (bookId) {
+            // Dispatch event to open the modal
+            window.dispatchEvent(new CustomEvent('open-modal', {
+              detail: {
+                bookId: parseInt(bookId)
+              }
+            }));
+            e.preventDefault();
+          }
+        }
       });
     });
   </script>

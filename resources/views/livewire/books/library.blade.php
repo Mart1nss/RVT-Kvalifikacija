@@ -26,4 +26,15 @@
       {{ $books->onEachSide(1)->links('vendor.pagination.tailwind') }}
     </div>
   </div>
+
+  {{-- Mobile Modals --}}
+  <div class="mobile-modals-container">
+    @foreach ($books as $book)
+      @include('components.book-modal', [
+          'book' => $book,
+          'showAdminActions' => false,
+          'source' => 'library',
+      ])
+    @endforeach
+  </div>
 </div>
