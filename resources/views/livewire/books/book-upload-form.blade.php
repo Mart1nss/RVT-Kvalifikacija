@@ -1,18 +1,29 @@
 <link rel="stylesheet" href="{{ asset('css/book-manage/upload-div.css') }}">
 
 <div class="upload-div">
+  <h2 class="upload-text">Upload Book</h2>
 
   <form class="upload-book-form" action="{{ url('uploadbook') }}" method="post" enctype="multipart/form-data">
-
     @csrf
+
     <div class="form-group">
-      <input class="form-control"type="text" name="title" id="titleInput" placeholder="Title">
-      <span class="error-message" id="titleError"></span>
+      <input class="form-control" type="text" name="title" id="titleInput" placeholder="Title">
+      <span class="error-message" id="titleError">
+        @error('title')
+          {{ $message }}
+        @enderror
+      </span>
     </div>
+
     <div class="form-group">
-      <input class="form-control"type="text" name="author" id="authorInput" placeholder="Author">
-      <span class="error-message" id="authorError"></span>
+      <input class="form-control" type="text" name="author" id="authorInput" placeholder="Author">
+      <span class="error-message" id="authorError">
+        @error('author')
+          {{ $message }}
+        @enderror
+      </span>
     </div>
+
     <div class="form-group">
       <select class="form-control" name="category_id" id="categoryInput">
         <option value="">Select Category</option>
@@ -20,8 +31,13 @@
           <option value="{{ $category->id }}">{{ $category->name }}</option>
         @endforeach
       </select>
-      <span class="error-message" id="categoryError"></span>
+      <span class="error-message" id="categoryError">
+        @error('category_id')
+          {{ $message }}
+        @enderror
+      </span>
     </div>
+
     <div class="form-group">
       <div class="visibility-toggle">
         <label class="switch">
@@ -49,15 +65,17 @@
         <span id="file-chosen">No file chosen</span>
         <button type="button" class="clear-file-btn" onclick="clearFileInput()">Clear</button>
       </div>
-      <span class="error-message" id="fileError"></span>
+      <span class="error-message" id="fileError">
+        @error('file')
+          {{ $message }}
+        @enderror
+      </span>
     </div>
 
     <div class="form-btn">
       <input class="btn-primary" type="submit" value="UPLOAD">
     </div>
-
   </form>
-
 </div>
 
 <script src="{{ asset('js/book-upload.js') }}"></script>

@@ -16,7 +16,7 @@ class CategoryManagement extends Component
 
     #[Rule('required|string|max:30|unique:categories,name')]
     public $name = '';
-    
+
     public $search = '';
     public $status = 'all';
     public $sort = 'newest';
@@ -118,7 +118,7 @@ class CategoryManagement extends Component
 
         $category = Category::find($this->editingCategoryId);
         $oldName = $category->name;
-        
+
         $category->update([
             'name' => $this->editingCategoryName
         ]);
@@ -150,13 +150,15 @@ class CategoryManagement extends Component
 
     public function cancelDelete()
     {
-        $this->reset(['showDeleteModal', 'categoryToDelete', 'selectedNewCategoryId']);
+        $this->showDeleteModal = false;
+        $this->categoryToDelete = null;
+        $this->selectedNewCategoryId = null;
     }
 
     public function toggleVisibility($categoryId)
     {
         $category = Category::findOrFail($categoryId);
-        
+
         if ($category->is_system) {
             $this->dispatch('alert', [
                 'type' => 'error',
@@ -185,10 +187,10 @@ class CategoryManagement extends Component
 
     public function getAvailableCategories()
     {
-        return Category::where(function($query) {
-                $query->where('id', '!=', $this->categoryToDelete?->id)
-                    ->where('is_system', false);
-            })
+        return Category::where(function ($query) {
+            $query->where('id', '!=', $this->categoryToDelete?->id)
+                ->where('is_system', false);
+        })
             ->orWhere('name', 'Uncategorized')
             ->orderBy('name')
             ->get();
@@ -199,8 +201,8 @@ class CategoryManagement extends Component
         if ($value === '') {
             $this->selectedNewCategoryId = null;
         } else {
-            $this->selectedNewCategoryId = (int)$value;
-            
+            $this->selectedNewCategoryId = (int) $value;
+
             // Refresh the category to delete to maintain its products count
             if ($this->categoryToDelete) {
                 $this->categoryToDelete = Category::withCount('products')
@@ -294,12 +296,14 @@ class CategoryManagement extends Component
             }
 
             DB::commit();
-            
-            $this->reset(['showDeleteModal', 'categoryToDelete', 'selectedNewCategoryId']);
-            
+
+            $this->showDeleteModal = false;
+            $this->categoryToDelete = null;
+            $this->selectedNewCategoryId = null;
+
             $this->dispatch('alert', [
                 'type' => 'success',
-                'message' => $hasBooks 
+                'message' => $hasBooks
                     ? "Category '{$categoryName}' deleted and {$updatedCount} books reassigned successfully."
                     : "Category '{$categoryName}' deleted successfully."
             ]);
@@ -323,7 +327,7 @@ class CategoryManagement extends Component
 
     public function getStatusText()
     {
-        return match($this->status) {
+        return match ($this->status) {
             'assigned' => 'Assigned Books',
             'not-assigned' => 'Not Assigned Books',
             default => 'All Categories'
@@ -332,7 +336,7 @@ class CategoryManagement extends Component
 
     public function getVisibilityText()
     {
-        return match($this->visibility) {
+        return match ($this->visibility) {
             'public' => 'Public Categories',
             'private' => 'Private Categories',
             default => 'All Visibility'
@@ -341,7 +345,7 @@ class CategoryManagement extends Component
 
     public function getSortText()
     {
-        return match($this->sort) {
+        return match ($this->sort) {
             'oldest' => 'Oldest First',
             'count_asc' => 'Book Count (Low to High)',
             'count_desc' => 'Book Count (High to Low)',
@@ -395,4 +399,4 @@ class CategoryManagement extends Component
             'availableCategories' => $this->showDeleteModal ? $this->getAvailableCategories() : collect()
         ]);
     }
-} 
+}

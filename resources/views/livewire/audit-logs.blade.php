@@ -73,6 +73,8 @@
                     <i class='bx bx-category'></i>
                   @elseif($log->action_type === 'notification')
                     <i class='bx bx-bell'></i>
+                  @elseif($log->action_type === 'ticket')
+                    <i class='bx bx-support'></i>
                   @endif
                 </span>
                 <span class="admin-name">{{ $log->admin ? $log->admin->name : 'Unknown Admin' }}</span>

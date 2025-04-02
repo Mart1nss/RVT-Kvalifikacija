@@ -60,16 +60,35 @@
           type,
           message
         } = event.detail;
+        console.log('Alert received:', type, message);
         window.showAlert(message, type);
       });
     });
+
+    // Also listen for Livewire events
+    if (window.Livewire) {
+      window.Livewire.on('alert', function(data) {
+        // Handle different data formats
+        if (Array.isArray(data) && data.length > 0) {
+          data = data[0]; // Use first item if array
+        }
+
+        if (data && typeof data === 'object' && data.message) {
+          window.showAlert(data.message, data.type);
+        }
+      });
+    }
   });
 
   // Function to show alert programmatically
   window.showAlert = function(message, type = 'success') {
+    if (!message) {
+      return;
+    }
+
     const alertContainer = document.getElementById('alertContainer');
     const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type}`;
+    alertDiv.className = `alert alert-${type || 'success'}`; // Default to success if type is undefined
     alertDiv.textContent = message;
 
     // Clear existing alerts

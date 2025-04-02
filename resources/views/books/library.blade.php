@@ -8,12 +8,11 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>Library</title>
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
   <link rel="stylesheet" href="{{ asset('css/allbooks-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/notifications-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/components/pdf-item.css') }}">
   <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
+  @livewireStyles
 </head>
 
 <body>
@@ -21,32 +20,30 @@
   @include('navbar')
 
   <div class="main-container">
-    <div class="text-container">
-      <h1 class="text-container-title">Library</h1>
-      <x-filter-section :sort="$sort" />
-    </div>
-
-    <div id="books-container">
-      <div class="item-container">
-        @foreach ($data as $book)
-          <x-book-card :book="$book" :source="'library'" />
-        @endforeach
-      </div>
-
-      <div class="pagination-container">
-        {{ $data->onEachSide(1)->links('vendor.pagination.tailwind') }}
-      </div>
-    </div>
-
-    {{-- Mobile Modals --}}
-    <div class="mobile-modals-container">
-      @foreach ($data as $book)
-        @include('components.book-modal', ['book' => $book, 'showAdminActions' => false])
-      @endforeach
-    </div>
+    @livewire('books.library')
   </div>
 
   <script src="{{ asset('js/library-pdf.js') }}" type="module"></script>
+
+  <script>
+    document.addEventListener('livewire:initialized', () => {
+      // Listen for Livewire alert events
+      Livewire.on('alert', ({
+        type,
+        message
+      }) => {
+        // Dispatch to the existing alert system
+        window.dispatchEvent(new CustomEvent('show-alert', {
+          detail: {
+            message,
+            type
+          }
+        }));
+      });
+    });
+  </script>
+
+  @livewireScripts
 </body>
 
 </html>

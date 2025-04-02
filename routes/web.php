@@ -43,48 +43,39 @@ Route::get('/myprogress', function () {
 
 Route::get('/', [HomeController::class, 'carousel']);
 
-//nez vai vajag
-Route::get('/testings', [HomeController::class, 'uploadpage'])->middleware(['auth', 'admin'])->name('uploadpage');
-
-//See Books
-Route::get('/library', [BookController::class, 'library'])->name('library');
-
+// Get all categories/genres for the filter dropdown
 Route::get('/get-genres', function () {
     $genres = App\Models\Category::pluck('name');
     return response()->json($genres);
 });
 
-//Book Routes
+// Book Routes - Using Livewire Components
+Route::get('/library', function () {
+    return view('books.library');
+})->name('library');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/view/{id}', [BookController::class, 'view'])->name('view');
     Route::get('/download/{file}', [BookController::class, 'download'])->name('download');
     Route::get('/book-thumbnail/{file}', [BookController::class, 'servePdf'])->name('book.thumbnail');
-    Route::get('/ajax/books', [BookController::class, 'ajaxBooks'])->name('ajax.books');
+    Route::get('/book-thumbnails/{filename}', [BookController::class, 'serveThumbnail'])->name('book.thumbnail.image');
 });
 
-//Admin Book Management Routes
+// Admin Book Management Routes - Using Livewire Components
 Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/book-manage', [BookController::class, 'show'])->name('book-manage');
-    Route::get('/uploadpage', [BookController::class, 'uploadpage'])->name('uploadpage');
-    Route::post('/uploadbook', [BookController::class, 'store']);
-    Route::get('/edit/{id}', [BookController::class, 'edit'])->name('edit');
-    Route::match(['post', 'put'], '/update/{id}', [BookController::class, 'update'])->name('update');
-    Route::delete('/delete/{id}', [BookController::class, 'destroy'])->name('delete');
-    Route::post('/toggle-visibility/{id}', [BookController::class, 'toggleVisibility'])->name('toggle.visibility');
+    Route::get('/book-manage', function () {
+        return view('books.book-manage');
+    })->name('book-manage');
+    Route::post('/uploadbook', [BookController::class, 'store'])->name('uploadbook');
 });
 
 // User Management Routes - Using Livewire Components
-// These routes are protected by auth and admin middleware
-// Only authenticated admin users can access these pages
 Route::get('/user-management', function () {
-    // Load the user management view which contains the Livewire component
     return view('admin.users.user-management');
 })->name('user.management.livewire')->middleware(['auth', 'admin']);
 
 // User Details/Edit Route
-// This route accepts a userId parameter to show details for a specific user
 Route::get('/user/{userId}', function ($userId) {
-    // Load the user show view and pass the userId to the Livewire component
     return view('admin.users.user-show', ['userId' => $userId]);
 })->name('user.show')->middleware(['auth', 'admin']);
 
