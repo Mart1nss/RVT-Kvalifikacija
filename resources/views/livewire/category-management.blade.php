@@ -27,20 +27,25 @@
             placeholder="Search categories..." autocomplete="off">
         </div>
 
+        <!-- Mobile filter button - only visible on small screens -->
+        <button class="mobile-filter-btn" id="mobileFilterBtn">
+          <i class='bx bx-filter-alt'></i>
+        </button>
+
         <div class="filter-container">
-          <select wire:model.live="status" class="filter-select">
+          <select wire:model.live="status" class="filter-select" wire:key="desktop-status-{{ $status }}">
             <option value="all">All Categories</option>
             <option value="assigned">Assigned Books</option>
             <option value="not-assigned">Not Assigned Books</option>
           </select>
 
-          <select wire:model.live="visibility" class="filter-select">
+          <select wire:model.live="visibility" class="filter-select" wire:key="desktop-visibility-{{ $visibility }}">
             <option value="all">All Visibility</option>
             <option value="public">Public Only</option>
             <option value="private">Private Only</option>
           </select>
 
-          <select wire:model.live="sort" class="filter-select">
+          <select wire:model.live="sort" class="filter-select" wire:key="desktop-sort-{{ $sort }}">
             <option value="newest">Newest First</option>
             <option value="oldest">Oldest First</option>
             <option value="count_asc">Book Count (Low to High)</option>
@@ -48,6 +53,43 @@
           </select>
         </div>
       </div>
+
+      <!-- Mobile Filter Drawer Component -->
+      <x-filters.mobile-filter-drawer title="Filter Categories">
+        <!-- Status Filter -->
+        <x-filters.filter-item label="Status">
+          <select wire:model.live="status" class="drawer-select" wire:key="status-{{ $status }}">
+            <option value="all">All Categories</option>
+            <option value="assigned">Assigned Books</option>
+            <option value="not-assigned">Not Assigned Books</option>
+          </select>
+        </x-filters.filter-item>
+
+        <!-- Visibility Filter -->
+        <x-filters.filter-item label="Visibility">
+          <select wire:model.live="visibility" class="drawer-select" wire:key="visibility-{{ $visibility }}">
+            <option value="all">All Visibility</option>
+            <option value="public">Public Only</option>
+            <option value="private">Private Only</option>
+          </select>
+        </x-filters.filter-item>
+
+        <!-- Sort Options -->
+        <x-filters.filter-item label="Sort By">
+          <select wire:model.live="sort" class="drawer-select" wire:key="sort-{{ $sort }}">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="count_asc">Book Count (Low to High)</option>
+            <option value="count_desc">Book Count (High to Low)</option>
+          </select>
+        </x-filters.filter-item>
+
+        <x-slot name="footer">
+          <button class="drawer-clear-btn" wire:click="clearFilters">
+            <i class='bx bx-trash'></i> Clear All Filters
+          </button>
+        </x-slot>
+      </x-filters.mobile-filter-drawer>
 
       <!-- Active Filters Display -->
       @if ($hasActiveFilters)

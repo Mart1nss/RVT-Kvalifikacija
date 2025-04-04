@@ -29,16 +29,13 @@
   </div>
 
   <script>
-    // Add mobile book modal functionality
+    // mobile book modal
     document.addEventListener('DOMContentLoaded', function() {
-      // Click event for book cards (mobile view)
       document.querySelector('.item-container').addEventListener('click', function(e) {
-        // Find closest pdf-item if clicked on a book card or its child
         const pdfItem = e.target.closest('.pdf-item');
         if (pdfItem && window.innerWidth <= 768) {
           const bookId = pdfItem.dataset.bookId;
           if (bookId) {
-            // Dispatch event to open the modal
             window.dispatchEvent(new CustomEvent('open-modal', {
               detail: {
                 bookId: parseInt(bookId)
@@ -52,7 +49,6 @@
       // Listen for edit/delete events from mobile modal
       window.addEventListener('openEditModal', function(e) {
         if (e.detail && e.detail.bookId) {
-          // Find and trigger the edit button for this book
           const editBtn = document.querySelector(`.pdf-item[data-book-id="${e.detail.bookId}"] .edit-btn`);
           if (editBtn) {
             editBtn.click();
@@ -62,7 +58,6 @@
 
       window.addEventListener('confirmDelete', function(e) {
         if (e.detail && e.detail.bookId) {
-          // Find and trigger the delete button for this book
           const deleteBtn = document.querySelector(`.pdf-item[data-book-id="${e.detail.bookId}"] .delete-btn`);
           if (deleteBtn) {
             deleteBtn.click();

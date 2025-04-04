@@ -23,7 +23,7 @@ class UserManagement extends Component
     public $searchQuery = '';
     public $sortField = 'created_at';
     public $sortDirection = 'desc';
-    public $filterUserType = '';     
+    public $filterUserType = '';
     public $filterBanStatus = '';
     public $sortOption = 'newest';
 
@@ -202,4 +202,25 @@ class UserManagement extends Component
         $this->filterBanStatus = '';
         $this->resetPage();
     }
-} 
+
+    /**
+     * Check if there are any active filters
+     * Returns true if any filter is applied
+     */
+    public function hasActiveFilters()
+    {
+        return !empty($this->searchQuery) ||
+            !empty($this->filterUserType) ||
+            !empty($this->filterBanStatus) ||
+            $this->sortOption !== 'newest';
+    }
+
+    /**
+     * Check if the filter info row should be displayed
+     * Returns true if there are active filters or users to display
+     */
+    public function showFilterInfo()
+    {
+        return $this->hasActiveFilters() || $this->getTotalUsers() > 0;
+    }
+}

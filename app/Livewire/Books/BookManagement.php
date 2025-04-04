@@ -118,7 +118,6 @@ class BookManagement extends Component
 
     $books = $query->paginate(15);
 
-    // Calculate rating for each book
     $books->each(function ($book) {
       $book->rating = $book->reviews_avg_review_score ?? 0;
     });
@@ -163,6 +162,61 @@ class BookManagement extends Component
   public function resetEditForm()
   {
     $this->reset(['editingBookId', 'title', 'author', 'category_id', 'is_public', 'showEditModal']);
+  }
+
+  /**
+   * Delete the selected book
+   */
+  public function deleteBook()
+  {
+    if (!$this->bookToDelete) {
+      return;
+    }
+
+    // Get book information for logging and thumbnail deletion
+    $bookId = $this->bookToDelete->id;
+    $bookTitle = $this->bookToDelete->title;
+    $bookAuthor = $this->bookToDelete->author;
+    $bookFile = $this->bookToDelete->file;
+
+    // Store book info in associated notes before deletion
+    $this->bookToDelete->notes()->update([
+      'book_title' => $bookTitle,
+      'book_author' => $bookAuthor
+    ]);
+
+    // Delete the book file from storage
+    if ($bookFile && Storage::exists('books/' . $bookFile)) {
+      Storage::delete('books/' . $bookFile);
+    }
+
+    // Delete the thumbnail if it exists
+    $thumbnailFilename = str_replace('.pdf', '.jpg', $bookFile);
+    $thumbnailPath = public_path('book-thumbnails/' . $thumbnailFilename);
+    if (file_exists($thumbnailPath)) {
+      unlink($thumbnailPath);
+    }
+
+    // Delete the book record
+    $this->bookToDelete->delete();
+
+    // Log the deletion
+    app(AuditLogService::class)->log(
+      "Deleted book",
+      "book",
+      "Deleted book",
+      $bookId,
+      $bookTitle
+    );
+
+    // Reset and show success message
+    $this->confirmingBookDeletion = false;
+    $this->bookToDelete = null;
+
+    $this->dispatch('alert', [
+      'type' => 'success',
+      'message' => 'Book deleted successfully'
+    ]);
   }
 
   public function updateBook()

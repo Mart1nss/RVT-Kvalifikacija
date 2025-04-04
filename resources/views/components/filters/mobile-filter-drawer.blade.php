@@ -36,7 +36,7 @@
           });
         }
 
-        // Close drawer when close button or overlay is clicked
+        // Close drawer when close or overlay is clicked
         if (drawerCloseBtn) {
           drawerCloseBtn.addEventListener('click', closeDrawer);
         }
@@ -48,17 +48,8 @@
         function closeDrawer() {
           filterDrawer.classList.remove('open');
           overlay.classList.remove('active');
-          document.body.style.overflow = ''; // Re-enable scrolling
+          document.body.style.overflow = ''; // scrolling
         }
-
-        // Close drawer when a filter is selected (optional)
-        const drawerSelects = document.querySelectorAll('#{{ $id }} .drawer-select');
-        drawerSelects.forEach(select => {
-          select.addEventListener('change', function() {
-            // Add a small delay to allow the Livewire update to complete
-            setTimeout(closeDrawer, 300);
-          });
-        });
       });
     </script>
   @endpush

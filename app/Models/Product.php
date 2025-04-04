@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Favorite;
 use App\Models\Review;
 use App\Models\ReadLater;
+use App\Models\Note;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -58,5 +59,10 @@ class Product extends Model
         }
 
         return $this->favorites()->where('user_id', $user->id)->exists();
+    }
+
+    public function notes()
+    {
+        return $this->hasMany(Note::class);
     }
 }

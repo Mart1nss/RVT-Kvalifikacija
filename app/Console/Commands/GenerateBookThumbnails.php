@@ -111,7 +111,6 @@ class GenerateBookThumbnails extends Command
           }
           return true; // Ghostscript succeeded
         }
-        // If Ghostscript failed ($return_var !== 0), fall through to placeholder
       }
 
       // Fallback: If Ghostscript is not found or failed, use enhanced placeholder

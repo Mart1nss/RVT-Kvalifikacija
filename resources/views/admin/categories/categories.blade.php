@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="{{ asset('css/categorymanage-style.css') }}">
 <link rel="stylesheet" href="{{ asset('css/components/buttons.css') }}">
 <link rel="stylesheet" href="{{ asset('css/modal-confirmation-delete.css') }}">
+<link rel="stylesheet" href="{{ asset('css/components/mobile-filter-drawer.css') }}">
 <style>
   .delete-confirmation-modal {
     position: fixed;
@@ -66,6 +67,24 @@
     border-radius: 4px;
     margin-top: 8px;
   }
+
+  /* Category-specific responsive styles */
+  @media (max-width: 768px) {
+    .filter-container {
+      display: none;
+    }
+
+    .search-filter-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .search-container {
+      flex: 1;
+    }
+  }
 </style>
 @livewireStyles
 
@@ -93,3 +112,4 @@
     });
   });
 </script>
+@stack('scripts')

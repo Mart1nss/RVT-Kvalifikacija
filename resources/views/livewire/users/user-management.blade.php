@@ -45,51 +45,54 @@
     </div>
 
     <!-- Active filters display - only shown when filters are applied -->
-    <div class="filter-info-row" x-data="{}"
-      x-show="$wire.searchQuery || $wire.filterUserType || $wire.filterBanStatus || $wire.sortOption !== 'newest'">
-      <span class="total-count"><span>{{ $totalUsers }}</span> users</span>
+    @if ($this->showFilterInfo())
+      <div class="filter-info-row">
+        <span class="total-count"><span>{{ $totalUsers }}</span> users</span>
 
-      <!-- Display active filter tags -->
-      <div id="active-filters">
-        @if ($searchQuery)
-          <span class="filter-tag">Results for '{{ $searchQuery }}'</span>
-        @endif
+        <!-- Display active filter tags -->
+        <div id="active-filters">
+          @if ($searchQuery)
+            <span class="filter-tag">Results for '{{ $searchQuery }}'</span>
+          @endif
 
-        @if ($filterUserType)
-          <span class="filter-tag">{{ $filterUserType === 'admin' ? 'Admins' : 'Users' }}</span>
-        @endif
+          @if ($filterUserType)
+            <span class="filter-tag">{{ $filterUserType === 'admin' ? 'Admins' : 'Users' }}</span>
+          @endif
 
-        @if ($filterBanStatus)
-          <span class="filter-tag">{{ $filterBanStatus === 'banned' ? 'Banned' : 'Active' }}</span>
-        @endif
+          @if ($filterBanStatus)
+            <span class="filter-tag">{{ $filterBanStatus === 'banned' ? 'Banned' : 'Active' }}</span>
+          @endif
 
-        @if ($sortOption !== 'newest')
-          <span class="filter-tag">
-            @switch($sortOption)
-              @case('oldest')
-                Oldest
-              @break
+          @if ($sortOption !== 'newest')
+            <span class="filter-tag">
+              @switch($sortOption)
+                @case('oldest')
+                  Oldest
+                @break
 
-              @case('nameAZ')
-                Name (A-Z)
-              @break
+                @case('nameAZ')
+                  Name (A-Z)
+                @break
 
-              @case('nameZA')
-                Name (Z-A)
-              @break
+                @case('nameZA')
+                  Name (Z-A)
+                @break
 
-              @case('lastOnline')
-                Last Online
-              @break
-            @endswitch
-          </span>
+                @case('lastOnline')
+                  Last Online
+                @break
+              @endswitch
+            </span>
+          @endif
+        </div>
+
+        @if ($this->hasActiveFilters())
+          <button class="clear-filters-btn" wire:click="clearFilters">
+            <i class='bx bx-x'></i> Clear Filters
+          </button>
         @endif
       </div>
-
-      <button class="clear-filters-btn" wire:click="clearFilters">
-        <i class='bx bx-x'></i> Clear Filters
-      </button>
-    </div>
+    @endif
   </div>
 
   <!-- Mobile Filter Drawer Component -->

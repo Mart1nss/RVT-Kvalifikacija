@@ -9,10 +9,6 @@
   <link type="text/css" rel="stylesheet" href="{{ asset('css/pdf-view.css') }}">
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
-  <!-- Add Alpine.js -->
-  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-  <!-- Add jQuery -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
@@ -54,8 +50,9 @@
     <div id="notes-div" class="notes-div">
       <div class="notes-name">
         <p class="notes-p">notes</p>
+        <div class="character-counter"><span id="char-count">0</span>/7500</div>
       </div>
-      <textarea id="note-area" placeholder="Type anything here..."></textarea>
+      <textarea id="note-area" maxlength="7500" placeholder="Type anything here..."></textarea>
     </div>
   </div>
 
@@ -111,41 +108,91 @@
 
   <!-- NOTE SCRIPT   -->
   <script>
-    $(document).ready(function() {
+    document.addEventListener('DOMContentLoaded', function() {
       const productId = {{ $data->id }};
+      const noteArea = document.getElementById('note-area');
+      const charCount = document.getElementById('char-count');
       let saveTimeout;
 
-      $.get(`/notes/${productId}`, function(note) {
-        if (note) {
-          $('#note-area').val(note.note_text);
-        }
-      });
+      // Update character count
+      function updateCharCount() {
+        const currentLength = noteArea.value.length;
+        charCount.textContent = currentLength;
 
-      $('#note-area').on('input', function() {
+        // Optional: Change color when approaching limit
+        if (currentLength > 7000) {
+          charCount.classList.add('near-limit');
+        } else {
+          charCount.classList.remove('near-limit');
+        }
+      }
+
+      // Initial count update
+      updateCharCount();
+
+      // Fetch existing note
+      fetch(`/notes/${productId}`)
+        .then(response => response.json())
+        .then(note => {
+          if (note) {
+            noteArea.value = note.note_text;
+            updateCharCount(); // Update count after loading note
+          }
+        })
+        .catch(error => console.error('Error loading note:', error));
+
+      // Handle input changes
+      noteArea.addEventListener('input', function() {
+        updateCharCount(); // Update character count
         clearTimeout(saveTimeout);
 
         saveTimeout = setTimeout(function() {
-          const noteText = $('#note-area').val();
+          const noteText = noteArea.value;
           saveOrUpdateNote(noteText, productId);
         }, 500);
       });
 
       function saveOrUpdateNote(noteText, productId) {
-        $.ajax({
-          url: `/notes/${productId}`,
-          method: 'PUT',
-          data: {
-            note_text: noteText,
-            product_id: productId,
-            _token: "{{ csrf_token() }}"
-          },
-          success: function(response) {
-            console.log(response.message);
-          }
-        });
+        const formData = new FormData();
+        formData.append('note_text', noteText);
+        formData.append('product_id', productId);
+        formData.append('_token', "{{ csrf_token() }}");
+
+        fetch(`/notes/${productId}`, {
+            method: 'PUT',
+            headers: {
+              'X-CSRF-TOKEN': "{{ csrf_token() }}",
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'Accept': 'application/json'
+            },
+            body: new URLSearchParams(formData)
+          })
+          .then(response => response.json())
+          .then(data => console.log(data.message))
+          .catch(error => console.error('Error saving note:', error));
       }
     });
   </script>
+
+  <!-- Add styles for character counter -->
+  <style>
+    .notes-name {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .character-counter {
+      font-size: 12px;
+      color: #999;
+      margin-right: 10px;
+    }
+
+    .near-limit {
+      color: #ff6b6b;
+      font-weight: bold;
+    }
+  </style>
 
   <!-- NAVIGATE MOBILE BUTTON -->
   <script>
