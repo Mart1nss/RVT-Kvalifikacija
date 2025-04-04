@@ -59,7 +59,10 @@
           <div class="carousel-track">
             @foreach ($data as $book)
               <div class="pdf-item">
-                <div class="thumbnail" data-pdfpath="/assets/{{ $book->file }}"></div>
+                <div class="thumbnail">
+                  <img src="{{ asset('book-thumbnails/' . str_replace('.pdf', '.jpg', $book->file)) }}"
+                    alt="{{ $book->title }}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
               </div>
             @endforeach
             <!-- Duplicate books for continuous scrolling -->
@@ -73,7 +76,7 @@
       </div>
     </section>
 
-    
+
 
     <section class="why-choose">
       <h3 class="section-title">Why Choose Elevate Reads?</h3>
@@ -115,41 +118,48 @@
           </div>
         </div>
         <div class="cta-container">
-          <button onclick="window.location.href = '{{ route('register') }}'" class="btn btn-primary btn-lg">Get Started Today</button>
+          <button onclick="window.location.href = '{{ route('register') }}'" class="btn btn-primary btn-lg">Get Started
+            Today</button>
         </div>
       </div>
     </section>
 
     <section class="feature-spotlight">
       <h3 class="section-title">Interactive Features</h3>
-      
+
       <div class="feature-container notebook-feature">
         <div class="feature-content">
           <h4>Virtual Notebook</h4>
-          <p>Take notes while reading with your personal virtual notebook. Every book comes with a dedicated note-taking space, allowing you to highlight key insights and save important thoughts without leaving the page.</p>
-          <p>All your notes are organized by book and easily accessible in one central location, making review and study effortless.</p>
+          <p>Take notes while reading with your personal virtual notebook. Every book comes with a dedicated note-taking
+            space, allowing you to highlight key insights and save important thoughts without leaving the page.</p>
+          <p>All your notes are organized by book and easily accessible in one central location, making review and study
+            effortless.</p>
         </div>
         <div class="feature-image">
           <img src="https://placehold.co/200x300" alt="Virtual Notebook">
         </div>
       </div>
-      
+
       <div class="feature-container forum-feature">
         <div class="feature-image">
           <img src="https://placehold.co/500x300" alt="Community Forums">
         </div>
         <div class="feature-content">
           <h4>Community Forums</h4>
-          <p>Connect with fellow readers in our vibrant community forums. Create discussions, share insights, and gain new perspectives on your favorite books.</p>
-          <p>Ask questions, participate in deep conversations, and build connections with like-minded individuals passionate about personal growth and learning.</p>
+          <p>Connect with fellow readers in our vibrant community forums. Create discussions, share insights, and gain
+            new perspectives on your favorite books.</p>
+          <p>Ask questions, participate in deep conversations, and build connections with like-minded individuals
+            passionate about personal growth and learning.</p>
         </div>
       </div>
-      
+
       <div class="feature-container progress-feature">
         <div class="feature-content">
           <h4>Personal Progress Tracking</h4>
-          <p>Monitor your reading journey with detailed progress statistics. Track the number of books you've read, reviews you've written, forums you've participated in, and much more.</p>
-          <p>Gain insights into your reading habits with metrics on your most-read genres, favorite authors, average reading time, and login patterns — helping you optimize your learning experience.</p>
+          <p>Monitor your reading journey with detailed progress statistics. Track the number of books you've read,
+            reviews you've written, forums you've participated in, and much more.</p>
+          <p>Gain insights into your reading habits with metrics on your most-read genres, favorite authors, average
+            reading time, and login patterns — helping you optimize your learning experience.</p>
         </div>
         <div class="feature-image">
           <img src="https://placehold.co/500x300" alt="Progress Tracking">
@@ -193,7 +203,8 @@
             </div>
             <h4 class="genre-title-text">Productivity</h4>
           </div>
-          <p class="genre-description">Unlock strategies to get more done in less time, without sacrificing balance.</p>
+          <p class="genre-description">Unlock strategies to get more done in less time, without sacrificing balance.
+          </p>
         </div>
 
         <div class="genre-card">
