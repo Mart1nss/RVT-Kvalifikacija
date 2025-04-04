@@ -52,3 +52,18 @@ body {
         font-size: 28px;
     }
 }
+
+.text-alert {
+    color: #ffc107;
+}
+
+.filter-select {
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: none;
+    height: 40px;
+    color: white;
+    background-color: rgb(13, 13, 13);
+    min-width: 160px;
+    cursor: pointer;
+}

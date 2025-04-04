@@ -30,6 +30,13 @@
       </div>
     @endif
 
+    @if (session('error'))
+      <div class="alert alert-danger"
+        style="background-color: rgb(126,6,6); color: white; padding: 15px; margin-bottom: 20px; border-radius: 4px; text-align: center;">
+        {{ session('error') }}
+      </div>
+    @endif
+
     <h1 class="logo">ELEVATE READS</h1>
     <p class="small-text">LOGIN TO <br>
       ELEVATE READS

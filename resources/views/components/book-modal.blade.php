@@ -15,37 +15,33 @@
             '{{ route('readlater.delete', $book->id) }}' :
             '{{ route('readlater.add', $book->id) }}';
 
-        try {
-            const formData = new FormData();
-            formData.append('_token', document.querySelector('meta[name=csrf-token]').content);
-            if (this.isInReadLater) {
-                formData.append('_method', 'DELETE');
-            }
+        const formData = new FormData();
+        formData.append('_token', document.querySelector('meta[name=csrf-token]').content);
+        if (this.isInReadLater) {
+            formData.append('_method', 'DELETE');
+        }
 
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json'
-                },
-                body: formData
-            });
-
-            if (response.ok) {
-                this.isInReadLater = !this.isInReadLater;
-                // Dispatch a custom event for notifications
-                const message = this.isInReadLater ? 'Book added to read later list' : 'Book removed from read later list';
-                window.dispatchEvent(new CustomEvent('show-alert', {
-                    detail: { message, type: 'success' }
-                }));
-            } else {
-                throw new Error('Failed to update read later status');
-            }
-        } catch (error) {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json'
+            },
+            body: formData
+        }).catch(() => {
             window.dispatchEvent(new CustomEvent('show-alert', {
                 detail: { message: 'Failed to update read later status', type: 'error' }
             }));
-        } finally {
-            this.isLoading = false;
+            return null;
+        });
+
+        this.isLoading = false;
+
+        if (response && response.ok) {
+            this.isInReadLater = !this.isInReadLater;
+            const message = this.isInReadLater ? 'Book added to read later list' : 'Book removed from read later list';
+            window.dispatchEvent(new CustomEvent('show-alert', {
+                detail: { message, type: 'success' }
+            }));
         }
     },
     close() {
@@ -55,6 +51,16 @@
             this.closing = false;
             document.body.style.overflow = '';
         }, 300);
+    },
+    triggerEditModal(bookId) {
+        window.dispatchEvent(new CustomEvent('openEditModal', {
+            detail: { bookId: bookId }
+        }));
+    },
+    triggerDeleteConfirm(title, author, bookId) {
+        window.dispatchEvent(new CustomEvent('confirmDelete', {
+            detail: { title: title, author: author, bookId: bookId }
+        }));
     }
 }" x-show="isOpen"
   :class="{ 'active': isOpen, 'closing': closing }"
@@ -67,10 +73,9 @@
     <button class="modal-close" @click="close()"><i class='bx bx-x'></i></button>
     <div class="modal-book-info">
       <div class="modal-thumbnail">
-        <div class="thumbnail" data-pdfpath="/assets/{{ $book->file }}">
-          <div class="loading-indicator">
-            <i class='bx bx-loader-alt'></i>
-          </div>
+        <div class="thumbnail">
+          <img src="{{ asset('book-thumbnails/' . str_replace('.pdf', '.jpg', $book->file)) }}"
+            alt="{{ $book->title }}" loading="lazy" class="book-thumbnail">
         </div>
       </div>
       <div class="modal-details">
@@ -113,14 +118,14 @@
           @endif
 
           @if ($showAdminActions)
-            <button class="action-btn edit-btn" @click="openEditModal({{ $book->id }}); close()">
+            <button class="action-btn edit-btn" @click="triggerEditModal({{ $book->id }}); close()">
               <i class='bx bx-edit-alt'></i>
             </button>
             <a href="{{ route('download', $book->file) }}" class="action-btn download-btn">
               <i class='bx bxs-download'></i>
             </a>
             <button class="action-btn delete-btn"
-              @click="confirmDelete('{{ $book->title }}', '{{ $book->author }}', {{ $book->id }}); close()">
+              @click="triggerDeleteConfirm('{{ $book->title }}', '{{ $book->author }}', {{ $book->id }}); close()">
               <i class='bx bx-trash'></i>
             </button>
           @endif
@@ -134,5 +139,11 @@
   .action-btn.loading {
     opacity: 0.7;
     cursor: not-allowed;
+  }
+
+  .book-thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 </style>

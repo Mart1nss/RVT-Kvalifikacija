@@ -1,0 +1,382 @@
+.search-filter-container {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.search-container {
+    position: relative;
+    flex: 1;
+}
+
+.myInput {
+    width: 100%;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: rgb(13, 13, 13);
+    color: white;
+    font-family: sans-serif;
+    height: 40px;
+}
+
+.filter-div input:focus {
+    outline: 1px solid white;
+    background-color: #2a2a2a;
+}
+
+.button-container {
+    display: flex;
+}
+
+buttons i {
+    font-size: 16px;
+}
+
+.sort-dropdown {
+    width: 160px;
+    position: relative;
+}
+
+.clear-filters-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    height: 40px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    background-color: rgb(13, 13, 13);
+    color: white;
+    font-size: 12px;
+    font-weight: 800;
+    font-family: sans-serif;
+    text-transform: uppercase;
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+}
+
+.clear-filters-btn:hover {
+    background-color: rgb(126, 6, 6);
+}
+
+.clear-filters-btn i {
+    font-size: 18px;
+}
+
+.filter-info-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 15px;
+    padding: 0;
+    border-radius: 8px;
+    background-color: transparent;
+    font-family: sans-serif;
+    color: #fff;
+    font-size: 14px;
+}
+
+.filter-info-row .total-count {
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+#active-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-height: 72px;
+    overflow-y: hidden;
+    flex: 1;
+}
+
+.filter-info-row .filter-tag {
+    padding: 6px 12px;
+    border-radius: 4px;
+    background-color: #2a2a2a;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.show {
+    display: block;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.table-responsive h2 {
+    color: white;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #2a2a2a;
+    border: none;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.custom-table th,
+.custom-table td {
+    padding: 1rem;
+    text-align: left;
+    color: white;
+    border-bottom: 1px solid #333;
+}
+
+.custom-table th {
+    background-color: #333;
+    font-weight: 600;
+}
+
+.custom-table tr:hover {
+    background-color: #333;
+}
+
+.usertype-select {
+    background-color: #333;
+    color: white;
+    border: 1px solid #444;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.usertype-select:focus {
+    outline: 1px solid white;
+}
+
+.delete-btn {
+    color: white;
+    text-decoration: none;
+    background-color: rgb(126, 6, 6);
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    font-family: sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    text-transform: uppercase;
+    transition: all 0.2s;
+}
+
+.delete-btn:hover {
+    background-color: rgb(80, 80, 80);
+    cursor: pointer;
+}
+
+.upload-text {
+    font-family: sans-serif;
+    font-weight: 800;
+    color: white;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+}
+
+table {
+    border-radius: 8px;
+    border: white 1px solid;
+    width: 100%;
+    min-width: 600px;
+}
+
+th {
+    color: white;
+    font-family: sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    text-align: left;
+    padding: 10px 2vw;
+    background-color: rgb(37, 37, 37);
+}
+
+td {
+    color: white;
+    text-align: left;
+    padding: 10px 2vw;
+}
+
+tbody {
+    background-color: rgb(13, 13, 13);
+}
+
+.remove-btn {
+    color: white;
+    text-decoration: none;
+    background-color: rgb(126, 6, 6);
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    font-family: sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    text-transform: uppercase;
+    transition: all 0.2s;
+}
+
+.remove-btn:hover {
+    background-color: rgb(80, 80, 80);
+    color: white;
+    cursor: pointer;
+}
+
+.show {
+    display: block;
+    opacity: 1;
+    pointer-events: all;
+}
+
+.delete-confirmation-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.delete-confirmation-modal[x-cloak] {
+    display: none !important;
+}
+
+.delete-confirmation-content {
+    background-color: rgb(13, 13, 13);
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.delete-confirmation-header {
+    margin-bottom: 20px;
+}
+
+.delete-confirmation-header h2 {
+    color: white;
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.delete-confirmation-body {
+    margin-bottom: 20px;
+}
+
+.delete-confirmation-body p {
+    color: white;
+    margin: 0 0 10px 0;
+}
+
+.delete-confirmation-text {
+    color: #ff3333 !important;
+    font-size: 14px;
+}
+
+.delete-confirmation-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-secondary {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    background-color: #2a2a2a;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-secondary:hover {
+    background-color: #3a3a3a;
+}
+
+.btn-delete {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    background-color: rgb(126, 6, 6);
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-delete:hover {
+    background-color: rgb(150, 6, 6);
+}
+
+.edit-btn {
+    color: white;
+    text-decoration: none;
+    background-color: #202020;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    font-family: sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    display: inline-block;
+    text-align: center;
+}
+
+.edit-btn:hover {
+    background-color: rgb(50, 50, 50);
+    cursor: pointer;
+}
+
+.self-account-badge {
+    background-color: #666;
+    color: white;
+    padding: 11px 13px;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.status-badge.active {
+    background-color: rgb(0, 126, 0);
+    color: white;
+}
+
+.status-badge.banned {
+    background-color: rgb(126, 6, 6);
+    color: white;
+}
+
+@media (max-width: 1000px) {
+    .hide-small {
+        display: none;
+    }
+}

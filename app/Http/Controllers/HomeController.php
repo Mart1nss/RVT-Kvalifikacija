@@ -105,7 +105,7 @@ class HomeController extends Controller
         if (Auth::user() && Auth::user()->usertype === 'admin') {
             $data = Product::all();
         } else {
-            $data = Product::where('is_public', true)->get();
+            $data = Product::where('is_public', 1)->get();
         }
 
         return view('welcome', compact('data'));

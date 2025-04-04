@@ -24,8 +24,8 @@
 
 .delete-confirmation-content {
     background-color: #202020;
-    padding: 20px;
     border-radius: 8px;
+    padding: 0;
     width: 90%;
     max-width: 500px;
     position: fixed;
@@ -44,20 +44,26 @@
 /* Modal Header */
 .delete-confirmation-header {
     margin-bottom: 20px;
+    background-color: rgb(126, 6, 6);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    padding: 0;
 }
 
 .delete-confirmation-header h2 {
     margin: 0;
+    padding: 15px 16px;
     color: white;
     text-transform: uppercase;
     font-family: sans-serif;
     font-weight: 800;
-    font-size: 24px;
+    font-size: 20px;
 }
 
 /* Modal Body */
 .delete-confirmation-body {
     margin-bottom: 20px;
+    padding: 0 16px;
 }
 
 .delete-confirmation-body p {
@@ -66,7 +72,7 @@
     color: white;
 }
 
-#deleteBookDetails {
+.delete-confirmation-body span {
     color: #ffd700;
     font-weight: 800;
 }
@@ -92,6 +98,7 @@
     justify-content: flex-end;
     gap: 10px;
     margin-top: 20px;
+    padding: 0 16px 16px 16px;
 }
 
 .btn-delete {

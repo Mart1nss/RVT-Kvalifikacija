@@ -60,18 +60,18 @@
     right: 10px;
     background: rgba(0, 0, 0, 0.8);
     color: #ffd700;
-    padding: 5px 10px;
-    border-radius: 20px;
+    padding: 5px 8px;
+    border-radius: 10px;
     z-index: 2;
     display: flex;
     align-items: center;
     gap: 4px;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .rating-badge i {
-    font-size: 16px;
+    font-size: 14px;
 }
 
 .info-container {
@@ -172,6 +172,11 @@
     background-color: #505050;
 }
 
+.readlater-btn.loading {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .admin-actions {
     position: absolute;
     top: 10px;
@@ -209,8 +214,8 @@
 }
 
 .edit-btn {
-    height: 38px;
-    width: 38px;
+    height: 36px;
+    width: 36px;
     padding: 0;
     border: none;
     color: white;
@@ -225,8 +230,8 @@
 .admin-actions .delete-btn {
     color: #ff4444;
     background-color: rgba(0, 0, 0, 0.8);
-    height: 38px;
-    width: 38px;
+    height: 36px;
+    width: 36px;
 }
 
 .admin-actions .delete-btn:hover {
@@ -241,6 +246,8 @@
     font-family: sans-serif;
     font-weight: 800;
     font-size: 12px;
+    height: 36px;
+    width: 36px;
     text-transform: uppercase;
 }
 

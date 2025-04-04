@@ -8,6 +8,8 @@ use App\Models\Review;
 use App\Models\Ticket;
 use App\Models\UserPreference;
 use App\Models\Category;
+use App\Models\Forum;
+use App\Models\ForumReply;
 use App\Notifications\CustomResetPassword;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
@@ -29,7 +31,11 @@ class User extends Authenticatable
         'password',
         'last_online',
         'has_genre_preference_set',
-        'last_read_book_id'
+        'last_read_book_id',
+        'is_banned',
+        'banned_at',
+        'ban_reason',
+        'banned_by'
     ];
 
     /**
@@ -51,6 +57,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'last_online' => 'datetime',
+        'banned_at' => 'datetime',
+        'is_banned' => 'boolean',
     ];
 
     public function favorites()
@@ -78,6 +86,26 @@ class User extends Authenticatable
         return $this->hasMany(Ticket::class);
     }
 
+    /**
+     * Get all forums created by the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function forums()
+    {
+        return $this->hasMany(Forum::class);
+    }
+
+    /**
+     * Get all forum replies created by the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function forumReplies()
+    {
+        return $this->hasMany(ForumReply::class);
+    }
+
     public function isAdmin()
     {
         return $this->usertype === 'admin';
@@ -101,5 +129,25 @@ class User extends Authenticatable
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new CustomResetPassword($token));
+    }
+
+    /**
+     * Check if the user is banned.
+     *
+     * @return bool True if the user is banned, false otherwise
+     */
+    public function isBanned()
+    {
+        return $this->is_banned;
+    }
+
+    /**
+     * Get the admin who banned this user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo Relationship to the admin who banned this user
+     */
+    public function bannedBy()
+    {
+        return $this->belongsTo(User::class, 'banned_by');
     }
 }

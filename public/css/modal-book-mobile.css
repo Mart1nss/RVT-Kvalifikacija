@@ -62,6 +62,10 @@
     z-index: 2;
 }
 
+.modal-close i {
+    font-size: 24px;
+}
+
 /* Book Info Section */
 .mobile-modal .modal-book-info {
     display: flex;

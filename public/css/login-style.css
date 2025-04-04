@@ -160,7 +160,7 @@ input[type="password"]::-webkit-reveal-text {
     width: 50%;
     border: 2px solid white;
     border-radius: 8px;
-    background-color: black;
+    background-color: rgb(13, 13, 13);
     color: white;
     transition: all 0.2s;
 }

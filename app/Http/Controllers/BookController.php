@@ -8,6 +8,10 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Services\AuditLogService;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+use Spatie\PdfToImage\Pdf;
+use App\Http\Controllers\Controller;
 
 class BookController extends Controller
 {
@@ -26,9 +30,6 @@ class BookController extends Controller
    * Store a newly uploaded book in the database.
    * Handles file upload, validation, and creates a new book record.
    * Requirements:
-   * - Title and author (max 255 chars)
-   * - Valid category ID
-   * - PDF file (max 10MB)
    *
    * @param Request $request
    * @return \Illuminate\Http\RedirectResponse
@@ -54,12 +55,18 @@ class BookController extends Controller
 
     if ($request->hasFile('file')) {
       $file = $request->file('file');
-      $filename = md5($file->getClientOriginalName()) . '.' . $file->getClientOriginalExtension();
-      $file->move('assets', $filename);
+      $filename = Str::slug($request->title) . '_' . time() . '.' . $file->getClientOriginalExtension();
+      $file->storeAs('books', $filename);
       $product->file = $filename;
-    }
 
-    $product->save();
+      // Save the product first to get an ID
+      $product->save();
+
+      // Generate and save thumbnail with the actual title and author
+      $this->generateThumbnail($filename, $product->title, $product->author);
+    } else {
+      $product->save();
+    }
 
     AuditLogService::log(
       "Uploaded book",
@@ -73,230 +80,218 @@ class BookController extends Controller
   }
 
   /**
-   * Display the book management interface with filtering and sorting options.
-   * Features:
-   * - Search by title
-   * - Filter by visibility (public/private)
-   * - Filter by genres
-   * - Multiple sorting options
-   * - Pagination
-   * - AJAX support for dynamic updates
+   * Generate a thumbnail for a PDF file
    *
-   * @param Request $request
-   * @return \Illuminate\View\View|\Illuminate\Http\JsonResponse
+   * @param string $filename
+   * @param string $title
+   * @param string $author
+   * @return bool
    */
-  public function show(Request $request)
+  private function generateThumbnail($filename, $title = null, $author = null)
   {
-    $query = $request->get('query');
-    $visibility = $request->get('visibility', 'all');
-    $genres = $request->get('genres') ? explode(',', $request->get('genres')) : [];
-    $sort = $request->get('sort', 'newest');
+    try {
+      // Create the thumbnails directory if it doesn't exist
+      $thumbnailDir = public_path('book-thumbnails');
+      if (!file_exists($thumbnailDir)) {
+        mkdir($thumbnailDir, 0755, true);
+      }
 
-    $data = Product::query()->withAvg('reviews', 'review_score');
+      // Generate the thumbnail filename (change .pdf to .jpg)
+      $thumbnailFilename = str_replace('.pdf', '.jpg', $filename);
+      $thumbnailPath = $thumbnailDir . '/' . $thumbnailFilename;
 
-    if ($query) {
-      $data->where('title', 'like', '%' . $query . '%');
-    }
+      // Check if thumbnail already exists
+      if (file_exists($thumbnailPath)) {
+        return true;
+      }
 
-    if ($visibility === 'public') {
-      $data->where('is_public', true);
-    } elseif ($visibility === 'private') {
-      $data->where('is_public', false);
-    }
+      // Check if the PDF file exists
+      $pdfPath = storage_path('app/books/' . $filename);
+      if (!file_exists($pdfPath)) {
+        return $this->generateEnhancedThumbnail($thumbnailPath, $title, $author);
+      }
 
-    if (!empty($genres)) {
-      $data->whereHas('category', function ($q) use ($genres) {
-        $q->whereIn('name', $genres);
-      });
-    }
+      // Try using Ghostscript
+      $gsExecutable = 'C:\\Program Files\\gs\\gs10.05.0\\bin\\gswin64c.exe';
 
-    // Apply sorting
-    switch ($sort) {
-      case 'oldest':
-        $data->orderBy('created_at', 'asc');
-        break;
-      case 'title_asc':
-        $data->orderBy('title', 'asc');
-        break;
-      case 'title_desc':
-        $data->orderBy('title', 'desc');
-        break;
-      case 'author_asc':
-        $data->orderBy('author', 'asc');
-        break;
-      case 'author_desc':
-        $data->orderBy('author', 'desc');
-        break;
-      case 'rating_asc':
-        $data->orderBy('reviews_avg_review_score', 'asc');
-        break;
-      case 'rating_desc':
-        $data->orderBy('reviews_avg_review_score', 'desc');
-        break;
-      default: // 'newest'
-        $data->orderBy('created_at', 'desc');
-    }
+      if (file_exists($gsExecutable)) {
+        $command = '"' . $gsExecutable . '" -sDEVICE=jpeg -dNOPAUSE -dBATCH -dSAFER '
+          . '-dFirstPage=1 -dLastPage=1 -r150 '
+          . '-dTextAlphaBits=4 -dGraphicsAlphaBits=4 '
+          . '-o "' . $thumbnailPath . '" '
+          . '"' . $pdfPath . '"';
 
-    $data = $data->paginate(15)->withQueryString();
-    $categories = Category::all();
+        exec($command, $output, $return_var);
 
-    $data->each(function ($book) {
-      $book->rating = $book->reviews_avg_review_score ?? 0;
-    });
+        if ($return_var === 0 && file_exists($thumbnailPath)) {
+          // Optimize the thumbnail size if needed (using Imagick)
+          if (extension_loaded('imagick')) {
+            $this->resizeThumbnail($thumbnailPath);
+          }
+          return true; // Ghostscript succeeded
+        }
+      }
 
-    if ($request->ajax()) {
-      return response()->json([
-        'html' => view('components.book-grid', compact('data'))->render(),
-        'pagination' => view('vendor.pagination.tailwind', ['paginator' => $data])->render()
-      ]);
-    }
-
-    return view('book-manage', compact('data', 'categories', 'visibility', 'sort'));
-  }
-
-  /**
-   * Display the public library view with books.
-   * Shows only public books with filtering and sorting options.
-   * Features:
-   * - Search by title
-   * - Filter by genres
-   * - Multiple sorting options
-   * - Pagination
-   *
-   * @param Request $request
-   * @return \Illuminate\View\View
-   */
-  public function library(Request $request)
-  {
-    $query = $request->get('query');
-    $genres = $request->get('genres') ? explode(',', $request->get('genres')) : [];
-    $sort = $request->get('sort', 'newest');
-
-    $data = Product::query()
-      ->where('is_public', true)
-      ->withAvg('reviews', 'review_score')
-      ->when($query, function ($q) use ($query) {
-        return $q->where('title', 'like', '%' . $query . '%');
-      })
-      ->when(!empty($genres), function ($q) use ($genres) {
-        return $q->whereHas('category', function ($sq) use ($genres) {
-          $sq->whereIn('name', $genres);
-        });
-      });
-
-    // Apply sorting
-    switch ($sort) {
-      case 'oldest':
-        $data->orderBy('created_at', 'asc');
-        break;
-      case 'title_asc':
-        $data->orderBy('title', 'asc');
-        break;
-      case 'title_desc':
-        $data->orderBy('title', 'desc');
-        break;
-      case 'author_asc':
-        $data->orderBy('author', 'asc');
-        break;
-      case 'author_desc':
-        $data->orderBy('author', 'desc');
-        break;
-      case 'rating_asc':
-        $data->orderBy('reviews_avg_review_score', 'asc');
-        break;
-      case 'rating_desc':
-        $data->orderBy('reviews_avg_review_score', 'desc');
-        break;
-      default: // 'newest'
-        $data->orderBy('created_at', 'desc');
-    }
-
-    $data = $data->paginate(15)->withQueryString();
-
-    $data->each(function ($book) {
-      $book->rating = $book->reviews_avg_review_score ?? 0;
-    });
-
-    return view('library', compact('data', 'sort'));
-  }
-
-  /**
-   * Retrieve book information for editing.
-   * Returns JSON response with book details.
-   *
-   * @param int $id
-   * @return \Illuminate\Http\JsonResponse
-   */
-  public function edit($id)
-  {
-    $product = Product::findOrFail($id);
-    return response()->json($product);
-  }
-
-  /**
-   * Update book information.
-   * Tracks and logs all changes made to the book.
-   * Handles updates for:
-   * - Title
-   * - Author
-   * - Category
-   * - Visibility status
-   *
-   * @param Request $request
-   * @param int $id
-   * @return \Illuminate\Http\RedirectResponse
-   */
-  public function update(Request $request, $id)
-  {
-    $product = Product::findOrFail($id);
-
-    // Store old values before update
-    $changes = [];
-
-    if ($product->title !== $request->title) {
-      $changes[] = "title from '{$product->title}' to '{$request->title}'";
-    }
-
-    if ($product->author !== $request->author) {
-      $changes[] = "author from '{$product->author}' to '{$request->author}'";
-    }
-
-    if ((int) $product->category_id !== (int) $request->category_id) {
-      $oldCategory = Category::find($product->category_id);
-      $newCategory = Category::find($request->category_id);
-      if ($oldCategory && $newCategory) {
-        $changes[] = "category from '{$oldCategory->name}' to '{$newCategory->name}'";
+      // Fallback: If Ghostscript is not found or failed, use enhanced placeholder
+      return $this->generateEnhancedThumbnail($thumbnailPath, $title, $author);
+    } catch (\Exception $e) {
+      // Log error but don't fail the upload
+      \Log::error('Failed to generate thumbnail: ' . $e->getMessage());
+      // Attempt placeholder generation even on general error
+      try {
+        return $this->generateEnhancedThumbnail($thumbnailPath, $title, $author);
+      } catch (\Exception $placeholderEx) {
+        \Log::error('Failed to generate placeholder thumbnail after main error: ' . $placeholderEx->getMessage());
+        return false; // Both generation and placeholder failed
       }
     }
+  }
 
-    $oldIsPublic = (bool) $product->is_public;
-    $newIsPublic = (bool) $request->has('is_public');
+  /**
+   * Generate an enhanced thumbnail with book title and author
+   * 
+   * @param string $thumbnailPath
+   * @param string $title
+   * @param string $author
+   * @return bool
+   */
+  private function generateEnhancedThumbnail($thumbnailPath, $title, $author)
+  {
+    try {
+      // Create image with standard book dimensions
+      $width = 400;
+      $height = 566;
+      $img = imagecreatetruecolor($width, $height);
 
-    if ($oldIsPublic !== $newIsPublic) {
-      $oldVisibility = $oldIsPublic ? 'public' : 'private';
-      $newVisibility = $newIsPublic ? 'public' : 'private';
-      $changes[] = "visibility from {$oldVisibility} to {$newVisibility}";
+      // Define colors
+      $bgColor = imagecolorallocate($img, 35, 45, 75);       // Deep blue
+      $accentColor = imagecolorallocate($img, 80, 120, 180); // Bright blue accent
+      $textColor = imagecolorallocate($img, 240, 240, 240);  // White text
+      $overlayColor = imagecolorallocate($img, 25, 35, 65);  // Darker overlay
+      $highlightColor = imagecolorallocate($img, 255, 140, 0); // Orange highlight
+
+      // Fill background
+      imagefill($img, 0, 0, $bgColor);
+
+      // Create gradient-like background
+      for ($i = 0; $i < $height; $i += 30) {
+        $shade = min(180, 80 + $i / 4);
+        $patternColor = imagecolorallocate($img, 30, 40, $shade);
+        imagefilledrectangle($img, 0, $i, $width, $i + 15, $patternColor);
+      }
+
+      // Create central text area
+      $centerX1 = $width / 4;
+      $centerY1 = $height / 3 - 30;
+      $centerX2 = $width * 3 / 4;
+      $centerY2 = $height * 2 / 3 + 30;
+
+      imagefilledrectangle($img, $centerX1, $centerY1, $centerX2, $centerY2, $overlayColor);
+      imagerectangle($img, $centerX1, $centerY1, $centerX2, $centerY2, $accentColor);
+      imagerectangle($img, $centerX1 + 3, $centerY1 + 3, $centerX2 - 3, $centerY2 - 3, $highlightColor);
+
+      // Draw PDF badge
+      $badgeSize = 60;
+      $badgeY = $height / 3 - 15;
+      imagefilledellipse($img, $width / 2, $badgeY, $badgeSize, $badgeSize, $highlightColor);
+
+      // Add PDF text to badge
+      $pdfText = 'PDF';
+      $pdfFont = 5;
+      $pdfTextWidth = imagefontwidth($pdfFont) * strlen($pdfText);
+      $pdfX = ($width - $pdfTextWidth) / 2;
+      $pdfY = $badgeY - 10;
+      imagestring($img, $pdfFont, $pdfX, $pdfY, $pdfText, $textColor);
+
+      // Add book title
+      $titleFont = 4;
+      $bookTitle = $title ?? 'PDF Document';
+
+      // Shorten title if needed
+      if (strlen($bookTitle) > 25) {
+        $bookTitle = substr($bookTitle, 0, 22) . '...';
+      }
+
+      $titleWidth = imagefontwidth($titleFont) * strlen($bookTitle);
+      $titleX = ($width - $titleWidth) / 2;
+      $titleY = $height / 2 - 10;
+
+      // Title with shadow
+      imagestring($img, $titleFont, $titleX + 1, $titleY + 1, $bookTitle, imagecolorallocate($img, 20, 20, 20));
+      imagestring($img, $titleFont, $titleX, $titleY, $bookTitle, $highlightColor);
+
+      // Add author if available
+      if ($author) {
+        $authorFont = 2;
+
+        // Shorten author if needed
+        if (strlen($author) > 30) {
+          $author = substr($author, 0, 27) . '...';
+        }
+
+        $authorWidth = imagefontwidth($authorFont) * strlen($author);
+        $authorX = ($width - $authorWidth) / 2;
+        $authorY = $titleY + 30;
+
+        imagestring($img, $authorFont, $authorX, $authorY, $author, $textColor);
+      }
+
+      // Save the image
+      imagejpeg($img, $thumbnailPath, 90);
+      imagedestroy($img);
+
+      return true;
+    } catch (\Exception $e) {
+      \Log::error('Failed to generate enhanced thumbnail: ' . $e->getMessage());
+      return false;
+    }
+  }
+
+  /**
+   * Resize a thumbnail image to standard dimensions using Imagick
+   *
+   * @param string $thumbnailPath
+   * @return bool
+   */
+  private function resizeThumbnail($thumbnailPath)
+  {
+    if (!extension_loaded('imagick')) {
+      return false;
     }
 
-    $product->title = $request->title;
-    $product->author = $request->author;
-    $product->category_id = $request->category_id;
-    $product->is_public = $newIsPublic;
+    try {
+      $maxWidth = 400;
+      $maxHeight = 566;
 
-    $product->save();
+      $imagick = new \Imagick($thumbnailPath);
+      $imagick->setImageFormat('jpg');
+      $imagick->setImageCompression(\Imagick::COMPRESSION_JPEG);
+      $imagick->setImageCompressionQuality(85);
 
-    if (!empty($changes)) {
-      $changeDescription = "Changed " . implode(', ', $changes);
-      AuditLogService::log(
-        "Updated book",
-        "book",
-        $changeDescription,
-        $product->id,
-        $product->title
-      );
+      $width = $imagick->getImageWidth();
+      $height = $imagick->getImageHeight();
+
+      if ($width > $maxWidth || $height > $maxHeight) {
+        // Resize while maintaining aspect ratio
+        $ratioWidth = $maxWidth / $width;
+        $ratioHeight = $maxHeight / $height;
+        $ratio = min($ratioWidth, $ratioHeight);
+
+        $newWidth = $width * $ratio;
+        $newHeight = $height * $ratio;
+
+        $imagick->resizeImage($newWidth, $newHeight, \Imagick::FILTER_LANCZOS, 1);
+      }
+
+      $imagick->writeImage($thumbnailPath);
+      $imagick->clear();
+      $imagick->destroy();
+
+      return true;
+    } catch (\Exception $e) {
+      \Log::error('Failed to resize thumbnail: ' . $e->getMessage());
+      return false;
     }
-
-    return redirect()->back()->with('success', 'Book updated successfully');
   }
 
   /**
@@ -332,44 +327,6 @@ class BookController extends Controller
   }
 
   /**
-   * Delete a book and its associated files.
-   * Performs:
-   * - Deletion of associated reviews
-   * - Removal of PDF file from storage
-   * - Deletion of database record
-   * - Logging of deletion
-   *
-   * @param int $id
-   * @return \Illuminate\Http\RedirectResponse
-   */
-  public function destroy($id)
-  {
-    $data = Product::find($id);
-    if ($data) {
-      // Delete the file from the public/assets directory
-      $data->reviews()->delete();
-      $filePath = public_path('assets/' . $data->file);
-      if (file_exists($filePath)) {
-        unlink($filePath);
-      }
-
-      $data->delete();
-
-      AuditLogService::log(
-        "Deleted book",
-        "book",
-        "Deleted book",
-        $id,
-        $data->title
-      );
-
-      return redirect()->back()->with('success', 'Book deleted successfully!');
-    } else {
-      return redirect()->back()->withErrors(['error' => 'nav labi']);
-    }
-  }
-
-  /**
    * Download a book's PDF file.
    *
    * @param Request $request
@@ -378,97 +335,49 @@ class BookController extends Controller
    */
   public function download(Request $request, $file)
   {
-    return response()->download(public_path('assets/' . $file));
+    $path = storage_path('app/books/' . $file);
+    if (!file_exists($path)) {
+      return redirect()->back()->with('error', 'File not found.');
+    }
+    return response()->download($path);
   }
 
   /**
-   * Toggle a book's visibility status between public and private.
-   * Returns JSON response with updated status.
+   * Serve a PDF file for thumbnail generation.
    *
-   * @param Request $request
-   * @param int $id
-   * @return \Illuminate\Http\JsonResponse
+   * @param string $file
+   * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
    */
-  public function toggleVisibility(Request $request, $id)
+  public function servePdf($file)
   {
-    $product = Product::findOrFail($id);
-    $product->is_public = !$product->is_public;
-    $product->save();
-
-    return response()->json([
-      'success' => true,
-      'is_public' => $product->is_public
-    ]);
+    $path = storage_path('app/books/' . $file);
+    if (!file_exists($path)) {
+      abort(404);
+    }
+    return response()->file($path, ['Content-Type' => 'application/pdf']);
   }
 
   /**
-   * Handle AJAX requests for book data.
-   * Returns JSON with rendered book grid and pagination.
-   * Features:
-   * - Search by title
-   * - Filter by genres
-   * - Multiple sorting options
-   * - Only returns public books
+   * Add a new endpoint to serve thumbnail images
    *
-   * @param Request $request
-   * @return \Illuminate\Http\JsonResponse
+   * @param string $filename
+   * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
    */
-  public function ajaxBooks(Request $request)
+  public function serveThumbnail($filename)
   {
-    $query = $request->get('query');
-    $genres = $request->get('genres') ? explode(',', $request->get('genres')) : [];
-    $sort = $request->get('sort', 'newest');
+    $path = public_path('book-thumbnails/' . $filename);
 
-    $data = Product::query()
-      ->where('is_public', true)
-      ->withAvg('reviews', 'review_score');
-
-    if ($query) {
-      $data->where('title', 'like', '%' . $query . '%');
+    // If thumbnail doesn't exist, try to generate it
+    if (!file_exists($path)) {
+      $pdfFilename = str_replace('.jpg', '.pdf', $filename);
+      $this->generateThumbnail($pdfFilename);
     }
 
-    if (!empty($genres)) {
-      $data->whereHas('category', function ($q) use ($genres) {
-        $q->whereIn('name', $genres);
-      });
+    // Check again after possible generation
+    if (!file_exists($path)) {
+      abort(404);
     }
 
-    // Apply sorting
-    switch ($sort) {
-      case 'oldest':
-        $data->orderBy('created_at', 'asc');
-        break;
-      case 'title_asc':
-        $data->orderBy('title', 'asc');
-        break;
-      case 'title_desc':
-        $data->orderBy('title', 'desc');
-        break;
-      case 'author_asc':
-        $data->orderBy('author', 'asc');
-        break;
-      case 'author_desc':
-        $data->orderBy('author', 'desc');
-        break;
-      case 'rating_asc':
-        $data->orderBy('reviews_avg_review_score', 'asc');
-        break;
-      case 'rating_desc':
-        $data->orderBy('reviews_avg_review_score', 'desc');
-        break;
-      default: // 'newest'
-        $data->orderBy('created_at', 'desc');
-    }
-
-    $data = $data->paginate(15);
-
-    $data->each(function ($book) {
-      $book->rating = $book->reviews_avg_review_score ?? 0;
-    });
-
-    return response()->json([
-      'html' => view('components.book-grid', compact('data'))->render(),
-      'pagination' => view('vendor.pagination.tailwind', ['paginator' => $data])->render()
-    ]);
+    return response()->file($path, ['Content-Type' => 'image/jpeg']);
   }
 }

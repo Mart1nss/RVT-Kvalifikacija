@@ -135,16 +135,29 @@
                                expanded = !expanded;
                              ">
               <div class="note-title">
-                <h2>{{ $note->product->title }}</h2>
-                <p class="note-author">by {{ $note->product->author }}</p>
+                <h2>
+                  @if ($note->product)
+                    {{ $note->product->title }}
+                  @else
+                    {{ $note->book_title }} (Deleted)
+                  @endif
+                </h2>
+                <p class="note-author">by @if ($note->product)
+                    {{ $note->product->author }}
+                  @else
+                    {{ $note->book_author }}
+                  @endif
+                </p>
                 <span class="last-updated" data-timestamp="{{ $note->updated_at->timestamp }}">
                   {{-- dynamic text --}}
                 </span>
               </div>
               <div class="note-actions">
-                <a href="{{ route('view', ['id' => $note->product_id]) }}" class="goto-note-btn" @click.stop>
-                  <i class='bx bx-book-open'></i>
-                </a>
+                @if ($note->product)
+                  <a href="{{ route('view', ['id' => $note->product_id]) }}" class="goto-note-btn" @click.stop>
+                    <i class='bx bx-book-open'></i>
+                  </a>
+                @endif
                 <i class='bx bx-chevron-down accordion-icon' :class="{ 'rotate': expanded }"></i>
               </div>
             </div>

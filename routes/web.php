@@ -8,13 +8,12 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FavoritesController;
-use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\PreferenceController;
-use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\ReadLaterController;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,47 +43,41 @@ Route::get('/myprogress', function () {
 
 Route::get('/', [HomeController::class, 'carousel']);
 
-//nez vai vajag
-Route::get('/testings', [HomeController::class, 'uploadpage'])->middleware(['auth', 'admin'])->name('uploadpage');
-
-//See Books
-Route::get('/library', [BookController::class, 'library'])->name('library');
-
+// Get all categories/genres for the filter dropdown
 Route::get('/get-genres', function () {
     $genres = App\Models\Category::pluck('name');
     return response()->json($genres);
 });
 
-Route::get('/assets/{filename}', function ($filename) {
-    $path = public_path('assets/' . $filename);
-    if (!File::exists($path)) {
-        abort(404);
-    }
-    return response()->file($path);
-});
+// Book Routes - Using Livewire Components
+Route::get('/library', function () {
+    return view('books.library');
+})->middleware('auth')->name('library');
 
-//Book Routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/view/{id}', [BookController::class, 'view'])->name('view');
     Route::get('/download/{file}', [BookController::class, 'download'])->name('download');
-    Route::get('/ajax/books', [BookController::class, 'ajaxBooks'])->name('ajax.books');
+    Route::get('/book-thumbnail/{file}', [BookController::class, 'servePdf'])->name('book.thumbnail');
+    Route::get('/book-thumbnails/{filename}', [BookController::class, 'serveThumbnail'])->name('book.thumbnail.image');
 });
 
-//Admin Book Management Routes
+// Admin Book Management Routes - Using Livewire Components
 Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/book-manage', [BookController::class, 'show'])->name('book-manage');
-    Route::get('/uploadpage', [BookController::class, 'uploadpage'])->name('uploadpage');
-    Route::post('/uploadbook', [BookController::class, 'store']);
-    Route::get('/edit/{id}', [BookController::class, 'edit'])->name('edit');
-    Route::match(['post', 'put'], '/update/{id}', [BookController::class, 'update'])->name('update');
-    Route::delete('/delete/{id}', [BookController::class, 'destroy'])->name('delete');
-    Route::post('/toggle-visibility/{id}', [BookController::class, 'toggleVisibility'])->name('toggle.visibility');
+    Route::get('/book-manage', function () {
+        return view('books.book-manage');
+    })->name('book-manage');
+    Route::post('/uploadbook', [BookController::class, 'store'])->name('uploadbook');
 });
 
-//User Manage Routes
-Route::get('/managepage', [UserController::class, 'index'])->name('user.manage')->middleware(['auth', 'admin']);
-Route::put('/users/{user}', [UserController::class, 'updateUserType'])->name('users.updateUserType');
-Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+// User Management Routes - Using Livewire Components
+Route::get('/user-management', function () {
+    return view('admin.users.user-management');
+})->name('user.management.livewire')->middleware(['auth', 'admin']);
+
+// User Details/Edit Route
+Route::get('/user/{userId}', function ($userId) {
+    return view('admin.users.user-show', ['userId' => $userId]);
+})->name('user.show')->middleware(['auth', 'admin']);
 
 // File Routes
 Route::get('/redirect-back', [HomeController::class, 'redirectAfterBack'])->name('redirect.back');
@@ -96,21 +89,9 @@ Route::delete('/my-collection/{id}', [FavoritesController::class, 'delete'])->na
 
 //Notification Routes
 Route::middleware(['auth'])->group(function () {
-    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index')->middleware(['auth', 'admin']);
-
-    Route::post('/notifications/send', [NotificationController::class, 'sendNotification'])
-        ->name('admin.send.notification');
-
-    Route::post('/notifications/mark-read', [NotificationController::class, 'markAsRead'])
-        ->name('notifications.markRead');
-    Route::post('/notifications/{id}/delete', [NotificationController::class, 'deleteNotification'])
-        ->name('notifications.delete');
-    Route::post('/notifications/delete-all', [NotificationController::class, 'deleteAllNotifications'])
-        ->name('notifications.deleteAll');
-    Route::get('/notifications/count', [NotificationController::class, 'getCount'])
-        ->name('notifications.count');
-    Route::post('/notifications/sent/{id}/delete', [NotificationController::class, 'deleteSentNotification'])
-        ->name('notifications.sent.delete')->middleware('admin');
+    Route::get('/notifications', function () {
+        return view('notifications');
+    })->name('notifications.index')->middleware(['auth', 'admin']);
 });
 
 // Notes Routes
@@ -144,11 +125,9 @@ Route::middleware('auth')->group(function () {
 
 // Category Management Routes
 Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
-    Route::get('/categories/search', [CategoryController::class, 'search'])->name('categories.search');
-    Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
-    Route::put('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
-    Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+    Route::get('/categories', function () {
+        return view('admin.categories.categories');
+    })->name('categories.index');
 });
 
 // Support Tickets Routes
@@ -169,7 +148,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/preferences/edit', [PreferenceController::class, 'edit'])->name('preferences.edit');
 });
 
-Route::get('/audit-logs', [AuditLogController::class, 'index'])->middleware(['auth', 'admin']);
+// Audit Logs Route - Using Livewire Component
+Route::get('/audit-logs', function () {
+    return view('audit-logs-page');
+})->name('audit.logs')->middleware(['auth', 'admin']);
 
 // Read Later Routes
 Route::middleware(['auth'])->group(function () {
