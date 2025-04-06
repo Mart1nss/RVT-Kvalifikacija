@@ -1,21 +1,38 @@
-.admin-panel {
+.big-item-container {
     display: flex;
-    width: 200px;
-    background-color: black;
-    flex-direction: column;
-    gap: 10px;
+    flex-direction: row;
+    gap: 20px;
 }
 
-.admin-panel button {
-    width: 100%;
+.dashboard-text-container {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.dashboard-text-container-title {
+    font-size: 32px;
+    text-transform: uppercase;
+    font-weight: 800;
+
+    @media (max-width: 1000px) {
+        font-size: 28px;
+    }
+
+    @media (max-width: 768px) {
+        font-size: 24px;
+    }
+
+    @media (max-width: 540px) {
+        font-size: 18px;
+    }
 }
 
 .item-container {
     background-color: #202020;
-    border-bottom-right-radius: 8px;
-    border-bottom-left-radius: 8px;
+    border-radius: 8px;
     padding: 16px;
     display: flex;
+    flex-direction: column;
 }
 
 @media (max-width: 769px) {
@@ -26,6 +43,7 @@
 
 #dashboardIcon {
     font-size: 16px;
+    
 }
 
 #dropdown-1 {
@@ -46,11 +64,17 @@
     padding: 0;
 }
 
-.btn-div {
-    width: 60%;
+.admin-btn-div {
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+.btn-div {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
 }
 
 .stats-text {
@@ -63,9 +87,10 @@
 }
 
 .stats-div {
-    width: 40%;
-    background-color: rgb(13, 13, 13);
+    width: 100%;
+    background-color: #202020;
     padding: 10px;
+    margin-top: 20px;
     border-radius: 8px;
     @media (max-width: 769px) {
         width: 100%;

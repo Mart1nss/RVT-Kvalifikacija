@@ -1,6 +1,7 @@
  {{-- Newest Books Carousel --}}
 
  <link rel="stylesheet" href="{{ asset('css/components/pdf-item.css') }}">
+ <link rel="stylesheet" href="{{ asset('css/pdf-carousel.css') }}">
 
  <div class="newest-books-container">
    <div class="carousel-header">

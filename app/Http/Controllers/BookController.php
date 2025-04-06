@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Services\AuditLogService;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
-use Spatie\PdfToImage\Pdf;
 use App\Http\Controllers\Controller;
 
 class BookController extends Controller
@@ -29,7 +28,6 @@ class BookController extends Controller
   /**
    * Store a newly uploaded book in the database.
    * Handles file upload, validation, and creates a new book record.
-   * Requirements:
    *
    * @param Request $request
    * @return \Illuminate\Http\RedirectResponse
@@ -62,8 +60,8 @@ class BookController extends Controller
       // Save the product first to get an ID
       $product->save();
 
-      // Generate and save thumbnail with the actual title and author
-      $this->generateThumbnail($filename, $product->title, $product->author);
+      // Generate thumbnail
+      $this->generateThumbnail($filename);
     } else {
       $product->save();
     }
@@ -80,175 +78,58 @@ class BookController extends Controller
   }
 
   /**
-   * Generate a thumbnail for a PDF file
+   * Generate a thumbnail for a PDF file using Ghostscript
    *
    * @param string $filename
-   * @param string $title
-   * @param string $author
    * @return bool
    */
-  private function generateThumbnail($filename, $title = null, $author = null)
+  private function generateThumbnail($filename)
   {
-    try {
-      // Create the thumbnails directory if it doesn't exist
-      $thumbnailDir = public_path('book-thumbnails');
-      if (!file_exists($thumbnailDir)) {
-        mkdir($thumbnailDir, 0755, true);
-      }
-
-      // Generate the thumbnail filename (change .pdf to .jpg)
-      $thumbnailFilename = str_replace('.pdf', '.jpg', $filename);
-      $thumbnailPath = $thumbnailDir . '/' . $thumbnailFilename;
-
-      // Check if thumbnail already exists
-      if (file_exists($thumbnailPath)) {
-        return true;
-      }
-
-      // Check if the PDF file exists
-      $pdfPath = storage_path('app/books/' . $filename);
-      if (!file_exists($pdfPath)) {
-        return $this->generateEnhancedThumbnail($thumbnailPath, $title, $author);
-      }
-
-      // Try using Ghostscript
-      $gsExecutable = 'C:\\Program Files\\gs\\gs10.05.0\\bin\\gswin64c.exe';
-
-      if (file_exists($gsExecutable)) {
-        $command = '"' . $gsExecutable . '" -sDEVICE=jpeg -dNOPAUSE -dBATCH -dSAFER '
-          . '-dFirstPage=1 -dLastPage=1 -r150 '
-          . '-dTextAlphaBits=4 -dGraphicsAlphaBits=4 '
-          . '-o "' . $thumbnailPath . '" '
-          . '"' . $pdfPath . '"';
-
-        exec($command, $output, $return_var);
-
-        if ($return_var === 0 && file_exists($thumbnailPath)) {
-          // Optimize the thumbnail size if needed (using Imagick)
-          if (extension_loaded('imagick')) {
-            $this->resizeThumbnail($thumbnailPath);
-          }
-          return true; // Ghostscript succeeded
-        }
-      }
-
-      // Fallback: If Ghostscript is not found or failed, use enhanced placeholder
-      return $this->generateEnhancedThumbnail($thumbnailPath, $title, $author);
-    } catch (\Exception $e) {
-      // Log error but don't fail the upload
-      \Log::error('Failed to generate thumbnail: ' . $e->getMessage());
-      // Attempt placeholder generation even on general error
-      try {
-        return $this->generateEnhancedThumbnail($thumbnailPath, $title, $author);
-      } catch (\Exception $placeholderEx) {
-        \Log::error('Failed to generate placeholder thumbnail after main error: ' . $placeholderEx->getMessage());
-        return false; // Both generation and placeholder failed
-      }
+    // Create the thumbnails directory if it doesn't exist
+    $thumbnailDir = public_path('book-thumbnails');
+    if (!file_exists($thumbnailDir)) {
+      mkdir($thumbnailDir, 0755, true);
     }
-  }
 
-  /**
-   * Generate an enhanced thumbnail with book title and author
-   * 
-   * @param string $thumbnailPath
-   * @param string $title
-   * @param string $author
-   * @return bool
-   */
-  private function generateEnhancedThumbnail($thumbnailPath, $title, $author)
-  {
-    try {
-      // Create image with standard book dimensions
-      $width = 400;
-      $height = 566;
-      $img = imagecreatetruecolor($width, $height);
+    // Generate the thumbnail filename (change .pdf to .jpg)
+    $thumbnailFilename = str_replace('.pdf', '.jpg', $filename);
+    $thumbnailPath = $thumbnailDir . '/' . $thumbnailFilename;
 
-      // Define colors
-      $bgColor = imagecolorallocate($img, 35, 45, 75);       // Deep blue
-      $accentColor = imagecolorallocate($img, 80, 120, 180); // Bright blue accent
-      $textColor = imagecolorallocate($img, 240, 240, 240);  // White text
-      $overlayColor = imagecolorallocate($img, 25, 35, 65);  // Darker overlay
-      $highlightColor = imagecolorallocate($img, 255, 140, 0); // Orange highlight
-
-      // Fill background
-      imagefill($img, 0, 0, $bgColor);
-
-      // Create gradient-like background
-      for ($i = 0; $i < $height; $i += 30) {
-        $shade = min(180, 80 + $i / 4);
-        $patternColor = imagecolorallocate($img, 30, 40, $shade);
-        imagefilledrectangle($img, 0, $i, $width, $i + 15, $patternColor);
-      }
-
-      // Create central text area
-      $centerX1 = $width / 4;
-      $centerY1 = $height / 3 - 30;
-      $centerX2 = $width * 3 / 4;
-      $centerY2 = $height * 2 / 3 + 30;
-
-      imagefilledrectangle($img, $centerX1, $centerY1, $centerX2, $centerY2, $overlayColor);
-      imagerectangle($img, $centerX1, $centerY1, $centerX2, $centerY2, $accentColor);
-      imagerectangle($img, $centerX1 + 3, $centerY1 + 3, $centerX2 - 3, $centerY2 - 3, $highlightColor);
-
-      // Draw PDF badge
-      $badgeSize = 60;
-      $badgeY = $height / 3 - 15;
-      imagefilledellipse($img, $width / 2, $badgeY, $badgeSize, $badgeSize, $highlightColor);
-
-      // Add PDF text to badge
-      $pdfText = 'PDF';
-      $pdfFont = 5;
-      $pdfTextWidth = imagefontwidth($pdfFont) * strlen($pdfText);
-      $pdfX = ($width - $pdfTextWidth) / 2;
-      $pdfY = $badgeY - 10;
-      imagestring($img, $pdfFont, $pdfX, $pdfY, $pdfText, $textColor);
-
-      // Add book title
-      $titleFont = 4;
-      $bookTitle = $title ?? 'PDF Document';
-
-      // Shorten title if needed
-      if (strlen($bookTitle) > 25) {
-        $bookTitle = substr($bookTitle, 0, 22) . '...';
-      }
-
-      $titleWidth = imagefontwidth($titleFont) * strlen($bookTitle);
-      $titleX = ($width - $titleWidth) / 2;
-      $titleY = $height / 2 - 10;
-
-      // Title with shadow
-      imagestring($img, $titleFont, $titleX + 1, $titleY + 1, $bookTitle, imagecolorallocate($img, 20, 20, 20));
-      imagestring($img, $titleFont, $titleX, $titleY, $bookTitle, $highlightColor);
-
-      // Add author if available
-      if ($author) {
-        $authorFont = 2;
-
-        // Shorten author if needed
-        if (strlen($author) > 30) {
-          $author = substr($author, 0, 27) . '...';
-        }
-
-        $authorWidth = imagefontwidth($authorFont) * strlen($author);
-        $authorX = ($width - $authorWidth) / 2;
-        $authorY = $titleY + 30;
-
-        imagestring($img, $authorFont, $authorX, $authorY, $author, $textColor);
-      }
-
-      // Save the image
-      imagejpeg($img, $thumbnailPath, 90);
-      imagedestroy($img);
-
+    // Check if thumbnail already exists
+    if (file_exists($thumbnailPath)) {
       return true;
-    } catch (\Exception $e) {
-      \Log::error('Failed to generate enhanced thumbnail: ' . $e->getMessage());
+    }
+
+    // Get PDF file path
+    $pdfPath = storage_path('app/books/' . $filename);
+    if (!file_exists($pdfPath)) {
       return false;
     }
+
+    // Use Ghostscript to extract the first page
+    $gsExecutable = 'C:\\Program Files\\gs\\gs10.05.0\\bin\\gswin64c.exe';
+
+    if (file_exists($gsExecutable)) {
+      $command = '"' . $gsExecutable . '" -sDEVICE=jpeg -dNOPAUSE -dBATCH -dSAFER '
+        . '-dFirstPage=1 -dLastPage=1 -r150 '
+        . '-dTextAlphaBits=4 -dGraphicsAlphaBits=4 '
+        . '-o "' . $thumbnailPath . '" '
+        . '"' . $pdfPath . '"';
+
+      exec($command, $output, $return_var);
+
+      if ($return_var === 0 && file_exists($thumbnailPath)) {
+        // Optimize the thumbnail size if needed
+        $this->resizeThumbnail($thumbnailPath);
+        return true;
+      }
+    }
+
+    return false;
   }
 
   /**
-   * Resize a thumbnail image to standard dimensions using Imagick
+   * Resize a thumbnail image to standard dimensions
    *
    * @param string $thumbnailPath
    * @return bool
@@ -259,39 +140,34 @@ class BookController extends Controller
       return false;
     }
 
-    try {
-      $maxWidth = 400;
-      $maxHeight = 566;
+    $maxWidth = 400;
+    $maxHeight = 566;
 
-      $imagick = new \Imagick($thumbnailPath);
-      $imagick->setImageFormat('jpg');
-      $imagick->setImageCompression(\Imagick::COMPRESSION_JPEG);
-      $imagick->setImageCompressionQuality(85);
+    $imagick = new \Imagick($thumbnailPath);
+    $imagick->setImageFormat('jpg');
+    $imagick->setImageCompression(\Imagick::COMPRESSION_JPEG);
+    $imagick->setImageCompressionQuality(85);
 
-      $width = $imagick->getImageWidth();
-      $height = $imagick->getImageHeight();
+    $width = $imagick->getImageWidth();
+    $height = $imagick->getImageHeight();
 
-      if ($width > $maxWidth || $height > $maxHeight) {
-        // Resize while maintaining aspect ratio
-        $ratioWidth = $maxWidth / $width;
-        $ratioHeight = $maxHeight / $height;
-        $ratio = min($ratioWidth, $ratioHeight);
+    if ($width > $maxWidth || $height > $maxHeight) {
+      // Resize while maintaining aspect ratio
+      $ratioWidth = $maxWidth / $width;
+      $ratioHeight = $maxHeight / $height;
+      $ratio = min($ratioWidth, $ratioHeight);
 
-        $newWidth = $width * $ratio;
-        $newHeight = $height * $ratio;
+      $newWidth = $width * $ratio;
+      $newHeight = $height * $ratio;
 
-        $imagick->resizeImage($newWidth, $newHeight, \Imagick::FILTER_LANCZOS, 1);
-      }
-
-      $imagick->writeImage($thumbnailPath);
-      $imagick->clear();
-      $imagick->destroy();
-
-      return true;
-    } catch (\Exception $e) {
-      \Log::error('Failed to resize thumbnail: ' . $e->getMessage());
-      return false;
+      $imagick->resizeImage($newWidth, $newHeight, \Imagick::FILTER_LANCZOS, 1);
     }
+
+    $imagick->writeImage($thumbnailPath);
+    $imagick->clear();
+    $imagick->destroy();
+
+    return true;
   }
 
   /**
@@ -358,7 +234,7 @@ class BookController extends Controller
   }
 
   /**
-   * Add a new endpoint to serve thumbnail images
+   * Serve thumbnail images
    *
    * @param string $filename
    * @return \Symfony\Component\HttpFoundation\BinaryFileResponse

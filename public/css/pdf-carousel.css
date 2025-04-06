@@ -286,6 +286,10 @@
 }
 
 @media (max-width: 768px) {
+    .newest-books-container {
+        padding: 12px 8px;
+    }
+
     .carousel-item {
         flex: 0 0 calc(25% - 12px);
         min-width: 140px;
@@ -311,7 +315,7 @@
     }
 
     .h1-text {
-        font-size: 14px;
+        font-size: 18px;
     }
 
     .carousel-button {
