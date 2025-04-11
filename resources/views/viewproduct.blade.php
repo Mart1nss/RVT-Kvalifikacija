@@ -8,7 +8,7 @@
   <title>View Book</title>
   <link type="text/css" rel="stylesheet" href="{{ asset('css/pdf-view.css') }}">
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+  @livewireStyles
 </head>
 
 <body>
@@ -60,7 +60,7 @@
     <div class="metadata">
       <div class="book-info">
         <h2>{{ $data->title }} </h2>
-        <h3 style="color: white; display: block;"> by {{ $data->author }}</h3>
+        <h3 style="color: white; display: block;"> {{ $data->author }}</h3>
       </div>
       <div class="action-buttons">
         <form class="favorite-form" x-data="{ isFavorited: {{ $product->isFavoritedBy(auth()->user()) ? 'true' : 'false' }} }"
@@ -84,8 +84,8 @@
                 detail: { message: 'An error occurred', type: 'error' }
               }));
             })"
-          :action="isFavorited ? '{{ route('my-collection.delete', $product->id) }}' :
-              '{{ route('my-collection.add', $product->id) }}'"
+          :action="isFavorited ? `{{ route('my-collection.delete', $product->id) }}` :
+              `{{ route('my-collection.add', $product->id) }}`"
           :data-method="isFavorited ? 'DELETE' : 'POST'">
           @csrf
           <input type="hidden" name="_method" :value="isFavorited ? 'DELETE' : 'POST'">
@@ -102,7 +102,7 @@
     </div>
 
     <div class="under-pdf">
-      @include('components.reviews-section', ['product' => $product, 'reviews' => $product->reviews])
+      @livewire('reviews', ['product' => $product])
     </div>
   </section>
 
@@ -114,12 +114,10 @@
       const charCount = document.getElementById('char-count');
       let saveTimeout;
 
-      // Update character count
       function updateCharCount() {
         const currentLength = noteArea.value.length;
         charCount.textContent = currentLength;
 
-        // Optional: Change color when approaching limit
         if (currentLength > 7000) {
           charCount.classList.add('near-limit');
         } else {
@@ -127,23 +125,24 @@
         }
       }
 
-      // Initial count update
       updateCharCount();
 
       // Fetch existing note
       fetch(`/notes/${productId}`)
         .then(response => response.json())
         .then(note => {
-          if (note) {
+          if (note && note.note_text != null) {
             noteArea.value = note.note_text;
-            updateCharCount(); // Update count after loading note
+          } else {
+            noteArea.value = '';
           }
+          updateCharCount();
         })
         .catch(error => console.error('Error loading note:', error));
 
       // Handle input changes
       noteArea.addEventListener('input', function() {
-        updateCharCount(); // Update character count
+        updateCharCount();
         clearTimeout(saveTimeout);
 
         saveTimeout = setTimeout(function() {
@@ -153,23 +152,38 @@
       });
 
       function saveOrUpdateNote(noteText, productId) {
-        const formData = new FormData();
-        formData.append('note_text', noteText);
-        formData.append('product_id', productId);
-        formData.append('_token', "{{ csrf_token() }}");
-
-        fetch(`/notes/${productId}`, {
-            method: 'PUT',
+        // Use POST to the store route and send JSON
+        fetch(`/notes`, {
+            method: 'POST',
             headers: {
               'X-CSRF-TOKEN': "{{ csrf_token() }}",
-              'Content-Type': 'application/x-www-form-urlencoded',
+              'Content-Type': 'application/json',
               'Accept': 'application/json'
             },
-            body: new URLSearchParams(formData)
+            body: JSON.stringify({
+              note_text: noteText,
+              product_id: productId
+            })
           })
-          .then(response => response.json())
-          .then(data => console.log(data.message))
-          .catch(error => console.error('Error saving note:', error));
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log(data.message);
+          })
+          .catch(error => {
+            console.error('Error saving note:', error);
+            // Show error aler
+            window.dispatchEvent(new CustomEvent('show-alert', {
+              detail: {
+                message: 'Error saving note. Please try again.',
+                type: 'error'
+              }
+            }));
+          });
       }
     });
   </script>
@@ -258,6 +272,22 @@
       });
     });
   </script>
+
+  <!-- Listen for Livewire events -->
+  <script>
+    document.addEventListener('livewire:initialized', () => {
+      Livewire.on('alert', (data) => {
+        window.dispatchEvent(new CustomEvent('show-alert', {
+          detail: {
+            message: data.message,
+            type: data.type
+          }
+        }));
+      });
+    });
+  </script>
+
+  @livewireScripts
 </body>
 
 </html>

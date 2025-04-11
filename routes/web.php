@@ -5,7 +5,6 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FavoritesController;
 use App\Http\Controllers\CategoryController;
@@ -99,9 +98,6 @@ Route::post('/notes', [NoteController::class, 'store']);
 Route::get('/notes/{productId}', [NoteController::class, 'show']);
 Route::put('/notes/{productId}', [NoteController::class, 'store']);
 Route::get('/viewnotes', [NoteController::class, 'index'])->name('viewnotes')->middleware('auth');
-
-// Reviews Routes
-Route::resource('products.reviews', ReviewController::class)->only(['store', 'destroy']);
 
 // Peec Logina
 Route::get('/home', [HomeController::class, 'index'])->middleware('auth')->name('home');
