@@ -43,12 +43,10 @@
             <i class='bx bx-conversation'></i>
             <span>FORUMS</span>
           </a>
-          <div class="menu-item">
-            <i class='bx bx-bar-chart-alt-2'></i>
-            <span>MY PROGRESS<br>
-              (neiet)
-            </span>
-          </div>
+            <a href="{{ route('myprogress') }}" class="menu-item {{ Request::is('myprogress') ? 'active' : '' }}">
+              <i class='bx bx-bar-chart-alt-2'></i>
+              <span>MY PROGRESS</span>
+            </a>
         </div>
 
         <div class="menu-section {{ Request::is('viewnotes') ? 'active' : '' }}"
