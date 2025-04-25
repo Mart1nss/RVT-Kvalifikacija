@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Bookmark extends Model
 {
-    protected $fillable = ['user_id', 'product_id', 'page_number', 'scroll_position'];
+    protected $fillable = ['user_id', 'product_id', 'page_number'];
 
     public function user()
     {

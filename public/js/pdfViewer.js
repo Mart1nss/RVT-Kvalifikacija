@@ -19,10 +19,33 @@ document.addEventListener("DOMContentLoaded", function () {
     const zoomInBtn = document.getElementById("zoom-in");
     const zoomOutBtn = document.getElementById("zoom-out");
 
-    // Get book ID from URL
-    const bookId = window.location.pathname.split("/").pop();
+    // Get book ID from URL (if needed, though productId is passed from Blade now)
+    // const bookId = window.location.pathname.split("/").pop();
 
-    const initPDFViewer = async (url) => {
+    // Expose functions for external use (like bookmarking)
+    window.getCurrentPageNum = () => currentPageNum;
+    window.goToPage = (pageNumber) => {
+        const targetPageDiv = document.querySelector(`.pdf-page-container[data-page-number="${pageNumber}"]`);
+        if (targetPageDiv) {
+            pdfContainer.scrollTop = targetPageDiv.offsetTop - toolbarHeight; // Adjust for toolbar
+            // Ensure the page is rendered if not already
+            checkVisiblePages();
+        } else {
+            // console.warn(`goToPage: Page div ${pageNumber} not found.`);
+            // Fallback: scroll proportionally (less accurate)
+            const scrollPercentage = (pageNumber - 1) / pdfDoc.numPages;
+            pdfContainer.scrollTop = pdfContainer.scrollHeight * scrollPercentage;
+        }
+        // Update the displayed page number immediately
+        currentPageNum = pageNumber;
+        pageNumSpan.textContent = currentPageNum;
+    };
+
+    // Expose function to be called when PDF is loaded but before position restore
+    // let pdfLoadCallback = null;
+    // Modified initPDFViewer to accept a callback
+    const initPDFViewer = async (url, callback) => {
+        // pdfLoadCallback = callback; // Store callback
         try {
             // Show loading indicator
             pdfContainer.innerHTML =
@@ -48,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const pageDiv = document.createElement("div");
                 pageDiv.className = "pdf-page-container";
                 pageDiv.dataset.pageNumber = i;
-                pageDiv.style.minHeight = "800px"; // Default height until actual page is loaded
+                // pageDiv.style.minHeight = "800px"; // REMOVED - Let height be determined by canvas
                 pdfContainer.appendChild(pageDiv);
             }
 
@@ -60,7 +83,12 @@ document.addEventListener("DOMContentLoaded", function () {
             );
             window.addEventListener("resize", throttle(checkVisiblePages, 100));
 
-            restorePagePosition();
+            // Call the callback function if provided, *after* basic setup but *before* restoring position
+            if (typeof callback === 'function') {
+                callback();
+            }
+            // restorePagePosition(); // Restore logic is now handled by the callback in viewproduct.blade.php
+
         } catch (error) {
             console.error("Error loading PDF:", error);
             pdfContainer.innerHTML =
@@ -108,26 +136,35 @@ document.addEventListener("DOMContentLoaded", function () {
             ) {
                 renderPage(pageNumber);
             } else if (!isNearVisible && pageCanvases.has(pageNumber)) {
-                // Optionally remove far away pages to save memory
-                // pageCanvases.get(pageNumber).remove();
+                // Optionally unload far away pages (can improve performance on large docs)
+                // const canvas = pageCanvases.get(pageNumber);
+                // const pageDiv = canvas.parentNode;
+                // pageDiv.innerHTML = ''; // Clear content
                 // pageCanvases.delete(pageNumber);
+                // pageViewports.delete(pageNumber);
             }
 
-            // Update current page number
+            // Update current page number based on visibility
             if (
                 pageRect.top <= containerRect.top + toolbarHeight &&
                 pageRect.bottom > containerRect.top + toolbarHeight
             ) {
-                currentPageNum = pageNumber;
-                pageNumSpan.textContent = currentPageNum;
-                savePagePosition(currentPageNum, pdfContainer.scrollTop);
+                if (currentPageNum !== pageNumber) {
+                    currentPageNum = pageNumber;
+                    pageNumSpan.textContent = currentPageNum;
+                }
             }
         }
     };
 
     // Render a single page
     const renderPage = async (pageNumber) => {
+        // Keep try-catch here as rendering can fail
         try {
+            if (!pdfDoc) return; // Ensure pdfDoc is loaded
+            // Check if already rendering or rendered
+            if (pagesRendering.has(pageNumber) || pageCanvases.has(pageNumber)) return;
+
             pagesRendering.add(pageNumber);
             const page = await pdfDoc.getPage(pageNumber);
             const viewport = page.getViewport({ scale: scale });
@@ -155,36 +192,10 @@ document.addEventListener("DOMContentLoaded", function () {
             pagesRendering.delete(pageNumber);
         } catch (error) {
             console.error(`Error rendering page ${pageNumber}:`, error);
-            pagesRendering.delete(pageNumber);
-        }
-    };
-
-    // Save and restore page position
-    const savePagePosition = (pageNumber, scrollPosition) => {
-        localStorage.setItem(`book_${bookId}_page`, pageNumber);
-        localStorage.setItem(`book_${bookId}_scroll`, scrollPosition);
-        cleanupLocalStorage();
-    };
-
-    const restorePagePosition = () => {
-        const lastPage =
-            parseInt(localStorage.getItem(`book_${bookId}_page`)) || 1;
-        const lastScroll =
-            parseInt(localStorage.getItem(`book_${bookId}_scroll`)) || 0;
-
-        setTimeout(() => {
-            pdfContainer.scrollTop = lastScroll;
-            pageNumSpan.textContent = lastPage;
-            checkVisiblePages();
-        }, 100);
-    };
-
-    // Cleanup old localStorage entries
-    const cleanupLocalStorage = () => {
-        const keys = Object.keys(localStorage);
-        const bookKeys = keys.filter((key) => key.startsWith("book_"));
-        if (bookKeys.length > 100) {
-            localStorage.removeItem(bookKeys[0]);
+            // Attempt to remove the partially rendered/failed page container content
+            const pageDiv = document.querySelector(`.pdf-page-container[data-page-number="${pageNumber}"]`);
+            if (pageDiv) pageDiv.innerHTML = '<div class="error">Failed to render page</div>';
+            pagesRendering.delete(pageNumber); // Ensure it's removed from rendering set
         }
     };
 

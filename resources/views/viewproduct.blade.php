@@ -25,6 +25,9 @@
         <button id="zoom-in"><i class='bx bx-zoom-in'></i></button>
         <button id="zoom-out"><i class='bx bx-zoom-out'></i></button>
         <span>Page: <span id="page-num">1</span> / <span id="page-count"></span></span>
+        <button id="bookmark-btn" data-product-id="{{ $data->id }}">
+          <i class='bx bx-bookmark-alt'></i> <!-- Default icon -->
+        </button>
       </div>
 
       <div class="container">
@@ -39,7 +42,8 @@
     <script>
       document.addEventListener('DOMContentLoaded', function() {
         const pdfUrl = "/book-thumbnail/{{ $data->file }}";
-        initPDFViewer(pdfUrl);
+        // Initialize viewer and pass callback for post-load actions
+        initPDFViewer(pdfUrl, handlePdfLoad);
       });
     </script>
 
@@ -105,6 +109,143 @@
       @livewire('reviews', ['product' => $product])
     </div>
   </section>
+
+  <!-- BOOKMARK SCRIPT -->
+  <script>
+    let isBookmarked = false;
+    let bookmarkedPage = null;
+
+    const bookmarkBtn = document.getElementById('bookmark-btn');
+    const bookmarkIcon = bookmarkBtn.querySelector('i');
+    const productId = bookmarkBtn.dataset.productId;
+    const csrfToken = '{{ csrf_token() }}';
+
+    /**
+     * Updates the bookmark button's icon and title based on the isBookmarked state.
+     */
+    function updateBookmarkButton() {
+      if (isBookmarked) {
+        bookmarkIcon.classList.remove('bx-bookmark-alt');
+        bookmarkIcon.classList.add('bxs-bookmark-alt');
+        bookmarkBtn.title = 'Remove bookmark';
+      } else {
+        bookmarkIcon.classList.remove('bxs-bookmark-alt');
+        bookmarkIcon.classList.add('bx-bookmark-alt');
+        bookmarkBtn.title = 'Bookmark this page';
+      }
+    }
+
+    /**
+     * Fetches the current bookmark status from the server for this book.
+     * Updates the isBookmarked and bookmarkedPage variables.
+     */
+    async function fetchBookmark() {
+        const response = await fetch(`/bookmarks/${productId}`, {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' }
+        });
+
+        if (response.ok) {
+            const bookmark = await response.json();
+            // If a bookmark exists and has a page number
+            if (bookmark && bookmark.page_number) {
+                isBookmarked = true;
+                bookmarkedPage = bookmark.page_number;
+            } else {
+                // No bookmark found
+                isBookmarked = false;
+                bookmarkedPage = null;
+            }
+        } else {
+            // Failed to fetch status (server error, network issue, etc.)
+            console.error('Failed to fetch bookmark status:', response.status, response.statusText);
+            isBookmarked = false;
+            bookmarkedPage = null;
+            // Optionally show an alert to the user
+            // window.showAlert('Could not load bookmark status.', 'error');
+        }
+        // Update the button appearance after checking
+        updateBookmarkButton();
+    }
+
+    /**
+     * This function is called by pdfViewer.js *after* the PDF is loaded and ready.
+     * It fetches the bookmark and navigates to it if found.
+     */
+    async function handlePdfLoad() {
+      await fetchBookmark(); // Check server for existing bookmark
+
+      // If a bookmark exists, navigate the PDF viewer to that page
+      if (isBookmarked && bookmarkedPage && window.goToPage) {
+        window.goToPage(bookmarkedPage);
+      } else {
+      }
+      updateBookmarkButton();
+    }
+
+    // Add a click listener to the bookmark button
+    bookmarkBtn.addEventListener('click', async () => {
+      // Get the current page number from the PDF viewer script
+      const currentPage = window.getCurrentPageNum ? window.getCurrentPageNum() : null;
+
+      // If we couldn't get the page number, show error and stop
+      if (!currentPage) {
+        console.error("Could not get current page number for bookmarking.");
+        window.showAlert('Could not determine current page number.', 'error');
+        return;
+      }
+
+      // Determine the API endpoint and HTTP method based on whether we are adding or removing
+      const url = isBookmarked ? `/bookmarks/${productId}` : '/bookmarks';
+      const method = isBookmarked ? 'DELETE' : 'POST';
+
+      try {
+        const response = await fetch(url, {
+          method: method,
+          headers: {
+            'X-CSRF-TOKEN': csrfToken,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          // Only send body for POST request (when creating/updating bookmark)
+          body: method === 'POST' ? JSON.stringify({
+            product_id: productId,
+            page_number: currentPage
+          }) : null
+        });
+
+        // Check if the request was successful
+        if (!response.ok) {
+          // Try to get error message from server response, or use a default
+          let errorMsg = 'Failed to update bookmark.';
+          try {
+            const errorData = await response.json();
+            errorMsg = errorData.message || errorMsg;
+          } catch (e) { /* Ignore if response is not JSON */ }
+          throw new Error(errorMsg); // Throw error to be caught below
+        }
+
+        // Request was successful, parse the JSON response
+        const data = await response.json();
+
+        // Double-check the success flag from our API response
+        if (data.success) {
+          isBookmarked = !isBookmarked; // Toggle the bookmarked state
+          bookmarkedPage = isBookmarked ? currentPage : null; // Update stored bookmarked page
+          updateBookmarkButton();       // Update the button appearance
+          window.showAlert(data.message, 'success'); // Show success message
+        } else {
+          // API reported failure even with OK status (should ideally not happen)
+          throw new Error(data.message || 'An unknown error occurred.');
+        }
+
+      } catch (error) {
+        console.error('Error saving/removing bookmark:', error);
+        window.showAlert(error.message || 'An error occurred while managing bookmark.', 'error');
+      }
+    });
+
+  </script>
 
   <!-- NOTE SCRIPT   -->
   <script>
