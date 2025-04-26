@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Category;
 use Carbon\Carbon;
@@ -46,11 +47,20 @@ class ProgressController extends Controller
         // Calculate top genres if available
         $topGenres = $this->getTopGenres($user);
         
-        // TODO: Implement typical active time calculation
-        // This would require tracking user login times
-        // $typicalActiveTime = $this->calculateTypicalActiveTime($user);
+        // Get login hour distribution for the chart
+        $loginHours = $this->getLoginHourDistribution($user);
         
-        return view('myProgress', compact('stats', 'createdAt', 'accountAge', 'topGenres'));
+        // Get most active hour in UTC - will be converted in the view
+        $typicalActiveTimeUTC = $this->getMostActiveHour($user);
+        
+        return view('myProgress', compact(
+            'stats', 
+            'createdAt', 
+            'accountAge', 
+            'topGenres', 
+            'typicalActiveTimeUTC',
+            'loginHours'
+        ));
     }
     
     /**
@@ -115,17 +125,48 @@ class ProgressController extends Controller
     }
     
     /**
-     * TODO: Future implementation to calculate typical active time
-     * Would require tracking login/activity times in a new table
+     * Get most active hour from login history (in UTC)
      *
      * @param User $user
-     * @return string
+     * @return int|null
      */
-    private function calculateTypicalActiveTime($user)
+    private function getMostActiveHour($user)
     {
-        // This would analyze user login/activity patterns
-        // and return the most common active time period
-        // For now, return a placeholder
-        return '21:00 - 22:00';
+        // Get login data from the last 30 days
+        $loginData = DB::table('user_logins')
+            ->where('user_id', $user->id)
+            ->where('created_at', '>=', Carbon::now('UTC')->subDays(30))
+            ->select('hour_of_day', DB::raw('count(*) as login_count'))
+            ->groupBy('hour_of_day')
+            ->orderBy('login_count', 'desc')
+            ->first();
+            
+        return $loginData ? $loginData->hour_of_day : null;
+    }
+    
+    /**
+     * Get login hour distribution for all user logins
+     *
+     * @param User $user
+     * @return array
+     */
+    private function getLoginHourDistribution($user)
+    {
+        $distribution = DB::table('user_logins')
+            ->where('user_id', $user->id)
+            ->where('created_at', '>=', Carbon::now('UTC')->subDays(30))
+            ->select('hour_of_day', DB::raw('count(*) as login_count'))
+            ->groupBy('hour_of_day')
+            ->orderBy('hour_of_day')
+            ->pluck('login_count', 'hour_of_day')
+            ->toArray();
+            
+        // Fill in missing hours with zero
+        $result = [];
+        for ($i = 0; $i < 24; $i++) {
+            $result[$i] = $distribution[$i] ?? 0;
+        }
+        
+        return $result;
     }
 }

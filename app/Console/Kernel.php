@@ -24,6 +24,8 @@ class Kernel extends ConsoleKernel
             ->sundays()
             ->at('01:00')
             ->appendOutputTo(storage_path('logs/scheduler.log'));
+
+        $schedule->command('app:purge-old-login-records')->daily();
     }
 
     /**

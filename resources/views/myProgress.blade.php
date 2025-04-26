@@ -134,9 +134,20 @@ p {
 
 /* Responsive design */
 @media (max-width: 900px) {
+    .stat-title {
+        font-size: 24px;
+    }
+    .item-title {
+        font-size: 20px;
+    }
+    .stat-card-container {
+        gap: 15px;
+    }
     .stat-card {
         flex: 1 0 40%;
         min-width: 100px;
+        margin-bottom: 5px;
+        padding: 15px;
     }
     .stat-card-header {
         font-size: 10px;
@@ -147,15 +158,38 @@ p {
     .stat-card-header i {
         font-size: 16px;
     }
+    .account-container {
+        gap: 15px;
+    }
     .account-info-card i {
         font-size: 18px;
+    }
+    .account-info-card-header {
+        font-size: 10px;
+    }
+    .account-info-card-body {
+        font-size: 14px;
     }
 }
 
 @media (max-width: 600px) {
+    .item-container {
+        margin: 10px 0px;
+    }
+    .stat-card-container {
+        gap: 10px;
+    }
+    .item-title {
+        font-size: 18px;
+    }
+    .stat-title {
+        font-size: 20px;
+    }
     .stat-card {
         flex: 1 0 40%;
         min-width: 80px;
+        margin-bottom: 0px;
+        padding: 10px;
     }
     .stat-card-header {
         font-size: 8px;
@@ -166,8 +200,17 @@ p {
     .stat-card-header i {
         font-size: 12px;
     }
+    .account-container {
+        gap: 10px;
+    }
     .account-info-card i {
         font-size: 16px;
+    }
+    .account-info-card-header {
+        font-size: 8px;
+    }
+    .account-info-card-body {
+        font-size: 12px;
     }
 }
 </style>
@@ -247,7 +290,7 @@ p {
 
 
 <div class="item-container" style="margin: 20px 0px; border-radius: 8px;">
-<h2>Account & Activity</h2>
+<h2 class="item-title">Account & Activity</h2>
     <div class="account-container">
         <div class="account-info-card">
             <i class='bx bx-calendar' ></i>
@@ -278,7 +321,7 @@ p {
                     <h3>Typical Active Time</h3>
                 </div>
                 <div class="account-info-card-body">
-                    <h2>21:00 - 22:00</h2>
+                    <h2 id="active-time">Loading...</h2>
                 </div>
             </div>
         </div>
@@ -286,7 +329,7 @@ p {
 </div>
 
     <div class="item-container" style="margin: 20px 0px; border-radius: 8px;">
-        <h2 style="margin-bottom: 10px;">Top Genres</h2>
+        <h2 class="item-title" style="margin-bottom: 10px;">Top Genres</h2>
         @if(count($topGenres) > 0)
             <div class="genre-container">
                 @foreach($topGenres as $genre)
@@ -311,6 +354,32 @@ p {
     </div>
     
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Convert UTC hour to local time
+    const utcHour = {{ $typicalActiveTimeUTC ?? 'null' }};
+    
+    if (utcHour === null) {
+        document.getElementById('active-time').textContent = 'Not enough data';
+    } else {
+        // Convert UTC hour to local hour
+        const date = new Date();
+        date.setUTCHours(utcHour, 0, 0, 0);
+        
+        // Get local hour and format it
+        const localHour = date.getHours();
+        const nextHour = (localHour + 1) % 24;
+        
+        // Format as HH:00 - HH:00
+        const formattedHour = String(localHour).padStart(2, '0');
+        const formattedNextHour = String(nextHour).padStart(2, '0');
+        
+        document.getElementById('active-time').textContent = 
+            `${formattedHour}:00 - ${formattedNextHour}:00`;
+    }
+});
+</script>
 
 </body>
 </html>

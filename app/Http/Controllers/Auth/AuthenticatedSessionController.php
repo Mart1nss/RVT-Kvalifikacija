@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\UserLogin;
 use App\Providers\RouteServiceProvider;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,6 +32,14 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         $user = auth()->user();
+        
+        // Record login time in UTC
+        $now = Carbon::now('UTC');
+        UserLogin::create([
+            'user_id' => $user->id,
+            'hour_of_day' => $now->hour,
+        ]);
+        
         if ($user->userPreferences()->count() === 0) {
             return redirect()->route('preferences.show');
         }
