@@ -12,6 +12,7 @@ use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\PreferenceController;
 use App\Http\Controllers\ReadLaterController;
+use App\Http\Controllers\ReadBookController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -166,6 +167,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/forums/{forum}', function (App\Models\Forum $forum) {
         return view('forums.view', ['forum' => $forum]);
     })->name('forums.view');
+});
+
+// Read Book Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/read-books/{productId}', [ReadBookController::class, 'status'])->name('read-books.status');
+    Route::post('/read-books/{productId}', [ReadBookController::class, 'toggle'])->name('read-books.toggle');
 });
 
 require __DIR__ . '/auth.php';

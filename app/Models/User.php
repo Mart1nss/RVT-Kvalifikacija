@@ -15,6 +15,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Models\ReadBook;
 
 class User extends Authenticatable
 {
@@ -159,5 +160,26 @@ class User extends Authenticatable
     public function logins()
     {
         return $this->hasMany(UserLogin::class);
+    }
+
+    /**
+     * Get all read books for the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function readBooks()
+    {
+        return $this->hasMany(ReadBook::class);
+    }
+    
+    /**
+     * Check if the user has read a specific book.
+     *
+     * @param int $productId
+     * @return bool
+     */
+    public function hasRead($productId)
+    {
+        return $this->readBooks()->where('product_id', $productId)->exists();
     }
 }
