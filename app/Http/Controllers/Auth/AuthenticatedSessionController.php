@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\UserLogin;
 use App\Providers\RouteServiceProvider;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,6 +32,17 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         $user = auth()->user();
+        
+        // Record login time in UTC
+        $now = Carbon::now('UTC');
+        UserLogin::create([
+            'user_id' => $user->id,
+            'hour_of_day' => $now->hour,
+        ]);
+        
+        // Keep only the latest 20 login records
+        $this->trimLoginRecords($user->id);
+        
         if ($user->userPreferences()->count() === 0) {
             return redirect()->route('preferences.show');
         }
@@ -49,5 +62,25 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/');
+    }
+    
+    /**
+     * Keep only the latest 20 login records for a user
+     *
+     * @param int $userId
+     * @return void
+     */
+    private function trimLoginRecords($userId)
+    {
+        // Get login IDs to keep (the latest 20)
+        $loginIdsToKeep = UserLogin::where('user_id', $userId)
+            ->orderBy('created_at', 'desc')
+            ->limit(20)
+            ->pluck('id');
+            
+        // Delete all older login records
+        UserLogin::where('user_id', $userId)
+            ->whereNotIn('id', $loginIdsToKeep)
+            ->delete();
     }
 }

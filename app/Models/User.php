@@ -150,4 +150,14 @@ class User extends Authenticatable
     {
         return $this->belongsTo(User::class, 'banned_by');
     }
+
+    /**
+     * Get all login records for the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function logins()
+    {
+        return $this->hasMany(UserLogin::class);
+    }
 }

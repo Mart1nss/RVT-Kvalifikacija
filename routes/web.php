@@ -36,9 +36,7 @@ Route::get('/testpage', function () {
     return view('testpage');
 });
 
-Route::get('/myprogress', function () {
-    return view('myprogress');
-});
+Route::get('/myprogress', [App\Http\Controllers\ProgressController::class, 'index'])->middleware('auth')->name('myprogress');
 
 Route::get('/', [HomeController::class, 'carousel']);
 
