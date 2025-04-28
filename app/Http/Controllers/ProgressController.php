@@ -74,11 +74,21 @@ class ProgressController extends Controller
         $now = Carbon::now();
         $years = $now->diffInYears($createdAt);
         $months = $now->diffInMonths($createdAt) % 12;
+        $days = $now->diffInDays($createdAt) % 30;
         
+        // More than a year old - show in years
         if ($years > 0) {
             return $years . ' ' . ($years == 1 ? 'year' : 'years');
-        } else {
+        }
+        // More than a month old - show in months
+        else if ($months > 0) {
             return $months . ' ' . ($months == 1 ? 'month' : 'months');
+        }
+        // Less than a month - show in days
+        else {
+            // Ensure we show at least 1 day
+            $days = max(1, $days);
+            return $days . ' ' . ($days == 1 ? 'day' : 'days');
         }
     }
     
@@ -132,10 +142,9 @@ class ProgressController extends Controller
      */
     private function getMostActiveHour($user)
     {
-        // Get login data from the last 30 days
+        // Get login data from all available records
         $loginData = DB::table('user_logins')
             ->where('user_id', $user->id)
-            ->where('created_at', '>=', Carbon::now('UTC')->subDays(30))
             ->select('hour_of_day', DB::raw('count(*) as login_count'))
             ->groupBy('hour_of_day')
             ->orderBy('login_count', 'desc')
@@ -154,7 +163,6 @@ class ProgressController extends Controller
     {
         $distribution = DB::table('user_logins')
             ->where('user_id', $user->id)
-            ->where('created_at', '>=', Carbon::now('UTC')->subDays(30))
             ->select('hour_of_day', DB::raw('count(*) as login_count'))
             ->groupBy('hour_of_day')
             ->orderBy('hour_of_day')

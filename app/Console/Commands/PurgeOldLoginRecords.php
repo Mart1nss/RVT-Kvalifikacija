@@ -3,8 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Models\UserLogin;
-use Carbon\Carbon;
+use App\Models\User;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class PurgeOldLoginRecords extends Command
 {
@@ -20,18 +21,36 @@ class PurgeOldLoginRecords extends Command
      *
      * @var string
      */
-    protected $description = 'Delete user login records older than 30 days';
+    protected $description = 'Keep only the latest 20 login records per user';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        $cutoffDate = Carbon::now('UTC')->subDays(30);
+        $deletedCount = 0;
         
-        $count = UserLogin::where('created_at', '<', $cutoffDate)->delete();
+        // Get all users with login records
+        $userIds = UserLogin::select('user_id')
+            ->distinct()
+            ->pluck('user_id');
+            
+        foreach ($userIds as $userId) {
+            // Get login IDs to delete (all except the latest 20)
+            $loginIdsToKeep = UserLogin::where('user_id', $userId)
+                ->orderBy('created_at', 'desc')
+                ->limit(20)
+                ->pluck('id');
+                
+            // Delete all login records except the latest 20
+            $deleted = UserLogin::where('user_id', $userId)
+                ->whereNotIn('id', $loginIdsToKeep)
+                ->delete();
+                
+            $deletedCount += $deleted;
+        }
         
-        $this->info("Successfully deleted {$count} old login records.");
+        $this->info("Successfully deleted {$deletedCount} old login records, keeping the latest 20 per user.");
         
         return Command::SUCCESS;
     }
