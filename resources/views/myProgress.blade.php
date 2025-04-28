@@ -115,6 +115,13 @@
     color: black;
     padding: 10px;
     font-size: 12px;
+    min-width: 100px;
+    text-align: center;
+}
+
+.genre-card h3 {
+    margin: 0;
+    font-weight: 600;
 }
 
 p {
@@ -335,6 +342,7 @@ p {
                 @foreach($topGenres as $genre)
                     <div class="genre-card">
                         <h3>#{{ $genre['position'] }} {{ $genre['name'] }}</h3>
+                        <p style="color: #555; margin-top: 5px; font-size: 11px;">{{ $genre['count'] }} {{ Str::plural('book', $genre['count']) }} read</p>
                     </div>
                 @endforeach
             </div>

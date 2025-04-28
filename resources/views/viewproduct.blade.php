@@ -28,6 +28,9 @@
         <button id="bookmark-btn" data-product-id="{{ $data->id }}">
           <i class='bx bx-bookmark-alt'></i> <!-- Default icon -->
         </button>
+        <button id="read-btn" data-product-id="{{ $data->id }}">
+          <i class='bx bx-check-circle'></i> <!-- Default icon -->
+        </button>
       </div>
 
       <div class="container">
@@ -137,7 +140,6 @@
 
     /**
      * Fetches the current bookmark status from the server for this book.
-     * Updates the isBookmarked and bookmarkedPage variables.
      */
     async function fetchBookmark() {
         const response = await fetch(`/bookmarks/${productId}`, {
@@ -157,20 +159,14 @@
                 bookmarkedPage = null;
             }
         } else {
-            // Failed to fetch status (server error, network issue, etc.)
-            console.error('Failed to fetch bookmark status:', response.status, response.statusText);
             isBookmarked = false;
             bookmarkedPage = null;
-            // Optionally show an alert to the user
-            // window.showAlert('Could not load bookmark status.', 'error');
         }
-        // Update the button appearance after checking
         updateBookmarkButton();
     }
 
     /**
      * This function is called by pdfViewer.js *after* the PDF is loaded and ready.
-     * It fetches the bookmark and navigates to it if found.
      */
     async function handlePdfLoad() {
       await fetchBookmark(); // Check server for existing bookmark
@@ -178,7 +174,6 @@
       // If a bookmark exists, navigate the PDF viewer to that page
       if (isBookmarked && bookmarkedPage && window.goToPage) {
         window.goToPage(bookmarkedPage);
-      } else {
       }
       updateBookmarkButton();
     }
@@ -190,8 +185,12 @@
 
       // If we couldn't get the page number, show error and stop
       if (!currentPage) {
-        console.error("Could not get current page number for bookmarking.");
-        window.showAlert('Could not determine current page number.', 'error');
+        window.dispatchEvent(new CustomEvent('show-alert', {
+          detail: { 
+            message: 'Could not determine current page number.', 
+            type: 'error' 
+          }
+        }));
         return;
       }
 
@@ -199,52 +198,132 @@
       const url = isBookmarked ? `/bookmarks/${productId}` : '/bookmarks';
       const method = isBookmarked ? 'DELETE' : 'POST';
 
-      try {
-        const response = await fetch(url, {
-          method: method,
-          headers: {
-            'X-CSRF-TOKEN': csrfToken,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          // Only send body for POST request (when creating/updating bookmark)
-          body: method === 'POST' ? JSON.stringify({
-            product_id: productId,
-            page_number: currentPage
-          }) : null
-        });
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          'X-CSRF-TOKEN': csrfToken,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        // Only send body for POST request (when creating/updating bookmark)
+        body: method === 'POST' ? JSON.stringify({
+          product_id: productId,
+          page_number: currentPage
+        }) : null
+      });
 
-        // Check if the request was successful
-        if (!response.ok) {
-          // Try to get error message from server response, or use a default
-          let errorMsg = 'Failed to update bookmark.';
-          try {
-            const errorData = await response.json();
-            errorMsg = errorData.message || errorMsg;
-          } catch (e) { /* Ignore if response is not JSON */ }
-          throw new Error(errorMsg); // Throw error to be caught below
-        }
-
-        // Request was successful, parse the JSON response
+      if (response.ok) {
         const data = await response.json();
 
-        // Double-check the success flag from our API response
         if (data.success) {
           isBookmarked = !isBookmarked; // Toggle the bookmarked state
           bookmarkedPage = isBookmarked ? currentPage : null; // Update stored bookmarked page
           updateBookmarkButton();       // Update the button appearance
-          window.showAlert(data.message, 'success'); // Show success message
+          
+          window.dispatchEvent(new CustomEvent('show-alert', {
+            detail: { 
+              message: data.message, 
+              type: 'success' 
+            }
+          }));
         } else {
-          // API reported failure even with OK status (should ideally not happen)
-          throw new Error(data.message || 'An unknown error occurred.');
+          window.dispatchEvent(new CustomEvent('show-alert', {
+            detail: { 
+              message: data.message || 'An unknown error occurred.', 
+              type: 'error' 
+            }
+          }));
         }
-
-      } catch (error) {
-        console.error('Error saving/removing bookmark:', error);
-        window.showAlert(error.message || 'An error occurred while managing bookmark.', 'error');
+      } else {
+        window.dispatchEvent(new CustomEvent('show-alert', {
+          detail: { 
+            message: 'Failed to update bookmark.', 
+            type: 'error' 
+          }
+        }));
       }
     });
+  </script>
 
+  <!-- READ BOOK SCRIPT -->
+  <script>
+    let isRead = false;
+    
+    const readBtn = document.getElementById('read-btn');
+    const readIcon = readBtn.querySelector('i');
+    const readBookProductId = readBtn.dataset.productId;
+    const readBookCsrfToken = '{{ csrf_token() }}';
+
+    /**
+     * Updates the read button's icon and title based on the isRead state.
+     */
+    function updateReadButton() {
+      if (isRead) {
+        readIcon.classList.remove('bx-check-circle');
+        readIcon.classList.add('bxs-check-circle');
+        readBtn.title = 'Mark as unread';
+      } else {
+        readIcon.classList.remove('bxs-check-circle');
+        readIcon.classList.add('bx-check-circle');
+        readBtn.title = 'Mark as read';
+      }
+    }
+
+    /**
+     * Fetches the current read status from the server for this book.
+     */
+    async function fetchReadStatus() {
+      const response = await fetch(`/read-books/${readBookProductId}`, {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        isRead = data.is_read;
+      } else {
+        isRead = false;
+      }
+      
+      updateReadButton();
+    }
+
+    // Fetch read status when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      fetchReadStatus();
+    });
+
+    // Add a click listener to the read button
+    readBtn.addEventListener('click', async () => {
+      const response = await fetch(`/read-books/${readBookProductId}`, {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': readBookCsrfToken,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        isRead = data.is_read;
+        updateReadButton();
+        
+        window.dispatchEvent(new CustomEvent('show-alert', {
+          detail: { 
+            message: data.message, 
+            type: 'success' 
+          }
+        }));
+      } else {
+        window.dispatchEvent(new CustomEvent('show-alert', {
+          detail: { 
+            message: 'Failed to update read status', 
+            type: 'error' 
+          }
+        }));
+      }
+    });
   </script>
 
   <!-- NOTE SCRIPT   -->
@@ -279,7 +358,10 @@
           }
           updateCharCount();
         })
-        .catch(error => console.error('Error loading note:', error));
+        .catch(() => {
+          noteArea.value = '';
+          updateCharCount();
+        });
 
       // Handle input changes
       noteArea.addEventListener('input', function() {
@@ -313,11 +395,9 @@
             return response.json();
           })
           .then(data => {
-            console.log(data.message);
+            // Silently saved - no need to notify for autosave
           })
-          .catch(error => {
-            console.error('Error saving note:', error);
-            // Show error aler
+          .catch(() => {
             window.dispatchEvent(new CustomEvent('show-alert', {
               detail: {
                 message: 'Error saving note. Please try again.',
@@ -346,6 +426,26 @@
     .near-limit {
       color: #ff6b6b;
       font-weight: bold;
+    }
+    
+    /* Style for the "Mark as Read" button */
+    #read-btn {
+      background-color: transparent;
+      border: none;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.3s, color 0.3s;
+      font-size: 18px;
+      padding: 5px 10px;
+    }
+    
+    #read-btn:hover {
+      transform: scale(1.2);
+      color: #4caf50;
+    }
+    
+    #read-btn .bxs-check-circle {
+      color: #4caf50;
     }
   </style>
 

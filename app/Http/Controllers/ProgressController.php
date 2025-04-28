@@ -18,7 +18,6 @@ class ProgressController extends Controller
      */
     public function index()
     {
-        // Get authenticated user with all needed relationships
         $user = Auth::user();
         
         if (!$user) {
@@ -27,12 +26,12 @@ class ProgressController extends Controller
         
         // Load relationships needed for stats if not already loaded
         if (!$user->relationLoaded('reviews')) {
-            $user->load(['reviews', 'favorites', 'notes', 'forums', 'forumReplies', 'tickets']);
+            $user->load(['reviews', 'favorites', 'notes', 'forums', 'forumReplies', 'tickets', 'readBooks']);
         }
         
         // Basic stats
         $stats = [
-            'books_read' => $user->reviews->count(), // Assuming reviews indicate books read
+            'books_read' => $user->readBooks->count(), // Now using actual read books count
             'favorites' => $user->favorites->count(),
             'notes' => $user->notes->count(),
             'reviews' => $user->reviews->count(),
@@ -76,42 +75,55 @@ class ProgressController extends Controller
         $months = $now->diffInMonths($createdAt) % 12;
         $days = $now->diffInDays($createdAt) % 30;
         
-        // More than a year old - show in years
         if ($years > 0) {
             return $years . ' ' . ($years == 1 ? 'year' : 'years');
         }
-        // More than a month old - show in months
         else if ($months > 0) {
             return $months . ' ' . ($months == 1 ? 'month' : 'months');
         }
-        // Less than a month - show in days
         else {
-            // Ensure we show at least 1 day
             $days = max(1, $days);
             return $days . ' ' . ($days == 1 ? 'day' : 'days');
         }
     }
     
     /**
-     * Get top 3 genres based on user's read books
+     * Get top 3 genres based on user's read books and reviews
      *
      * @param User $user
      * @return array
      */
     private function getTopGenres($user)
     {
-        // Load user's reviews with book and category information
-        $user->load('reviews.product.category');
+        // Load user's read books and reviews with product and category information
+        $user->load('readBooks.product.category', 'reviews.product.category');
         
-        // Count genres from read books
+        // Count genres from read books and reviews
         $genreCounts = [];
+        
+        // Process read books
+        foreach ($user->readBooks as $readBook) {
+            if ($readBook->product && $readBook->product->category) {
+                $categoryName = $readBook->product->category->name;
+                if (!isset($genreCounts[$categoryName])) {
+                    $genreCounts[$categoryName] = 0;
+                }
+                $genreCounts[$categoryName]++;
+            }
+        }
+        
+        // Also include reviews for books that haven't been explicitly marked as read
         foreach ($user->reviews as $review) {
             if ($review->product && $review->product->category) {
                 $categoryName = $review->product->category->name;
                 if (!isset($genreCounts[$categoryName])) {
                     $genreCounts[$categoryName] = 0;
                 }
-                $genreCounts[$categoryName]++;
+                // We give less weight to reviews if the book isn't explicitly marked as read
+                // to avoid double-counting books that have both read status and reviews
+                if (!$user->hasRead($review->product_id)) {
+                    $genreCounts[$categoryName] += 0.5;
+                }
             }
         }
         
@@ -126,7 +138,7 @@ class ProgressController extends Controller
             $topGenres[] = [
                 'position' => $position,
                 'name' => $genre,
-                'count' => $count
+                'count' => round($count, 1) // Round to 1 decimal place
             ];
             $position++;
         }

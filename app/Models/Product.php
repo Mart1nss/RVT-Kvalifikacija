@@ -7,6 +7,7 @@ use App\Models\Favorite;
 use App\Models\Review;
 use App\Models\ReadLater;
 use App\Models\Note;
+use App\Models\ReadBook;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -64,5 +65,25 @@ class Product extends Model
     public function notes()
     {
         return $this->hasMany(Note::class);
+    }
+
+    public function readBooks()
+    {
+        return $this->hasMany(ReadBook::class);
+    }
+    
+    /**
+     * Check if this book has been read by a specific user.
+     *
+     * @param User|null $user
+     * @return bool
+     */
+    public function isReadBy($user = null)
+    {
+        if (!$user) {
+            return false;
+        }
+        
+        return $this->readBooks()->where('user_id', $user->id)->exists();
     }
 }
