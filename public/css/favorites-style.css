@@ -6,11 +6,11 @@
     display: flex;
     gap: 0;
     padding: 0 16px;
-    background-color: #202020;
+    background-color: #191919;
 }
 
 .tab-btn {
-    background-color: #202020;
+    background-color: #191919;
     border: none;
     color: white;
     font-size: 16px;
@@ -64,8 +64,7 @@
     font-family: sans-serif;
     font-size: 14px;
     font-weight: 800;
-    text-transform: uppercase;
-    color: white;
+    color: #999;
 }
 
 @media (max-width: 768px) {

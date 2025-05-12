@@ -5,7 +5,7 @@
 
   <div class="item-container" style="border-radius: 8px;">
 
-    <div class="search-filter-container" style="justify-content: flex-end;">
+    <div class="search-filter-container">
 
       <!-- Action Type Filter -->
       <div class="sort-dropdown">
@@ -123,11 +123,3 @@
     </div>
   </div>
 </div>
-
-@push('scripts')
-  <script>
-    document.addEventListener('livewire:initialized', function() {
-      console.log('Audit Logs Component Initialized');
-    });
-  </script>
-@endpush

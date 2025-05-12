@@ -101,7 +101,7 @@
     }
 
     .item-container {
-      background-color: #202020;
+      background-color: #191919;
       border-radius: 8px;
       border-top-left-radius: 0px;
       border-top-right-radius: 0px;
@@ -149,7 +149,7 @@
     }
 
     .custom-table td {
-      background-color: #2d2d2d;
+      background-color: #252525;
       color: white;
       padding: 12px 16px;
       font-family: sans-serif;
@@ -191,14 +191,13 @@
     .tabs {
       display: flex;
       gap: 0;
-
-      background-color: #202020;
+      background-color:#191919;
       margin-bottom: 16px;
     }
 
     .tab-item {
       padding: 12px 24px;
-      background-color: #202020;
+      background-color:#191919;
       color: white;
       text-decoration: none;
       font-family: sans-serif;

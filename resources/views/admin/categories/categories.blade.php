@@ -89,11 +89,12 @@
 @livewireStyles
 
 <div class="main-container">
-  <div class="category-container">
-    <h1
+<h1
       style="margin-bottom: 20px; font-family: sans-serif; font-weight: 800; text-transform: uppercase; font-size: 32px;">
       Manage Categories
     </h1>
+  <div class="category-container">
+    
 
     @livewire('category-management')
   </div>

@@ -23,7 +23,7 @@
 }
 
 .edit-book-modal-content {
-    background-color: #202020;
+    background-color: #191919;
     padding: 16px;
     border-radius: 8px;
     width: 90%;
@@ -70,7 +70,7 @@
     margin-bottom: 15px;
     border-radius: 8px;
     border: none;
-    background-color: rgb(13, 13, 13);
+    background-color: #252525;
     color: white;
     font-size: 14px;
 }
@@ -102,7 +102,7 @@
 
 .edit-book-btn-secondary {
     border: none;
-    background-color: #202020;
+    background-color: #191919;
     color: white;
     padding: 10px 20px;
     height: 40px;
@@ -146,7 +146,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #202020;
+    background-color: #191919;
     transition: 0.4s;
 }
 

@@ -49,7 +49,6 @@
             <option value="">Select Category</option>
             <option value="Technical Issue">Technical Issue</option>
             <option value="Account">Account</option>
-            <option value="Billing">Billing</option>
             <option value="Feature Request">Feature Request</option>
             <option value="Other">Other</option>
           </select>
@@ -115,7 +114,7 @@
     }
 
     .form-container {
-      background-color: #202020;
+      background-color: #191919;
       padding: 2rem;
       border-radius: 8px;
     }
@@ -154,7 +153,7 @@
       width: 100%;
       padding: 0.75rem;
       padding-right: 80px;
-      background-color: rgb(13, 13, 13);
+      background-color: #252525;
       border: none;
       border-radius: 8px;
       color: white;
@@ -174,7 +173,7 @@
     }
 
     .form-group select option {
-      background-color: rgb(13, 13, 13);
+      background-color: #252525;
       color: white;
     }
 

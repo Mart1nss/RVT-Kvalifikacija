@@ -32,7 +32,7 @@
 
 /* Modal Content */
 .mobile-modal .modal-content {
-    background: rgb(13, 13, 13);
+    background: #191919;
     border-radius: 12px;
     padding: 20px;
     position: fixed;

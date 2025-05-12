@@ -28,7 +28,7 @@ body {
 }
 
 .text-container {
-    background-color: #202020;
+    background-color: #191919;
     color: white;
     text-align: left;
     margin-top: 10px;
@@ -70,7 +70,7 @@ body {
     border: none;
     height: 40px;
     color: white;
-    background-color: #353535;
+    background-color: #252525;
     min-width: 160px;
     cursor: pointer;
 }

@@ -18,7 +18,7 @@
     padding: 12px 15px;
     border: none;
     border-radius: 8px;
-    background-color: rgb(13, 13, 13);
+    background-color: #252525;
     color: white;
     font-size: 14px;
     height: 40px;
@@ -46,7 +46,7 @@
     padding: 8px 16px;
     border: none;
     border-radius: 8px;
-    background-color: rgb(13, 13, 13);
+    background-color: #252525;
     color: white;
     font-size: 12px;
     font-weight: 800;
@@ -96,7 +96,7 @@
 .filter-info-row .filter-tag {
     padding: 6px 12px;
     border-radius: 4px;
-    background-color: #2a2a2a;
+    background-color: #252525;
     font-size: 12px;
     display: inline-flex;
     align-items: center;
@@ -113,7 +113,7 @@
     height: 40px;
     border: none;
     border-radius: 8px;
-    background-color: rgb(13, 13, 13);
+    background-color: #252525;
     color: white;
     cursor: pointer;
     transition: background-color 0.2s;
@@ -248,14 +248,14 @@
     margin: 0 10px;
     margin-right: 30px;
     overflow-x: auto;
-    scrollbar-width: none; /* For Firefox */
-    -ms-overflow-style: none; /* For IE and Edge */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
     mask-image: linear-gradient(to right, black 85%, transparent 100%);
     -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
 }
 
 .accordion-tags::-webkit-scrollbar {
-    display: none; /* For Chrome, Safari, and Opera */
+    display: none;
 }
 
 .accordion-tag {

@@ -30,7 +30,7 @@
 }
 
 .stat-card {
-    background-color: #353535;
+    background-color: #252525;
     border-radius: 8px;
     padding: 20px;
     margin-bottom: 10px;
@@ -63,7 +63,7 @@
 
 
 .account-container {
-    background-color: #202020;
+    background-color: #191919;
     border-radius: 8px;
     margin: 10px 0px;
     display: flex;
@@ -74,7 +74,7 @@
 }
 
 .account-info-card {
-    background-color: #353535;
+    background-color: #252525;
     border-radius: 8px;
     flex: 1 0 20%;
     min-width: 200px;

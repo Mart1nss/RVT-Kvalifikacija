@@ -39,7 +39,7 @@
 }
 
 .user-btn {
-    background-color: #202020;
+    background-color: #191919;
     color: white;
     border: none;
     padding: 10px;
@@ -87,7 +87,7 @@
     margin-right: 0px;
     margin-top: 10px;
     top: 50px;
-    background-color: #202020;
+    background-color: #191919;
     border-radius: 10px;
     width: 400px;
     padding: 15px;
@@ -116,7 +116,7 @@
 }
 
 .menu-item {
-    background-color: #353535;
+    background-color: #252525;
     border-radius: 8px;
     padding: 15px;
     height: 85px;
@@ -129,12 +129,12 @@
 }
 
 .menu-item:hover {
-    background-color: #424242;
+    background-color: #353535;
 }
 
 .menu-item.active,
 .menu-section.active {
-    background-color: #424242;
+    background-color: #353535;
 }
 
 .menu-item i {
@@ -153,7 +153,7 @@
 .menu-section {
     padding: 8px;
     margin: 5px 0;
-    background-color: #363636;
+    background-color: #252525;
     border-radius: 8px;
     height: 48px;
     cursor: pointer;
@@ -161,7 +161,7 @@
 }
 
 .menu-section:hover {
-    background-color: #404040;
+    background-color: #353535;
 }
 
 .section-header {
@@ -179,7 +179,7 @@
     gap: 10px;
     margin-top: 15px;
     padding-top: 15px;
-    border-top: 1px solid #363636;
+    border-top: 1px solid #252525;
 }
 
 .support-btn {
@@ -267,7 +267,7 @@
 }
 
 .notification-icon {
-    background-color: #202020;
+    background-color: #191919;
     height: 36px;
     width: 36px;
     border-radius: 20px;
@@ -307,7 +307,7 @@
     right: 0;
     width: 400px;
     max-height: 500px;
-    background-color: #202020;
+    background-color: #191919;
     border-radius: 8px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     z-index: 1000;
@@ -321,7 +321,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px;
-    background-color: #202020;
+    background-color: #191919;
 }
 
 .notification-header h3 {
@@ -435,7 +435,7 @@
 .spinner {
     width: 40px;
     height: 40px;
-    border: 3px solid #202020;
+    border: 3px solid #191919;
     border-top: 3px solid white;
     border-radius: 50%;
     animation: spin 1s linear infinite;
@@ -445,7 +445,7 @@
 .spinner-small {
     width: 20px;
     height: 20px;
-    border: 2px solid #202020;
+    border: 2px solid #191919;
     border-top: 2px solid white;
     border-radius: 50%;
     animation: spin 1s linear infinite;
@@ -492,7 +492,7 @@
     position: sticky;
     bottom: 0;
     color: #fff;
-    background-color: #202020;
+    background-color: #191919;
     padding: 10px;
     border-top: 1px solid #444;
     border-bottom-left-radius: 8px;

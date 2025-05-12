@@ -21,12 +21,12 @@
 }
 
 .btn-secondary {
-    background-color: #202020;
+    background-color: #191919;
     color: white;
 }
 
 .btn-filter {
-    background-color: #353535;
+    background-color: #252525;
     color: white;
     display: flex;
     align-items: center;

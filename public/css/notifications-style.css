@@ -1,5 +1,5 @@
 .item-container {
-    background-color: #202020;
+    background-color: #191919;
     padding: 16px;
     width: 100%;
 }
@@ -36,7 +36,7 @@
     border-radius: 8px;
     font-size: 14px;
     outline: transparent;
-    background-color: rgb(13, 13, 13);
+    background-color: #252525;
     color: white;
     font-family: sans-serif;
     align-items: center;
@@ -87,12 +87,12 @@
     gap: 16px;
     padding: 16px;
     margin-top: 16px;
-    background-color: #202020;
+    background-color: #191919;
 }
 
 .notification-card {
     display: flex;
-    background-color: rgb(13, 13, 13);
+    background-color: #252525;
     border-radius: 8px;
     border: none;
     padding: 16px;
@@ -116,16 +116,20 @@
 }
 
 .delete-btn {
-    background: #202020;
+    background-color: #202020;
     border: none;
     border-radius: 8px;
     height: 40px;
     width: 40px;
-    color: rgb(126, 6, 6);
     cursor: pointer;
     padding: 5px;
     font-size: 16px;
     transition: all 0.2s;
+}
+
+.delete-btn i {
+    font-size: 16px;
+    color: #dc2626;
 }
 
 .delete-btn:hover {
@@ -265,7 +269,7 @@ button:disabled {
     padding: 8px 16px;
     border: none;
     border-radius: 8px;
-    background-color: rgb(13, 13, 13);
+    background-color: #252525;
     color: white;
     font-size: 12px;
     font-weight: 800;

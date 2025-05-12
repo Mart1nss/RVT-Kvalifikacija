@@ -100,7 +100,7 @@
       min-width: 200px;
       max-height: 300px;
       overflow-y: auto;
-      background-color: rgb(13, 13, 13);
+      background-color: #252525;
       border: none;
       border-radius: 4px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);

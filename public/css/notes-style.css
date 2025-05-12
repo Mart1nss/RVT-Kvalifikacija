@@ -3,14 +3,14 @@
     flex-direction: column;
     gap: 16px;
     padding: 16px;
-    background-color: #202020;
+    background-color: #191919;
     border-radius: 8px;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 }
 
 .item-card {
-    background-color: rgb(13, 13, 13);
+    background-color: #252525;
     border-radius: 8px;
     overflow: hidden;
     transition: all 0.2s ease;
@@ -93,7 +93,7 @@
 }
 
 .note-content {
-    background-color: #1a1a1a;
+    background-color: #202020;
     transition: all 0.3s ease;
     width: 100%;
 }
@@ -184,7 +184,7 @@
     align-items: center;
     gap: 15px;
     padding: 16px;
-    background-color: #202020;
+    background-color: #191919;
 }
 
 .search-container {
@@ -196,7 +196,7 @@
     padding: 12px 15px;
     border: none;
     border-radius: 8px;
-    background-color: rgb(13, 13, 13);
+    background-color: #252525;
     color: white;
     font-size: 14px;
     height: 40px;
@@ -204,7 +204,6 @@
 
 .search-container input:focus {
     outline: 1px solid white;
-    background-color: #2a2a2a;
 }
 
 /* Sort Dropdown Styles */

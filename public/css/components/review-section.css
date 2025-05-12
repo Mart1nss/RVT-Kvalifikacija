@@ -1,6 +1,6 @@
 /* Reviews */
 .reviews-div {
-    background-color: #202020;
+    background-color: #191919;
     width: 100%;
     color: white;
     position: relative;
@@ -114,7 +114,7 @@
     border-radius: 8px;
     font-size: 14px;
     outline: transparent;
-    background-color: rgb(13, 13, 13);
+    background-color: #252525;
     color: white;
     font-family: sans-serif;
     min-height: 120px;
@@ -187,7 +187,7 @@
 }
 
 .no-reviews {
-    background-color: rgb(13, 13, 13);
+    background-color: #252525;
     padding: 40px 20px;
     border-radius: 8px;
     margin-top: 20px;
@@ -225,7 +225,7 @@
 
 /* Review Card Styles */
 .review-card {
-    background-color: rgb(13, 13, 13);
+    background-color: #252525;
     padding: 15px;
     border-radius: 8px;
     margin-top: 15px;
@@ -304,7 +304,7 @@
     position: absolute;
     top: 100%;
     right: 0;
-    background-color: rgb(13, 13, 13);
+    background-color: #252525;
     border: 1px solid #333;
     border-radius: 8px;
     min-width: 150px;
@@ -340,11 +340,11 @@
 
 .review-options-dropdown button i {
     font-size: 16px;
-    color: rgb(126, 6, 6);
+    color: #dc3545;
 }
 
 .button-delete {
-    background-color: rgb(126, 6, 6);
+    background-color: #dc3545;
     color: white;
     border: none;
     height: 40px;
@@ -396,8 +396,6 @@
 
 .delete-modal-content {
     background-color: #202020;
-    padding: 24px;
-    border-radius: 8px;
     width: 90%;
     max-width: 500px;
     color: white;
@@ -409,6 +407,8 @@
     font-weight: 800;
     margin-bottom: 16px;
     text-transform: uppercase;
+    border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
 }
 
 .delete-modal-body {
@@ -421,12 +421,14 @@
     display: flex;
     gap: 12px;
     justify-content: flex-end;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
 }
 
 .delete-modal-btn {
     padding: 8px 16px;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     font-family: sans-serif;
     font-weight: 800;
     font-size: 14px;
@@ -440,7 +442,9 @@
 }
 
 .delete-modal-btn.cancel {
-    background-color: #202020;
+    background-color: transparent;
+    border-radius: 8px;
+    border: 1px solid #333;
     color: white;
     height: 40px;
 }

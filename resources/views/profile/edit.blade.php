@@ -20,7 +20,7 @@
   }
 
   .item-card {
-    background-color: #202020;
+    background-color: #191919;
     color: white;
     padding: 20px;
     border-radius: 8px;
@@ -42,7 +42,7 @@
 
   .item-card-2 {
     width: 50%;
-    background-color: #202020;
+    background-color: #191919;
     color: white;
     padding: 20px;
     border-radius: 8px;
@@ -64,7 +64,7 @@
   input {
     width: 100%;
     height: 40px;
-    background-color: rgb(13, 13, 13);
+    background-color: #252525;
     border: none;
     border-radius: 8px;
     font-size: 16px;

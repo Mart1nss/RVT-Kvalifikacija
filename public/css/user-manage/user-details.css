@@ -8,7 +8,7 @@
 }
 
 .user-info-card, .user-activity-card {
-    background-color: #202020;
+    background-color: #191919;
     border-radius: 8px;
     color: white;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -96,13 +96,19 @@
 }
 
 .usertype-select {
-    padding: 8px 12px;
-    border-radius: 8px;
+    background-color: #252525;
+    color: white;
     border: none;
     height: 40px;
-    background-color: rgb(13, 13, 13);
-    font-size: 14px;
     width: 160px;
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.usertype-select:focus {
+    outline: 1px solid white;
 }
 
 .btn-unban {
@@ -166,7 +172,7 @@ button i {
 }
 
 .ban-confirmation-content {
-    background-color: #202020;
+    background-color: #191919;
     border-radius: 8px;
     width: 90%;
     max-width: 500px;
@@ -207,7 +213,7 @@ button i {
     padding: 10px;
     border-radius: 4px;
     border: none;
-    background-color: rgb(13, 13, 13);
+    background-color: #252525;
     color: white;
     resize: vertical;
     min-height: 80px;
@@ -218,25 +224,7 @@ button i {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
-    background-color: #202020;
-}
-
-.btn-secondary {
-    background-color: #6c757d;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    transition: background-color 0.2s;
-}
-
-.btn-secondary:hover {
-    background-color: #5a6268;
+    background-color: #191919;
 }
 
 /* Activity Stats */
@@ -248,7 +236,7 @@ button i {
 }
 
 .stat-item {
-    background-color: rgb(13, 13, 13);
+    background-color: #252525;
     border-radius: 6px;
     padding: 12px;
     text-align: center;

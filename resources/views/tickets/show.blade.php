@@ -160,7 +160,7 @@
     }
 
     .status-select {
-      background-color: #2d2d2d;
+      background-color: #191919;
       color: white;
       padding: 8px;
       border: 1px solid #3d3d3d;
@@ -189,7 +189,7 @@
     }
 
     .ticket-info {
-      background-color: #202020;
+      background-color: #191919;
       padding: 1.5rem;
       border-radius: 8px;
       margin-bottom: 2rem;
@@ -215,7 +215,7 @@
 
     .ticket-description {
       margin-bottom: 2rem;
-      background-color: #202020;
+      background-color: #191919;
       padding: 1.5rem;
       border-radius: 8px;
     }
@@ -227,7 +227,7 @@
     }
 
     .ticket-responses {
-      background-color: #202020;
+      background-color: #191919;
       padding: 1.5rem;
       border-radius: 8px;
       margin-bottom: 1rem;
@@ -242,8 +242,8 @@
     }
 
     .response {
-      background-color: #202020;
-      border: 1px solid #333;
+      background-color: #252525;
+      border: none;
       padding: 1.5rem;
       border-radius: 8px;
       margin: 6px 0px;
@@ -258,7 +258,7 @@
 
     textarea {
       width: 100%;
-      background-color: #202020;
+      background-color: #191919;
       border: 1px solid #3d3d3d;
       color: white;
       padding: 1rem;
@@ -305,7 +305,7 @@
     .response-form textarea {
       width: 100%;
       margin-top: 10px;
-      background-color: #202020;
+      background-color: #191919;
       color: white;
       padding: 1rem;
       border: none;
@@ -328,7 +328,7 @@
     }
 
     .waiting-message {
-      background-color: #202020;
+      background-color: #191919;
       padding: 1rem;
       border-radius: 8px;
       margin-top: 1rem;

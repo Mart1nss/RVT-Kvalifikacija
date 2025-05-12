@@ -1,14 +1,11 @@
 .container {
     position: relative;
     display: flex;
-    padding: 10px;
     max-width: 1350px;
     margin: 0 auto;
-    margin-bottom: 10px;
     gap: 20px;
     padding: 0 10px;
     @media (max-width: 769px) {
-        padding: 0 10px;
         flex-wrap: wrap;
         margin-bottom: 20px;
     }
@@ -71,7 +68,7 @@
 }
 
 .notes-div {
-    background-color: rgb(26, 25, 25);
+    background-color: #151515;
     width: 40%;
     margin-left: 20px;
     border: none;
@@ -85,8 +82,9 @@
 }
 
 .notes-name {
-    background-color: #202020;
+    background-color: #191919;
     height: 55px;
+    align-items: center;
     border-top-right-radius: 10px;
     border-top-left-radius: 10px;
     @media (max-width: 769px) {
@@ -97,7 +95,7 @@
 .notes-p {
     display: flex;
     padding-left: 20px;
-    padding-top: 15px;
+    align-items: center;
     color: white;
     font-family: sans-serif;
     font-weight: 800;
@@ -117,7 +115,7 @@
     height: 93%;
     width: 100%;
     border: none;
-    background-color: #181818;
+    background-color: #151515;
     resize: none;
     outline: none;
     @media (max-width: 769px) {
@@ -195,17 +193,21 @@
     gap: 10px;
 }
 
+.pdf-viewer-wrapper .container {
+    padding: 0;
+}
+
 #pdf-toolbar {
     display: flex;
     width: 100%;
     padding: 13px 5px;
-    background-color: #202020;
+    background-color: #191919;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     align-items: center;
     justify-content: center;
     gap: 15px;
     border-radius: 8px;
-    margin-bottom: -5px;
+    margin-bottom: -8px;
     position: relative;
 }
 
@@ -288,7 +290,7 @@
     width: 100%;
     margin-bottom: 20px;
     height: max-content;
-
+    margin-top: 10px;
     gap: 10px;
     align-items: center;
 }
@@ -324,7 +326,7 @@
     align-items: center;
     gap: 5px;
     border: none;
-    background-color: #202020;
+    background-color: #191919;
     color: white;
     border-radius: 8px;
     padding: 10px 15px;

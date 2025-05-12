@@ -141,7 +141,7 @@
                 <p>Are you sure you want to ban user <span class="text-alert">{{ $user->name }}</span>?</p>
                 <p>Banned users will not be able to log in to the website.</p>
                 <div class="ban-reason-input">
-                    <label for="banReason">Reason for ban (optional):</label>
+                    <label for="banReason">Reason for ban:</label>
                     <textarea id="banReason" wire:model="banReason" rows="3" placeholder="Enter reason for banning this user..."></textarea>
                 </div>
             </div>

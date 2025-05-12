@@ -9,7 +9,7 @@
     font-weight: 800;
     font-size: 12px;
     text-transform: uppercase;
-    background-color: #202020;
+    background-color: transparent;
     cursor: pointer;
     transition: all 0.2s;
   }
@@ -33,7 +33,7 @@
   }
 
   .modal-content {
-    background-color: #202020;
+    background-color: #191919;
     color: white;
     border-radius: 8px;
     width: 90%;
@@ -51,7 +51,7 @@
   }
 
   .modal-content p {
-    color: rgb(128, 128, 128);
+    color: #999;
     font-family: sans-serif;
     font-size: 16px;
     margin-bottom: 10px;
@@ -74,15 +74,15 @@
     font-family: sans-serif;
     font-weight: 800;
     font-size: 12px;
-    border: none;
+    border: 1px solid #333;
     text-transform: uppercase;
-    background-color: rgb(13, 13, 13);
+    background-color: transparent;
     cursor: pointer;
     transition: all 0.2s;
   }
 
   .cancel-btn:hover {
-    opacity: 0.5;
+    background-color: #252525;
   }
 
   .delete-confirm-btn {

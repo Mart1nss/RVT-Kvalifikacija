@@ -1,5 +1,5 @@
 .category-container {
-    background-color: #202020;
+    background-color: #191919;
     border-radius: 8px;
     padding: 16px;
     margin-top: 10px;
@@ -150,7 +150,7 @@ textarea {
     height: 40px;
     border-radius: 8px;
     border: none;
-    background-color: rgb(13, 13, 13);
+    background-color: #252525;
     color: white;
 }
 .category-edit input {
@@ -162,20 +162,20 @@ textarea {
     padding: 10px;
     border-radius: 8px;
     border: 1px solid #4a4a4a;
-    background-color: rgb(56, 56, 56);
+    background-color: #252525;
     color: white;
     font-size: 14px;
 }
 
 .search-input::placeholder {
-    color: #999;
+    color: white;
 }
 
 .no-results {
     color: #999;
     text-align: center;
     padding: 20px;
-    background-color: rgb(56, 56, 56);
+    background-color: #353535;
     border-radius: 8px;
     margin-top: 10px;
 }
@@ -191,26 +191,16 @@ textarea {
 .category-edit-form {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 15px;
+    flex-direction: row;
 }
 
-.category-edit-form .edit-input {
-    flex: 1;
-    width: 100%;
-    background-color: #202020;
-    border: none;
-    padding: 8px 12px;
-    height: 40px;
-    border-radius: 8px;
-    color: white;
-    font-size: 14px;
-}
-
-.edit-form {
+.category-edit-form form {
     display: flex;
-    align-items: center;
+    justify-content: space-between;
     gap: 15px;
-    width: 100%;
+    flex-direction: row;
 }
 
 .edit-buttons {
@@ -288,9 +278,9 @@ textarea {
 #active-filters {
     display: flex;
     flex-wrap: wrap;
-    align-items: left;
-    text-align: left;
     gap: 8px;
+    max-height: 72px;
+    overflow-y: hidden;
     flex: 1;
 }
 
@@ -311,7 +301,7 @@ textarea {
     padding: 8px 16px;
     border: none;
     border-radius: 8px;
-    background-color: rgb(13, 13, 13);
+    background-color: #303030;
     color: white;
     font-size: 12px;
     font-weight: 800;

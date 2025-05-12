@@ -106,8 +106,8 @@ class BookController extends Controller
       return false;
     }
 
-    // Use Ghostscript to extract the first page
-    $gsExecutable = 'C:\\Program Files\\gs\\gs10.05.0\\bin\\gswin64c.exe';
+    // get gs exe
+    $gsExecutable = 'C:\\Program Files\\gs\\gs10.05.1\\bin\\gswin64c.exe';
 
     if (file_exists($gsExecutable)) {
       $command = '"' . $gsExecutable . '" -sDEVICE=jpeg -dNOPAUSE -dBATCH -dSAFER '

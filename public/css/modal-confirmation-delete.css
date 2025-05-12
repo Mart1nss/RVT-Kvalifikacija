@@ -23,7 +23,7 @@
 }
 
 .delete-confirmation-content {
-    background-color: #202020;
+    background-color: #191919;
     border-radius: 8px;
     padding: 0;
     width: 90%;
@@ -99,42 +99,6 @@
     gap: 10px;
     margin-top: 20px;
     padding: 0 16px 16px 16px;
-}
-
-.btn-delete {
-    border: none;
-    background-color: rgb(128, 6, 6);
-    color: white;
-    padding: 10px 20px;
-    height: 40px;
-    border-radius: 8px;
-    font-weight: 800;
-    font-size: 12px;
-    text-transform: uppercase;
-    transition: all 0.2s;
-    cursor: pointer;
-}
-
-.btn-delete:hover {
-    background-color: rgb(80, 80, 80);
-}
-
-.btn-secondary {
-    border: none;
-    background-color: #202020;
-    color: white;
-    padding: 10px 20px;
-    height: 40px;
-    border-radius: 8px;
-    font-weight: 800;
-    font-size: 12px;
-    text-transform: uppercase;
-    transition: all 0.2s;
-    cursor: pointer;
-}
-
-.btn-secondary:hover {
-    background-color: rgb(56, 56, 56);
 }
 
 /* Animation Keyframes */
