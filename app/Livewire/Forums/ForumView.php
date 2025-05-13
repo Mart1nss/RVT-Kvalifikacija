@@ -28,23 +28,18 @@ class ForumView extends Component
 
     public function addReply()
     {
-        try {
-            $validatedData = $this->validate();
+        $validatedData = $this->validate();
 
-            $reply = $this->forum->replies()->create([
-                'content' => $this->newReply,
-                'user_id' => auth()->id()
-            ]);
+        $reply = $this->forum->replies()->create([
+            'content' => $this->newReply,
+            'user_id' => auth()->id()
+        ]);
 
-            if ($reply) {
-                $this->reset('newReply');
-                $this->dispatch('reply-added');
-            } else {
-                $this->dispatch('show-alert', type: 'error', message: 'Failed to add reply. Please try again.');
-            }
-        } catch (\Exception $e) {
-            logger()->error('Forum reply error: ' . $e->getMessage());
-            $this->dispatch('show-alert', type: 'error', message: 'An error occurred while adding your reply.');
+        if ($reply) {
+            $this->reset('newReply');
+            $this->dispatch('reply-added');
+        } else {
+            $this->dispatch('show-alert', type: 'error', message: 'Failed to add reply. Please try again.');
         }
     }
 
@@ -57,22 +52,17 @@ class ForumView extends Component
 
     public function deleteReply($replyId)
     {
-        try {
-            $reply = $this->forum->replies()->findOrFail($replyId);
+        $reply = $this->forum->replies()->findOrFail($replyId);
 
-            if (!$this->canDeleteReply($reply)) {
-                $this->dispatch('show-alert', type: 'error', message: 'You are not authorized to delete this reply.');
-                return;
-            }
+        if (!$this->canDeleteReply($reply)) {
+            $this->dispatch('show-alert', type: 'error', message: 'You are not authorized to delete this reply.');
+            return;
+        }
 
-            if ($reply->delete()) {
-                $this->dispatch('show-alert', type: 'success', message: 'Reply deleted successfully.');
-            } else {
-                $this->dispatch('show-alert', type: 'error', message: 'Failed to delete reply.');
-            }
-        } catch (\Exception $e) {
-            logger()->error('Forum reply deletion error: ' . $e->getMessage());
-            $this->dispatch('show-alert', type: 'error', message: 'An error occurred while deleting the reply.');
+        if ($reply->delete()) {
+            $this->dispatch('show-alert', type: 'success', message: 'Reply deleted successfully.');
+        } else {
+            $this->dispatch('show-alert', type: 'error', message: 'Failed to delete reply.');
         }
     }
 

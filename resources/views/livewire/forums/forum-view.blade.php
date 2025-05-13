@@ -1,4 +1,4 @@
-<div class="item-container" style="border-radius: 8px;" wire:poll.30s x-data="{ reviewOptionsOpen: null }">
+<div class="item-container" style="border-radius: 8px;" wire:poll.30s>
   <!-- Forum Details -->
   <div class="forum-details">
     <h1 class="forum-heading">{{ $forum->title }}</h1>
@@ -20,7 +20,7 @@
           <div style="width: 100%;">
             <div class="input-wrapper">
               <textarea id="replyContent" wire:model="newReply" class="reply-textarea @error('newReply') error @enderror"
-                placeholder="Write your reply..." rows="4" maxlength="250"></textarea>
+                placeholder="Write your reply..." rows="4" maxlength="250" data-counter="replyCounter"></textarea>
               <span class="char-counter" id="replyCounter">0/250</span>
             </div>
             @error('newReply')
@@ -52,16 +52,15 @@
               <span class="reply-author">{{ $reply->user->name }}</span>
               <span class="reply-date">{{ $reply->created_at->diffForHumans() }}</span>
               @if (auth()->check() && (auth()->id() === $reply->user_id || auth()->user()->usertype === 'admin'))
-                <div class="review-options">
-                  <button class="review-options-btn"
-                    @click.stop="reviewOptionsOpen = reviewOptionsOpen === {{ $reply->id }} ? null : {{ $reply->id }}">
+                <div class="review-options" x-data="{ optionsOpen: false }" @click.away="optionsOpen = false">
+                  <button class="review-options-btn" @click.stop="optionsOpen = !optionsOpen">
                     <i class='bx bx-dots-vertical-rounded'></i>
                   </button>
-                  <div class="review-options-dropdown" :class="{ 'show': reviewOptionsOpen === {{ $reply->id }} }">
+                  <div class="review-options-dropdown" :class="{ 'show': optionsOpen }">
                     <button type="button" wire:click="deleteReply({{ $reply->id }})">
                       <i class='bx bx-trash'></i>
                       Delete<span
-                        x-show="{{ auth()->user()->usertype === 'admin' }} && {{ $reply->user_id }} !== {{ auth()->id() }}"></span>
+                        x-show="'{{ auth()->user()->usertype }}' === 'admin' && {{ $reply->user_id }} !== {{ auth()->id() }}"></span>
                     </button>
                   </div>
                 </div>
@@ -84,35 +83,35 @@
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const replyInput = document.getElementById('replyContent');
-      const replyCounter = document.getElementById('replyCounter');
-      const maxLength = 250;
-
-      function updateCounter(input, counter, maxLength) {
-        const count = input?.value?.length || 0;
-        counter.textContent = `${count}/${maxLength}`;
-
-        if (count >= maxLength) {
-          counter.classList.add('at-limit');
-          counter.classList.remove('near-limit');
-        } else if (count >= maxLength * 0.8) {
-          counter.classList.add('near-limit');
-          counter.classList.remove('at-limit');
-        } else {
-          counter.classList.remove('near-limit', 'at-limit');
-        }
-      }
-
-      if (replyInput && replyCounter) {
-        replyInput.addEventListener('input', () => updateCounter(replyInput, replyCounter, maxLength));
-        updateCounter(replyInput, replyCounter, maxLength);
-      }
-
-      // Update counter when Livewire updates the DOM
-      document.addEventListener('livewire:initialized', function() {
-        if (replyInput && replyCounter) {
-          updateCounter(replyInput, replyCounter, maxLength);
+    // Char counter
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('textarea[data-counter]').forEach(textarea => {
+        const counterId = textarea.dataset.counter;
+        const counter = document.getElementById(counterId);
+        const maxLength = textarea.getAttribute('maxlength') || 250;
+        
+        if (!counter) return;
+        
+        const updateCount = () => {
+          const count = textarea.value.length;
+          counter.textContent = `${count}/${maxLength}`;
+        };
+        
+        textarea.addEventListener('input', updateCount);
+        updateCount();
+      });
+      
+      // Listen for Livewire events
+      Livewire.on('reply-added', () => {
+        const textarea = document.getElementById('replyContent');
+        if (textarea) {
+          textarea.value = '';
+          const counterId = textarea.dataset.counter;
+          const counter = document.getElementById(counterId);
+          if (counter) {
+            const maxLength = textarea.getAttribute('maxlength') || 250;
+            counter.textContent = `0/${maxLength}`;
+          }
         }
       });
     });
