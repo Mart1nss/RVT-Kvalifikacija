@@ -1,5 +1,4 @@
 <div>
-  {{-- If your happiness depends on money, you will never be happy with yourself. --}}
   <form wire:submit.prevent="createForum" class="create-forum-form">
     <div class="form-group">
       <label for="title" class="title-label">Title</label>

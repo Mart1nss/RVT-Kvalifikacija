@@ -1,9 +1,27 @@
 <div class="item-container" style="border-radius: 8px;" wire:poll.30s>
   <!-- Forum Details -->
   <div class="forum-details">
-    <h1 class="forum-heading">{{ $forum->title }}</h1>
+    <div class="forum-header">
+      <h1 class="forum-heading">{{ $forum->title }}</h1>
+      
+      @if (auth()->check() && (auth()->id() === $forum->user_id || auth()->user()->usertype === 'admin'))
+        <div class="review-options" x-data="{ optionsOpen: false }" @click.away="optionsOpen = false">
+          <button class="review-options-btn" @click.stop="optionsOpen = !optionsOpen">
+            <i class='bx bx-dots-vertical-rounded'></i>
+          </button>
+          <div class="review-options-dropdown" :class="{ 'show': optionsOpen }">
+            <button type="button" wire:click="deleteForum">
+              <i class='bx bx-trash'></i>
+              Delete<span
+                x-show="'{{ auth()->user()->usertype }}' === 'admin' && {{ $forum->user_id }} !== {{ auth()->id() }}"></span>
+            </button>
+          </div>
+        </div>
+      @endif
+    </div>
     <div class="forum-info">
-      <span>Posted by {{ $forum->user->name }}</span>
+      <span>{{ $forum->user->name }}</span>
+      <span>&#8226;</span>
       <span>{{ $forum->created_at->diffForHumans() }}</span>
     </div>
     <div class="forum-description-container">

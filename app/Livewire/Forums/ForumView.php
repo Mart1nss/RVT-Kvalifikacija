@@ -50,6 +50,27 @@ class ForumView extends Component
         $this->render();
     }
 
+    public function deleteForum()
+    {
+        if (!$this->canDeleteForum()) {
+            $this->dispatch('show-alert', type: 'error', message: 'You are not authorized to delete this forum.');
+            return;
+        }
+
+        if ($this->forum->delete()) {
+            session()->flash('success', 'Forum deleted successfully.');
+            return redirect()->route('forums.index');
+        } else {
+            $this->dispatch('show-alert', type: 'error', message: 'Failed to delete forum.');
+        }
+    }
+
+    protected function canDeleteForum()
+    {
+        $user = auth()->user();
+        return $user && ($user->id === $this->forum->user_id || $user->usertype === 'admin');
+    }
+
     public function deleteReply($replyId)
     {
         $reply = $this->forum->replies()->findOrFail($replyId);

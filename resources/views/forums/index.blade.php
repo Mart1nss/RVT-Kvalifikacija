@@ -28,16 +28,6 @@
   </div>
 
   @livewireScripts
-
-  <script>
-    document.addEventListener('livewire:init', () => {
-      console.log('Livewire Initialized');
-
-      Livewire.on('searchUpdated', (event) => {
-        console.log('Search Updated:', event);
-      });
-    });
-  </script>
 </body>
 
 </html>

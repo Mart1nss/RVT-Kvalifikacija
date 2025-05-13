@@ -22,16 +22,6 @@
   </div>
 
   @livewireScripts
-  <script>
-    document.addEventListener('livewire:init', () => {
-      console.log('Livewire Initialized');
-
-      // Listen for reply-added event
-      Livewire.on('reply-added', () => {
-        window.showAlert('Reply added successfully!', 'success');
-      });
-    });
-  </script>
 </body>
 
 </html>

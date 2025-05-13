@@ -1,4 +1,5 @@
 <div>
+  <x-alert />
 
   <div class="item-container" id="filter-section">
     <div class="search-section">
@@ -15,23 +16,26 @@
 
   <div class="forum-list">
     @forelse($forums as $forum)
-      <div class="forum-item">
-        <div class="forum-info-container">
-          <a href="{{ route('forums.view', $forum) }}" class="forum-title">
-            {{ $forum->title }}
-          </a>
-          <p class="forum-description">{{ Str::limit($forum->description, 200) }}</p>
-        </div>
-        <div class="forum-meta">
-          <div class="forum-meta-left">
-            <span>By {{ $forum->user->name }}</span>
-            <span>{{ $forum->created_at->diffForHumans() }}</span>
+      <a href="{{ route('forums.view', $forum) }}" class="forum-item-link">
+        <div class="forum-item">
+          <div class="forum-info-container">
+            <div class="forum-title">
+              {{ $forum->title }}
+            </div>
+            <p class="forum-description">{{ Str::limit($forum->description, 200) }}</p>
           </div>
-          <div>
-            <span>{{ $forum->replies_count }} {{ Str::plural('reply', $forum->replies_count) }}</span>
+          <div class="forum-meta">
+            <div class="forum-meta-left">
+              <span>{{ $forum->user->name }}</span>
+              <span>&#8226;</span>
+              <span>{{ $forum->created_at->diffForHumans() }}</span>
+            </div>
+            <div>
+              <span>{{ $forum->replies_count }} {{ Str::plural('reply', $forum->replies_count) }}</span>
+            </div>
           </div>
         </div>
-      </div>
+      </a>
     @empty
       <div class="no-items-message">
         <p>No forums found.</p>
@@ -42,11 +46,4 @@
   <div class="pagination">
     {{ $forums->links('vendor.pagination.tailwind') }}
   </div>
-
-
-  <script>
-    document.addEventListener('livewire:initialized', () => {
-      console.log('Livewire Forum List Component Initialized');
-    });
-  </script>
 </div>
