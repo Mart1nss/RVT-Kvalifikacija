@@ -72,7 +72,8 @@ class CategoryManagement extends Component
             ]);
 
             $category = Category::create([
-                'name' => $this->name
+                'name' => $this->name,
+                'is_public' => true
             ]);
 
             AuditLogService::log(
@@ -222,7 +223,6 @@ class CategoryManagement extends Component
         } else {
             $this->selectedNewCategoryId = (int) $value;
 
-            // Refresh the category to delete to maintain its products count
             if ($this->categoryToDelete) {
                 $this->categoryToDelete = Category::withCount('products')
                     ->with('products')

@@ -1,5 +1,6 @@
 <div>
   <div>
+  <div class="category-container">
     <div class="category-form">
       <h2>Add New Category</h2>
       <form wire:submit="store">
@@ -16,6 +17,9 @@
         @enderror
       </form>
     </div>
+</div>
+
+<div class="category-container">
 
     <div class="category-list">
       <h2 style="margin-bottom: 16px;">Existing Categories</h2>
@@ -181,6 +185,7 @@
         {{ $categories->links('vendor.pagination.tailwind') }}
       </div>
     </div>
+</div>
 
     <!-- Delete Confirmation Modal -->
     @if ($showDeleteModal && $categoryToDelete)
@@ -199,7 +204,7 @@
                 @endif
               </p>
               @if ($categoryToDelete->products_count > 0)
-                <select wire:model="selectedNewCategoryId" class="reassign-select">
+                <select wire:model.live="selectedNewCategoryId" class="reassign-select">
                   <option value="">Select a category</option>
                   @foreach ($availableCategories as $category)
                     <option value="{{ $category->id }}">
@@ -215,11 +220,11 @@
             <p class="delete-confirmation-text">This action cannot be undone.</p>
           </div>
           <div class="delete-confirmation-footer">
-            <button type="button" class="btn-secondary" wire:click="cancelDelete">Cancel</button>
+            <button type="button" class="btn btn-ghost btn-md" wire:click="cancelDelete">Cancel</button>
 
             @if ($categoryToDelete->products_count > 0)
               @if ($selectedNewCategoryId)
-                <button type="button" class="btn-delete" wire:click="deleteCategory" wire:loading.attr="disabled"
+                <button type="button" class="btn btn-danger btn-md" wire:click="deleteCategory" wire:loading.attr="disabled"
                   wire:target="deleteCategory">
                   Delete
                 </button>
@@ -229,7 +234,7 @@
                 </button>
               @endif
             @else
-              <button type="button" class="btn-delete" wire:click="deleteCategory" wire:loading.attr="disabled"
+              <button type="button" class="btn btn-danger btn-md" wire:click="deleteCategory" wire:loading.attr="disabled"
                 wire:target="deleteCategory">
                 Delete
               </button>
@@ -240,3 +245,36 @@
     @endif
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const updateCharCounter = () => {
+      const input = document.querySelector('input[wire\\:model="name"]');
+      if (input) {
+        const charCount = document.querySelector('.char-count');
+        if (charCount) {
+          const count = input.value.length;
+          const maxLength = input.getAttribute('maxlength') || 30;
+          charCount.textContent = `${count} / ${maxLength}`;
+          charCount.classList.toggle('limit-reached', count >= maxLength);
+        }
+      }
+    };
+
+    updateCharCounter();
+
+    // Listen for input events on the text field
+    document.addEventListener('input', (e) => {
+      if (e.target.matches('input[wire\\:model="name"]')) {
+        updateCharCounter();
+      }
+    });
+
+    // Listen for Livewire updates
+    document.addEventListener('livewire:initialized', () => {
+      Livewire.hook('message.processed', () => {
+        updateCharCounter();
+      });
+    });
+  });
+</script>

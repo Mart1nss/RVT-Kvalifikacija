@@ -21,7 +21,7 @@
   }
 
   .delete-confirmation-content {
-    background: #202020;
+    background: #191919;
     border-radius: 8px;
     max-width: 500px;
     width: 90%;
@@ -68,7 +68,6 @@
     margin-top: 8px;
   }
 
-  /* Category-specific responsive styles */
   @media (max-width: 768px) {
     .filter-container {
       display: none;
@@ -90,27 +89,14 @@
 
 <div class="main-container">
 <h1
-      style="margin-bottom: 20px; font-family: sans-serif; font-weight: 800; text-transform: uppercase; font-size: 32px;">
+      style="margin-bottom: 10px; font-family: sans-serif; font-weight: 800; text-transform: uppercase; font-size: 32px;">
       Manage Categories
     </h1>
-  <div class="category-container">
-    
-
+  
     @livewire('category-management')
-  </div>
+
 </div>
 
 @livewireScripts
-<script>
-  document.addEventListener('livewire:initialized', () => {
-    Livewire.on('alert', (data) => {
-      window.dispatchEvent(new CustomEvent('alert', {
-        detail: {
-          type: data[0].type,
-          message: data[0].message
-        }
-      }));
-    });
-  });
-</script>
+
 @stack('scripts')

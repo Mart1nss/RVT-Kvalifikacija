@@ -78,8 +78,8 @@
 }
 
 .btn-category-secondary {
-    border: none;
-    background-color: rgb(13, 13, 13);
+    border: 1px solid #333;
+    background-color: transparent;
     color: white;
     padding: 10px;
     height: 40px;
@@ -121,8 +121,8 @@
 }
 
 .btn-delete-cat {
-    background-color: #202020;
-    color: rgb(126, 6, 6);
+    background-color: #191919;
+    color: #dc2626;
     height: 40px;
     width: 40px;
     text-transform: uppercase;
@@ -190,6 +190,7 @@ textarea {
 
 .category-edit-form {
     display: flex;
+    width: 100%;
     align-items: center;
     justify-content: space-between;
     gap: 15px;
@@ -198,6 +199,7 @@ textarea {
 
 .category-edit-form form {
     display: flex;
+    width: 100%;
     justify-content: space-between;
     gap: 15px;
     flex-direction: row;
@@ -417,7 +419,7 @@ textarea {
 .reassign-section {
     margin: 16px 0;
     padding: 16px;
-    background: rgba(255, 255, 255, 0.05);
+    background: #252525;
     border-radius: 4px;
 }
 
@@ -425,7 +427,7 @@ textarea {
     width: 100%;
     padding: 8px;
     margin-top: 8px;
-    background: #303030;
+    background: #252525;
     border: 1px solid #404040;
     border-radius: 4px;
     color: white;
