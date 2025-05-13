@@ -43,6 +43,7 @@
   .item-card-2 {
     width: 50%;
     background-color: #191919;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     color: white;
     padding: 20px;
     border-radius: 8px;
@@ -82,9 +83,9 @@
 
 .save-btn {
     display: inline-flex;
-    border: 1px solid rgb(0, 0, 0);
-    background-color: rgb(255, 255, 255);
-    color: rgb(0, 0, 0);
+    border: none;
+    background-color: white;
+    color: black;
     padding: 10px;
     border-radius: 8px;
     font-weight: 800;
@@ -100,9 +101,7 @@
   }
 
   .validation-errors {
-    background-color: rgba(255, 0, 0, 0.1);
-    color: rgb(126, 6, 6);
-    padding: 10px;
+    color: #ff0000;
     border-radius: 8px;
     margin-top: 5px;
     font-family: sans-serif;
@@ -112,7 +111,6 @@
     white-space: normal;
     word-wrap: break-word;
     line-height: 1.4;
-    height: 46px;
     list-style-type: none;
     display: block;
   }
@@ -147,25 +145,6 @@
 
   .delete-btn {
     width: max-content;
-  }
-
-  .saved-text {
-    color: green;
-    font-size: 14px;
-    margin-top: 15px;
-    margin-bottom: 0px;
-    width: 100%;
-    background-color: #072907;
-    height: 38px;
-    border-radius: 20px;
-    padding-left: 20px;
-    display: flex;
-    padding-top: 8px;
-    font-family: sans-serif;
-    font-weight: 800;
-    font-size: 14px;
-    text-transform: uppercase;
-
   }
 </style>
 

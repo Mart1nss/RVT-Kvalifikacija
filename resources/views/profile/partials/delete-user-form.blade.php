@@ -1,8 +1,8 @@
 <style>
   #delete-btn {
-    color: rgb(126, 6, 6);
+    color: #dc2626;
     text-decoration: none;
-    border: rgb(126, 6, 6) 1px solid;
+    border: #dc2626 1px solid;
     border-radius: 8px;
     padding: 10px;
     font-family: sans-serif;
@@ -15,7 +15,7 @@
   }
 
   #delete-btn:hover {
-    background-color: rgb(126, 6, 6);
+    background-color: #dc2626;
     color: white;
   }
 
@@ -130,7 +130,7 @@
   <button id="delete-btn" type="button" class="delete-btn"
     onclick="document.getElementById('delete-modal').style.display='flex'">{{ __('Delete Account') }}</button>
 
-  <div id="delete-modal" class="modal-backdrop" style="display: none;">
+  <div id="delete-modal" class="modal-backdrop" style="display: {{ $errors->userDeletion->isNotEmpty() ? 'flex' : 'none' }};">
     <div class="modal-content">
       <form method="post" action="{{ route('profile.destroy') }}" class="p-6">
         @csrf
@@ -183,6 +183,13 @@
       if (e.key === 'Escape') {
         document.getElementById('delete-modal').style.display = 'none';
       }
+    });
+
+    // Check if there are validation errors and show modal
+    document.addEventListener('DOMContentLoaded', function() {
+      @if($errors->userDeletion->isNotEmpty())
+        document.getElementById('delete-modal').style.display = 'flex';
+      @endif
     });
   </script>
 </section>

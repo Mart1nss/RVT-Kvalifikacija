@@ -9,7 +9,7 @@
   </div>
 
   <div id="books-container">
-    <div class="item-container">
+    <div class="item-container" style="border-top-left-radius: 0px; border-top-right-radius: 0px;">
       @foreach ($books as $book)
         @livewire(
             'books.book-card',

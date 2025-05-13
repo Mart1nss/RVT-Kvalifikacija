@@ -16,7 +16,7 @@
     ])
   </div>
 
-  <div style="margin-bottom: 20px;" class="item-container">
+  <div style="margin-bottom: 20px; border-top-left-radius: 0px; border-top-right-radius: 0px;" class="item-container">
     @foreach ($books as $book)
       @livewire(
           'books.book-card',

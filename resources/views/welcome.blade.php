@@ -17,6 +17,7 @@
 </head>
 
 <body>
+  @include('components.alert')
 
   <header class="navbar">
     <h1 class="logo"

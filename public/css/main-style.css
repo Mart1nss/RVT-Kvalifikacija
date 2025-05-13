@@ -74,3 +74,10 @@ body {
     min-width: 160px;
     cursor: pointer;
 }
+
+.item-container {
+    background-color: #191919;
+    padding: 16px;
+    width: 100%;
+    border-radius: 8px;
+}

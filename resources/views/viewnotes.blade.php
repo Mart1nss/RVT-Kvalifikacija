@@ -123,7 +123,7 @@
 
 
     @if ($notes->count() > 0)
-      <div class="item-container">
+      <div class="item-container" style="border-top-left-radius: 0px; border-top-right-radius: 0px;">
         @foreach ($notes as $note)
           <div class="item-card" x-data="{ expanded: false }"
             @expand-accordion.window="if($event.detail.id !== '{{ $note->id }}') expanded = false">
@@ -182,7 +182,7 @@
         @endforeach
       </div>
     @else
-      <div class="item-container">
+      <div class="item-container"  style="border-top-left-radius: 0px; border-top-right-radius: 0px;">
         <p style="font-family: sans-serif; font-size: 14px; font-weight: 800; text-transform: uppercase; color: white;">
           You don't have any notes yet.</p>
       </div>

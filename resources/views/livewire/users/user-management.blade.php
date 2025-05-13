@@ -134,7 +134,7 @@
   </x-filters.mobile-filter-drawer>
 
   <!-- Main content section with user table -->
-  <div class="item-container">
+  <div class="item-container"  style="border-top-left-radius: 0px; border-top-right-radius: 0px;">
     <div class="table-responsive">
       <h2>All Users</h2>
       <table class="custom-table">

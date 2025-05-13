@@ -22,7 +22,7 @@
         Forum</button>
     </div>
 
-    <div class="item-container">
+    <div class="item-container" style="border-top-left-radius: 0px; border-top-right-radius: 0px;">
       @livewire('forums.forum-list')
     </div>
   </div>

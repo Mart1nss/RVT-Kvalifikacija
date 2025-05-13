@@ -13,7 +13,7 @@
   </div>
 
   @if ($tab === 'favorites')
-    <div class="item-container">
+    <div class="item-container" style="border-top-left-radius: 0px; border-top-right-radius: 0px;">
       @if ($favorites->count() > 0)
         @foreach ($favorites as $favorite)
           @livewire(
@@ -30,7 +30,7 @@
       @endif
     </div>
   @else
-    <div class="item-container">
+    <div class="item-container" style="border-top-left-radius: 0px; border-top-right-radius: 0px;">
       @if ($readLater->count() > 0)
         @foreach ($readLater as $item)
           @livewire(
