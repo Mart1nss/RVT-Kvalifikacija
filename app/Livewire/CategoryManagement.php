@@ -167,6 +167,8 @@ class CategoryManagement extends Component
             return;
         }
 
+        $isBecomingPrivate = $category->is_public;
+        
         $category->update([
             'is_public' => !$category->is_public
         ]);
@@ -178,6 +180,23 @@ class CategoryManagement extends Component
             $category->id,
             $category->name
         );
+
+        // If the category is being made private, we should clean up user preferences
+        if ($isBecomingPrivate) {
+            // Remove this category from user preferences
+            $affectedUsers = \App\Models\UserPreference::where('category_id', $categoryId)->count();
+            \App\Models\UserPreference::where('category_id', $categoryId)->delete();
+            
+            if ($affectedUsers > 0) {
+                AuditLogService::log(
+                    "Removed private category from preferences",
+                    "category",
+                    "Removed from {$affectedUsers} users' preferences after making private",
+                    $category->id,
+                    $category->name
+                );
+            }
+        }
 
         $this->dispatch('alert', [
             'type' => 'success',

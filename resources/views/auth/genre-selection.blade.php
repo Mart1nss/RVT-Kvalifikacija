@@ -21,7 +21,7 @@
       border-radius: 8px;
       cursor: pointer;
       transition: all 0.3s ease;
-      background-color: #202020;
+      background-color: #191919;
       color: white;
       text-align: center;
     }
@@ -134,7 +134,16 @@
   </div>
 
   <script>
-    let selectedCategories = @json($selectedCategories ?? []);
+    // Get all available category IDs from the DOM
+    const availableCategoryIds = Array.from(
+      document.querySelectorAll('.category-card')
+    ).map(el => parseInt(el.getAttribute('data-id')));
+    
+    // Filter out any previously selected categories that are no longer available
+    let selectedCategories = @json($selectedCategories ?? []).filter(
+      categoryId => availableCategoryIds.includes(categoryId)
+    );
+    
     const maxSelections = 3;
 
     // Initialize selected categories on page load

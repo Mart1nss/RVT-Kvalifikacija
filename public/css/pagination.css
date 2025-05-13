@@ -5,7 +5,7 @@
 }
 
 .pagination-nav {
-    background: #202020;
+    background: transparent;
     width: 100%;
     display: flex;
     justify-content: center;
@@ -28,7 +28,7 @@
 .pagination-btn {
     min-width: 35px;
     height: 35px;
-    background-color: rgb(13, 13, 13);
+    background-color: #252525;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -98,21 +98,21 @@
     font-size: 20px;
 }
 
-/* Style for the "Previous" link */
+/* previous arrow */
 .pagination-container .pagination li:first-child a {
     display: flex;
     align-items: center;
     gap: 4px;
 }
 
-/* Style for the "Next" link */
+/* next arrow */
 .pagination-container .pagination li:last-child a {
     display: flex;
     align-items: center;
     gap: 4px;
 }
 
-/* Hide default arrows and replace with custom ones */
+/* hide default arrows */
 .pagination-container .pagination li:first-child span,
 .pagination-container .pagination li:last-child span {
     display: none;

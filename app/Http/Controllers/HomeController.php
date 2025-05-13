@@ -7,6 +7,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Category;
 
 class HomeController extends Controller
 {
@@ -71,8 +72,19 @@ class HomeController extends Controller
     {
         $recentBooks = Product::orderBy('created_at', 'desc')->take(10)->get();
 
-        $userPreferences = Auth::user()->preferredCategories()->get();
         $preferredBooks = [];
+        $user = Auth::user();
+        
+        // Get the user's preferred categories and ensure they are public
+        // For admin users, show all their preferred categories
+        if ($user->isAdmin()) {
+            $userPreferences = $user->preferredCategories()->get();
+        } else {
+            // For regular users, only show public categories
+            $userPreferences = $user->preferredCategories()
+                ->where('is_public', true)
+                ->get();
+        }
 
         foreach ($userPreferences as $category) {
             $books = Product::where('category_id', $category->id)
@@ -84,7 +96,7 @@ class HomeController extends Controller
             }
         }
 
-        if (Auth::user()->usertype == 'admin') {
+        if ($user->usertype == 'admin') {
             $bookCount = Product::count();
             $userCount = User::count();
             return view('admin.adminhome', compact('bookCount', 'userCount', 'recentBooks', 'preferredBooks'));

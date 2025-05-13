@@ -15,7 +15,7 @@ class PreferenceController extends Controller
             return redirect('/home');
         }
 
-        $categories = Category::all();
+        $categories = Category::where('is_public', true)->get();
         return view('auth.genre-selection', compact('categories'));
     }
 
@@ -26,6 +26,14 @@ class PreferenceController extends Controller
         
         if (!is_array($categories) || count($categories) !== 3) {
             return back()->with('error', 'Please select exactly 3 categories.');
+        }
+
+        // Validate that all selected categories are public
+        $publicCategoryIds = Category::where('is_public', true)->pluck('id')->toArray();
+        foreach ($categories as $categoryId) {
+            if (!in_array($categoryId, $publicCategoryIds)) {
+                return back()->with('error', 'One or more selected categories are not available.');
+            }
         }
 
         // Delete existing preferences if any
@@ -58,7 +66,7 @@ class PreferenceController extends Controller
 
     public function edit()
     {
-        $categories = Category::all();
+        $categories = Category::where('is_public', true)->get();
         $selectedCategories = auth()->user()->userPreferences()->pluck('category_id')->toArray();
         return view('auth.genre-selection', compact('categories', 'selectedCategories'));
     }
