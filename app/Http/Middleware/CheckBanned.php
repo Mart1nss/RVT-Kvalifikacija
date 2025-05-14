@@ -26,7 +26,7 @@ class CheckBanned
         // Check if the user is logged in and banned
         if (Auth::check() && Auth::user()->isBanned()) {
             // Get the ban reason if available to display to the user
-            $banReason = Auth::user()->ban_reason;
+            $banReason = Auth::user()->getBanReason();
             $message = 'Your account has been banned.';
             
             if ($banReason) {

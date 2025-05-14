@@ -63,12 +63,13 @@
                             <i class='bx bx-shield-quarter'></i> Unban User
                         </button>
                         <div class="ban-info">
-                            <p><strong>Banned at:</strong> {{ $user->banned_at->format('M d, Y H:i') }}</p>
-                            @if($user->ban_reason)
-                                <p><strong>Reason:</strong> {{ $user->ban_reason }}</p>
-                            @endif
-                            @if($user->bannedBy)
-                                <p><strong>Banned by:</strong> {{ $user->bannedBy->name }}</p>
+                            @php
+                                $activeBan = $user->activeBan()->first();
+                            @endphp
+                            <p><strong>Banned at:</strong> {{ $activeBan->created_at->format('M d, Y H:i') }}</p>
+                            <p><strong>Reason:</strong> {{ $activeBan->reason }}</p>
+                            @if($activeBan->admin)
+                                <p><strong>Banned by:</strong> {{ $activeBan->admin->name }}</p>
                             @endif
                         </div>
                     @endif
@@ -142,7 +143,8 @@
                 <p>Banned users will not be able to log in to the website.</p>
                 <div class="ban-reason-input">
                     <label for="banReason">Reason for ban:</label>
-                    <textarea id="banReason" wire:model="banReason" rows="3" placeholder="Enter reason for banning this user..."></textarea>
+                    <textarea id="banReason" wire:model="banReason" rows="3" placeholder="Enter reason for banning this user..." required></textarea>
+                    @error('banReason') <span class="error">{{ $message }}</span> @enderror
                 </div>
             </div>
             <div class="ban-confirmation-footer">
@@ -152,4 +154,10 @@
         </div>
     </div>
     @endif
-</div> 
+    
+    <style>
+        .error {
+            color: #dc2626;
+        }
+    </style>
+</div>

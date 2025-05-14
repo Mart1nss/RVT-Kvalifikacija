@@ -17,7 +17,6 @@ return new class extends Migration {
       $table->bigInteger('category_id')->unsigned()->nullable(); // Foreign key, nullable
       $table->string('file', 255)->nullable();
       $table->timestamps(); // created_at and updated_at, nullable by default
-      $table->boolean('is_public')->default(1);  // TINYINT(1) maps to boolean
 
       // Foreign key constraint
       $table->foreign('category_id')->references('id')->on('categories')->onDelete('set null');

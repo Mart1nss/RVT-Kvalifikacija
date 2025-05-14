@@ -52,15 +52,12 @@
         <div class="carousel-track-container">
           <div class="carousel-track">
             @php
-              // Filter books to only show those from public categories, limited to 20
-              $publicBooks = $data->filter(function($book) {
-                // Check if the book belongs to a public category
-                return $book->category && $book->category->is_public == true;
-              })->take(20);
+              // Limit to 20 books for the carousel
+              $displayBooks = $data->take(20);
             @endphp
             
             {{-- First set of books --}}
-            @foreach ($publicBooks as $book)
+            @foreach ($displayBooks as $book)
               <div class="pdf-item">
                 <div class="thumbnail">
                   <img src="{{ asset('book-thumbnails/' . str_replace('.pdf', '.jpg', $book->file)) }}"
@@ -70,7 +67,7 @@
             @endforeach
             
             {{-- Duplicate the same books to create a seamless loop --}}
-            @foreach ($publicBooks as $book)
+            @foreach ($displayBooks as $book)
               <div class="pdf-item">
                 <div class="thumbnail">
                   <img src="{{ asset('book-thumbnails/' . str_replace('.pdf', '.jpg', $book->file)) }}"

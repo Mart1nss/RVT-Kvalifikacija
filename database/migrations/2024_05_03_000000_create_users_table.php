@@ -21,8 +21,7 @@ return new class extends Migration {
       $table->string('remember_token', 100)->nullable();
       $table->timestamps(); 
       $table->timestamp('last_online')->nullable();
-      $table->boolean('has_genre_preference_set')->default(false); 
-
+      $table->boolean('has_genre_preference_set')->default(false);
       $table->unsignedBigInteger('last_read_book_id')->nullable();
       $table->foreign('last_read_book_id')
         ->references('id')

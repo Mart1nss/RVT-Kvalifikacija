@@ -55,8 +55,9 @@ class LoginRequest extends FormRequest
             Auth::logout();
             
             $message = 'This account is banned';
-            if ($user->ban_reason) {
-                $message .= ': ' . $user->ban_reason;
+            $banReason = $user->getBanReason();
+            if ($banReason) {
+                $message .= ': ' . $banReason;
             }
             
             throw ValidationException::withMessages([

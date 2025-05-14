@@ -11,12 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->boolean('is_banned')->default(false);
-            $table->timestamp('banned_at')->nullable();
-            $table->text('ban_reason')->nullable();
+        Schema::create('bans', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->text('reason')->nullable(false);
             $table->unsignedBigInteger('banned_by')->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->timestamps();
             
+            // Foreign keys
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
+                
             $table->foreign('banned_by')
                 ->references('id')
                 ->on('users')
@@ -29,9 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign(['banned_by']);
-            $table->dropColumn(['is_banned', 'banned_at', 'ban_reason', 'banned_by']);
-        });
+        Schema::dropIfExists('bans');
     }
 };

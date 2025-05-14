@@ -33,10 +33,6 @@ class User extends Authenticatable
         'last_online',
         'has_genre_preference_set',
         'last_read_book_id',
-        'is_banned',
-        'banned_at',
-        'ban_reason',
-        'banned_by'
     ];
 
     /**
@@ -133,23 +129,57 @@ class User extends Authenticatable
     }
 
     /**
+     * Get all user bans (active and inactive).
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function bans()
+    {
+        return $this->hasMany(Ban::class);
+    }
+
+    /**
+     * Get user's active ban if exists.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function activeBan()
+    {
+        return $this->hasOne(Ban::class)->active();
+    }
+    
+    /**
      * Check if the user is banned.
      *
      * @return bool True if the user is banned, false otherwise
      */
     public function isBanned()
     {
-        return $this->is_banned;
+        return $this->activeBan()->exists();
+    }
+    
+    /**
+     * Get the active ban reason if any.
+     *
+     * @return string|null
+     */
+    public function getBanReason()
+    {
+        if ($ban = $this->activeBan()->first()) {
+            return $ban->reason;
+        }
+        
+        return null;
     }
 
     /**
-     * Get the admin who banned this user.
+     * Get the ban that this admin created.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo Relationship to the admin who banned this user
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function bannedBy()
+    public function createdBans()
     {
-        return $this->belongsTo(User::class, 'banned_by');
+        return $this->hasMany(Ban::class, 'banned_by');
     }
 
     /**

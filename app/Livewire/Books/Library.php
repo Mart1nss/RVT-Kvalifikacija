@@ -74,7 +74,6 @@ class Library extends Component
   public function getBooks()
   {
     $query = Product::query()
-      ->where('is_public', true)
       ->whereHas('category', function ($q) {
         $q->where('is_public', true);
       })

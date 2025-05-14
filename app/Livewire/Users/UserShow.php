@@ -3,6 +3,7 @@
 namespace App\Livewire\Users;
 
 use App\Models\User;
+use App\Models\Ban;
 use App\Services\AuditLogService;
 use Livewire\Component;
 
@@ -233,7 +234,7 @@ class UserShow extends Component
     /**
      * Ban the user
      * This method is triggered when the admin confirms the ban in the modal
-     * It sets the ban-related fields and logs the action
+     * It creates a new Ban record and logs the action
      */
     public function banUser()
     {
@@ -258,19 +259,26 @@ class UserShow extends Component
             ]);
             return;
         }
+        
+        // Validate that ban reason is provided
+        if (empty($this->banReason)) {
+            $this->addError('banReason', 'A reason for the ban is required.');
+            return;
+        }
 
-        // Set ban-related fields in the user record
-        $this->user->is_banned = true;
-        $this->user->banned_at = now();
-        $this->user->ban_reason = $this->banReason;
-        $this->user->banned_by = auth()->id();
-        $this->user->save();
+        // Create a new ban record
+        Ban::create([
+            'user_id' => $this->user->id,
+            'reason' => $this->banReason,
+            'banned_by' => auth()->id(),
+            'is_active' => true
+        ]);
 
         // Log the ban action in the audit log for accountability
         AuditLogService::log(
             "Banned user",
             "user",
-            "Banned user account" . ($this->banReason ? " for: {$this->banReason}" : ""),
+            "Banned user account for: {$this->banReason}",
             $this->user->id,
             $this->user->name
         );
@@ -286,12 +294,15 @@ class UserShow extends Component
                 'message' => "User {$this->user->name} has been banned."
             ]
         ]);
+        
+        // Refresh user data to update UI
+        $this->loadUser();
     }
 
     /**
      * Unban the user
      * This method is triggered when the admin clicks the "Unban User" button
-     * It clears the ban-related fields and logs the action
+     * It deactivates all active bans for the user and logs the action
      */
     public function unbanUser()
     {
@@ -306,12 +317,8 @@ class UserShow extends Component
             return;
         }
 
-        // Clear all ban-related fields in the user record
-        $this->user->is_banned = false;
-        $this->user->banned_at = null;
-        $this->user->ban_reason = null;
-        $this->user->banned_by = null;
-        $this->user->save();
+        // Delete all ban records for this user
+        Ban::where('user_id', $this->user->id)->delete();
 
         // Log the unban action in the audit log for accountability
         AuditLogService::log(
@@ -329,5 +336,8 @@ class UserShow extends Component
                 'message' => "User {$this->user->name} has been unbanned."
             ]
         ]);
+        
+        // Refresh user data to update UI
+        $this->loadUser();
     }
-} 
+}

@@ -7,6 +7,17 @@
 <link rel="stylesheet" href="{{ asset('css/modal-confirmation-delete.css') }}">
 <link rel="stylesheet" href="{{ asset('css/components/mobile-filter-drawer.css') }}">
 <style>
+  .cat-title-1 {
+    margin-bottom: 10px;
+    font-family: sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 28px;
+    @media (max-width: 768px) {
+      font-size: 24px;
+    }
+  }
+
   .delete-confirmation-modal {
     position: fixed;
     top: 0;
@@ -83,13 +94,17 @@
     .search-container {
       flex: 1;
     }
+
+    h2 {
+      font-size: 20px;
+    }
   }
 </style>
 @livewireStyles
 
 <div class="main-container">
 <h1
-      style="margin-bottom: 10px; font-family: sans-serif; font-weight: 800; text-transform: uppercase;">
+      class="cat-title-1">
       Manage Categories
     </h1>
   

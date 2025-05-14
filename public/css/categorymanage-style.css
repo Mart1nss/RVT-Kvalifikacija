@@ -184,7 +184,7 @@ textarea {
     color: #999;
     text-align: center;
     padding: 20px;
-    background-color: #353535;
+    background-color: #252525;
     border-radius: 8px;
     margin-top: 10px;
 }
@@ -312,7 +312,7 @@ textarea {
     padding: 8px 16px;
     border: none;
     border-radius: 8px;
-    background-color: #303030;
+    background-color: #252525;
     color: white;
     font-size: 12px;
     font-weight: 800;
@@ -455,6 +455,16 @@ h1 {
     .category-container {
         padding: 8px;
     }
+
+    form {
+        flex-direction: column;
+    }
+
+    .category-add-container {
+        flex-direction: column;
+    }
+    
+    
 
     
 }

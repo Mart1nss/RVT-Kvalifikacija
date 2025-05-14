@@ -70,6 +70,7 @@ class HomeController extends Controller
      */
     public function dashboard()
     {
+        // For all users: get the 10 most recent books
         $recentBooks = Product::orderBy('created_at', 'desc')->take(10)->get();
 
         $preferredBooks = [];
@@ -118,9 +119,10 @@ class HomeController extends Controller
             // For admin, load all books with their categories
             $data = Product::with('category')->get();
         } else {
-            // For regular users, we'll filter by category visibility in the view
-            // Just load all books with their categories for now
-            $data = Product::with('category')->get();
+            // For regular users, only load books from public categories
+            $data = Product::whereHas('category', function ($query) {
+                $query->where('is_public', true);
+            })->with('category')->get();
         }
 
         return view('welcome', compact('data'));
