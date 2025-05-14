@@ -7,6 +7,7 @@
     @csrf
 
     <div class="form-group">
+      <label class="form-label" for="titleInput">Title</label>
       <input class="form-control" type="text" name="title" id="titleInput" placeholder="Title">
       <span class="error-message" id="titleError">
         @error('title')
@@ -16,6 +17,7 @@
     </div>
 
     <div class="form-group">
+      <label class="form-label" for="authorInput">Author</label>
       <input class="form-control" type="text" name="author" id="authorInput" placeholder="Author">
       <span class="error-message" id="authorError">
         @error('author')
@@ -25,6 +27,7 @@
     </div>
 
     <div class="form-group">
+      <label class="form-label" for="categoryInput">Category</label>
       <select class="form-control" name="category_id" id="categoryInput">
         <option value="">Select Category</option>
         @foreach ($categories as $category)

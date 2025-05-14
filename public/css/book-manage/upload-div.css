@@ -41,6 +41,14 @@
     color: white;
 }
 
+.form-label {
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
 .form-control:focus {
     outline: white 1px solid;
     background-color: rgb(36, 36, 36);

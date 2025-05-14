@@ -55,7 +55,7 @@
       <form wire:submit.prevent="updateBook"
         @if ($editingBookId) wire:key="edit-form-{{ $editingBookId }}" @endif>
         <div class="form-group">
-          <label for="title">Title:</label>
+          <label for="title" class="form-label">Title:</label>
           <input type="text" id="title" wire:model.live="title" value="{{ $title }}" required>
           @error('title')
             <span class="error">{{ $message }}</span>
@@ -63,7 +63,7 @@
         </div>
 
         <div class="form-group">
-          <label for="author">Author:</label>
+          <label for="author" class="form-label">Author:</label>
           <input type="text" id="author" wire:model.live="author" value="{{ $author }}" required>
           @error('author')
             <span class="error">{{ $message }}</span>
@@ -71,7 +71,7 @@
         </div>
 
         <div class="form-group">
-          <label for="category_id">Category:</label>
+          <label for="category_id" class="form-label">Category:</label>
           <select id="category_id" wire:model.live="category_id" required>
             <option value="">Select Category</option>
             @foreach ($categories as $category)
@@ -132,7 +132,7 @@
 
     .edit-book-modal-content,
     .delete-confirmation-content {
-      background-color: #202020;
+      background-color: #191919;
       margin: 0;
       border-radius: 8px;
       max-width: 500px;
@@ -153,14 +153,14 @@
     .form-group select {
       width: 100%;
       padding: 8px;
-      border: 1px solid #555;
+      border: none;
       border-radius: 4px;
-      background-color: rgb(13, 13, 13);
+      background-color: #252525;
       color: #fff;
     }
 
     .error {
-      color: #ff6b6b;
+      color: #dc2626;
       font-size: 12px;
       margin-top: 4px;
       display: block;
