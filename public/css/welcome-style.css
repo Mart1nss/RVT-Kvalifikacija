@@ -233,8 +233,18 @@ nav {
 
 .carousel-track {
     display: flex;
-    animation: scroll 10s linear infinite;
+    animation: scroll 60s linear infinite;
     width: fit-content;
+}
+
+/* When we have few items, make sure they're duplicated enough for continuous scrolling */
+.carousel-track.few-items {
+    animation: scroll 40s linear infinite;
+}
+
+.carousel-track.few-items .pdf-item {
+    /* Ensure items aren't stretched oddly if there are few */
+    min-width: 200px;
 }
 
 .carousel-track::after {
@@ -252,7 +262,7 @@ nav {
         flex: 0 0 220px;
     }
     .carousel-track {
-        animation: scroll 10s linear infinite;
+        animation: scroll 50s linear infinite;
     }
     .pdf-carousel::before,
     .pdf-carousel::after {
@@ -265,7 +275,7 @@ nav {
         flex: 0 0 180px;
     }
     .carousel-track {
-        animation: scroll 10s linear infinite;
+        animation: scroll 40s linear infinite;
     }
     .pdf-carousel::before,
     .pdf-carousel::after {
@@ -279,7 +289,7 @@ nav {
         padding: 0 3px;
     }
     .carousel-track {
-        animation: scroll 10s linear infinite;
+        animation: scroll 30s linear infinite;
     }
     .pdf-carousel::before,
     .pdf-carousel::after {
@@ -347,7 +357,7 @@ nav {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
-    min-height: 250px;
+    min-height: min-content;
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -358,28 +368,26 @@ nav {
 
 .genre-title {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-start;
+    gap: 10px;
     margin-bottom: 15px;
 }
 
 .icon-container {
-    min-width: 50px;
-    min-height: 50px;
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     background-color: rgb(255, 255, 255);
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-shrink: 0;
-    margin-bottom: 12px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .icon-container i {
-    font-size: 26px;
+    font-size: 24px;
 }
 
 .genre-title-text {
@@ -388,16 +396,16 @@ nav {
     font-family: sans-serif;
     text-transform: uppercase;
     margin-bottom: 0;
-    font-size: 18px;
+    margin-top: 8px;
+    font-size: 16px;
     word-break: break-word;
-    hyphens: auto;
     width: 100%;
 }
 
 .genre-description {
-    color: #cccccc;
+    color: #999;
     text-transform: none;
-    font-size: 16px;
+    font-size: 14px;
     flex-grow: 1;
     margin-left: 0;
     line-height: 1.4;
@@ -406,7 +414,7 @@ nav {
 @media (max-width: 768px) {
     .genre-card {
         width: calc(50% - 20px);
-        min-height: 220px;
+        min-height: min-content;
         padding: 15px;
     }
     .genre-title {
@@ -416,11 +424,8 @@ nav {
         font-size: 16px;
     }
     .icon-container {
-        min-width: 45px;
-        min-height: 45px;
-        width: 45px;
-        height: 45px;
-        margin-bottom: 10px;
+        width: 30px;
+        height: 30px;
     }
     .icon-container i {
         font-size: 22px;
@@ -567,34 +572,26 @@ nav {
 
 /* ===== FEATURE SPOTLIGHT SECTION ===== */
 .feature-spotlight {
-    margin-top: 40px;
+    margin-top: 20px;
+    padding: 0 20px;
 }
 
 .feature-container {
-    background-color: #191919;
-    border-radius: 8px;
     margin-top: 25px;
-    padding: 30px;
     display: flex;
-    flex-direction: row;
-    gap: 30px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.feature-container:nth-child(odd) {
-    flex-direction: row-reverse;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .feature-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .feature-content h4 {
     color: white;
-    font-size: 22px;
+    font-size: 24px;
     margin-bottom: 15px;
     text-transform: uppercase;
     font-weight: 700;
@@ -604,64 +601,61 @@ nav {
     color: #cccccc;
     font-size: 16px;
     margin: 0 0 15px 0;
-    text-transform: none;
-    line-height: 1.5;
+    line-height: 1.6;
     font-weight: 400;
 }
 
-.feature-image {
-    flex: 1;
+.feature-image-container {
+    background-color: #191919;
+    border-radius: 8px;
+    padding: 30px;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.feature-image img {
+.feature-image img,
+.feature-image2 img {
     max-width: 100%;
     height: auto;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    object-fit: contain;
+}
+
+@media (min-width: 901px) {
+    .feature-image img,
+    .feature-image2 img {
+        max-height: 400px;
+    }
 }
 
 @media (max-width: 900px) {
-    .feature-container, 
-    .feature-container:nth-child(odd) {
-        flex-direction: column;
-        padding: 25px;
-        gap: 20px;
-    }
-    
-    .feature-content {
-        order: 1;
-    }
-    
-    .feature-image {
-        order: 2;
-    }
-    
     .feature-content h4 {
-        font-size: 20px;
-        margin-bottom: 10px;
-        text-align: center;
+        font-size: 22px;
     }
     
-    .feature-content p {
-        font-size: 15px;
-        text-align: center;
+    .feature-image-container {
+        padding: 20px;
     }
 }
 
 @media (max-width: 600px) {
-    .feature-container {
-        padding: 20px;
+    .feature-spotlight {
+        padding: 0 10px;
     }
     
     .feature-content h4 {
-        font-size: 18px;
+        font-size: 20px;
     }
     
     .feature-content p {
-        font-size: 14px;
+        font-size: 15px;
+    }
+    
+    .feature-image-container {
+        padding: 15px;
     }
 }
 
@@ -670,17 +664,12 @@ nav {
         margin-top: 30px;
     }
     
-    .feature-container {
-        padding: 15px;
-        gap: 15px;
-    }
-    
     .feature-content h4 {
-        font-size: 16px;
+        font-size: 18px;
     }
     
     .feature-content p {
-        font-size: 13px;
+        font-size: 14px;
     }
 }
 

@@ -19,7 +19,6 @@ class BookManagement extends Component
   public $title;
   public $author;
   public $category_id;
-  public $is_public = true;
   public $file;
   public $showEditModal = false;
   public $confirmingBookDeletion = false;
@@ -86,7 +85,9 @@ class BookManagement extends Component
 
     // Apply visibility filter (for admin)
     if ($this->visibility !== 'all') {
-      $query->where('is_public', $this->visibility === 'public');
+      $query->whereHas('category', function ($q) {
+        $q->where('is_public', $this->visibility === 'public');
+      });
     }
 
     // Apply sorting
@@ -154,14 +155,13 @@ class BookManagement extends Component
       $this->title = $book->title;
       $this->author = $book->author;
       $this->category_id = $book->category_id;
-      $this->is_public = $book->is_public;
       $this->showEditModal = true;
     }
   }
 
   public function resetEditForm()
   {
-    $this->reset(['editingBookId', 'title', 'author', 'category_id', 'is_public', 'showEditModal']);
+    $this->reset(['editingBookId', 'title', 'author', 'category_id', 'showEditModal']);
   }
 
   /**
@@ -232,14 +232,12 @@ class BookManagement extends Component
       $originalTitle = $book->title;
       $originalAuthor = $book->author;
       $originalCategoryId = $book->category_id;
-      $originalVisibility = $book->is_public;
 
       // Update the book
       $book->update([
         'title' => $this->title,
         'author' => $this->author,
         'category_id' => $this->category_id,
-        'is_public' => $this->is_public,
       ]);
 
       // Prepare description of changes for audit log
@@ -254,9 +252,6 @@ class BookManagement extends Component
         $oldCategory = Category::find($originalCategoryId)?->name ?? 'Unknown';
         $newCategory = Category::find($this->category_id)?->name ?? 'Unknown';
         $changes[] = "Category changed from '{$oldCategory}' to '{$newCategory}'";
-      }
-      if ($originalVisibility !== $this->is_public) {
-        $changes[] = "Visibility changed from '" . ($originalVisibility ? 'Public' : 'Private') . "' to '" . ($this->is_public ? 'Public' : 'Private') . "'";
       }
 
       // Create audit log if changes were made

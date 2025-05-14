@@ -15,7 +15,6 @@ class BookUploadForm extends Component
   public $title = '';
   public $author = '';
   public $category_id = '';
-  public $is_public = false;
   public $file;
 
   public $categories = [];
@@ -46,7 +45,6 @@ class BookUploadForm extends Component
     $product->title = $this->title;
     $product->author = $this->author;
     $product->category_id = $this->category_id;
-    $product->is_public = $this->is_public;
 
     if ($this->file) {
       $filename = Str::slug($this->title) . '_' . time() . '.' . $this->file->getClientOriginalExtension();
@@ -66,7 +64,7 @@ class BookUploadForm extends Component
     );
 
     // Reset form
-    $this->reset(['title', 'author', 'category_id', 'is_public', 'file']);
+    $this->reset(['title', 'author', 'category_id', 'file']);
 
     // Show success message
     $this->dispatch('alert', [

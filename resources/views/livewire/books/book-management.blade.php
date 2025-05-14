@@ -85,14 +85,6 @@
           @enderror
         </div>
 
-        <div class="visibility-toggle">
-          <label class="switch">
-            <input type="checkbox" wire:model.live="is_public" {{ $is_public ? 'checked' : '' }}>
-            <span class="slider round"></span>
-          </label>
-          <span class="visibility-label">{{ $is_public ? 'Public' : 'Private' }}</span>
-        </div>
-
         <div class="edit-book-modal-footer">
           <button type="button" class="edit-book-btn-secondary" wire:click="resetEditForm">CANCEL</button>
           <button type="submit" class="edit-book-btn-primary">SAVE</button>

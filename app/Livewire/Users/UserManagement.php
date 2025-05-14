@@ -201,6 +201,9 @@ class UserManagement extends Component
         $this->filterUserType = '';
         $this->filterBanStatus = '';
         $this->resetPage();
+        
+        // Emit an event to notify JavaScript that filters were cleared
+        $this->dispatch('filtersCleared');
     }
 
     /**

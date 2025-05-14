@@ -25,7 +25,6 @@
   @stack('scripts')
 
   <script>
-    // Initialize event listeners when Livewire is ready
     document.addEventListener('livewire:initialized', () => {
       Livewire.on('alert', (data) => {
         if (window.showAlert) {
@@ -57,7 +56,6 @@
         });
       }
 
-      // Close drawer when close button or overlay is clicked
       if (drawerCloseBtn) {
         drawerCloseBtn.addEventListener('click', closeDrawer);
       }
@@ -69,7 +67,7 @@
       function closeDrawer() {
         filterDrawer.classList.remove('open');
         overlay.classList.remove('active');
-        document.body.style.overflow = ''; // Re-enable scrolling
+        document.body.style.overflow = '';
       }
 
       // Toggle accordion sections
@@ -78,10 +76,8 @@
           const accordionId = this.getAttribute('data-accordion');
           const content = this.nextElementSibling;
 
-          // Toggle active class on header
           this.classList.toggle('active');
 
-          // Toggle open class on content
           if (content.classList.contains('open')) {
             content.classList.remove('open');
             content.style.maxHeight = '0px';
@@ -92,18 +88,15 @@
         });
       });
 
-      // Close drawer when a filter is selected (optional)
+      // Close drawer when a filter is selected
       const drawerSelects = document.querySelectorAll('.drawer-select');
       drawerSelects.forEach(select => {
         select.addEventListener('change', function() {
-          // Add a small delay to allow the Livewire update to complete
           setTimeout(closeDrawer, 300);
         });
       });
 
-      // Handle Livewire updates - reattach event listeners
       document.addEventListener('livewire:update', function() {
-        // Re-initialize accordion functionality after Livewire updates
         const updatedAccordionHeaders = document.querySelectorAll('.accordion-header');
         updatedAccordionHeaders.forEach(header => {
           const content = header.nextElementSibling;
@@ -112,6 +105,35 @@
             content.style.maxHeight = content.scrollHeight + 'px';
           }
         });
+      });
+
+      // Reset filter UI elements after clearing
+      Livewire.on('filtersCleared', () => {
+        // reset search input
+        const searchInput = document.querySelector('input[wire\\:model\\.live\\.debounce\\.300ms="searchQuery"]');
+        if (searchInput) {
+          searchInput.value = '';
+          searchInput.dispatchEvent(new Event('input'));
+        }
+
+        // reset a select element
+        const resetSelect = (selector, defaultValue) => {
+          const selectElement = document.querySelector(selector);
+          if (selectElement) {
+            selectElement.value = defaultValue;
+            selectElement.dispatchEvent(new Event('change'));
+          }
+        };
+
+        // Reset desktop dropdowns
+        resetSelect('.search-filter-container select[wire\\:model\\.live="sortOption"]', 'newest');
+        resetSelect('.search-filter-container select[wire\\:model\\.live="filterUserType"]', '');
+        resetSelect('.search-filter-container select[wire\\:model\\.live="filterBanStatus"]', '');
+
+        // Reset mobile dropdowns
+        resetSelect('#filterDrawer select[wire\\:model\\.live="sortOption"]', 'newest');
+        resetSelect('#filterDrawer select[wire\\:model\\.live="filterUserType"]', '');
+        resetSelect('#filterDrawer select[wire\\:model\\.live="filterBanStatus"]', '');
       });
     });
   </script>

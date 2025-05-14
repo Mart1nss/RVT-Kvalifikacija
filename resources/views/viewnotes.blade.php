@@ -11,7 +11,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <link rel="stylesheet" href="{{ asset('css/components/buttons.css') }}">
-  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
 <body>
@@ -21,12 +20,11 @@
 
   <div class="main-container" x-data="{
       sortType: 'newest',
-      sortDropdownOpen: false,
       notes: [],
       searchQuery: '',
       searchTimeout: null,
       copyStatus: {},
-      errorStatus: {}, // Add error status
+      errorStatus: {},
       init() {
           this.notes = Array.from(document.querySelectorAll('.item-card')).map(card => ({
               element: card,
@@ -37,9 +35,7 @@
           this.updateTimes();
           setInterval(() => this.updateTimes(), 60000);
       },
-      toggleSort(type) {
-          this.sortType = type;
-          this.sortDropdownOpen = false;
+      updateSort() {
           this.sortAndFilterNotes();
       },
       filterNotes() {
@@ -80,19 +76,16 @@
               navigator.clipboard.writeText(text)
                   .then(() => {
                       this.copyStatus[noteId] = true;
-                      this.errorStatus[noteId] = false; // Clear any previous error
+                      this.errorStatus[noteId] = false;
                       setTimeout(() => {
                           this.copyStatus[noteId] = false;
                       }, 5000);
                   })
                   .catch(err => {
-                      console.error('Failed to copy: ', err);
-                      this.errorStatus[noteId] = true; // Set error status
+                      this.errorStatus[noteId] = true;
                       setTimeout(() => { this.errorStatus[noteId] = false; }, 5000);
                   });
           } else {
-              // Fallback for browsers that don't support navigator.clipboard
-              console.error('Clipboard API not available');
               this.errorStatus[noteId] = true;
               setTimeout(() => { this.errorStatus[noteId] = false; }, 5000);
           }
@@ -108,19 +101,13 @@
         <input type="text" placeholder="Search by book title or author..." x-model="searchQuery"
           @input="filterNotes()">
       </div>
-      <div class="sort-dropdown" @click.outside="sortDropdownOpen = false">
-        <button class="btn btn-filter btn-sm" @click="sortDropdownOpen = !sortDropdownOpen">
-          <i class='bx bx-sort-alt-2'></i>
-          <span x-text="sortType === 'newest' ? 'Newest' : 'Oldest'"></span>
-        </button>
-        <ul class="dropdown-content" :class="{ 'show': sortDropdownOpen }">
-          <li @click="toggleSort('newest')" :class="{ 'selected': sortType === 'newest' }">Newest</li>
-          <li @click="toggleSort('oldest')" :class="{ 'selected': sortType === 'oldest' }">Oldest</li>
-        </ul>
+      <div class="sort-container">
+        <select x-model="sortType" @change="updateSort()" class="filter-select">
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+        </select>
       </div>
     </div>
-
-
 
     @if ($notes->count() > 0)
       <div class="item-container" style="border-top-left-radius: 0px; border-top-right-radius: 0px;">
@@ -183,7 +170,7 @@
       </div>
     @else
       <div class="item-container"  style="border-top-left-radius: 0px; border-top-right-radius: 0px;">
-        <p style="font-family: sans-serif; font-size: 14px; font-weight: 800; text-transform: uppercase; color: white;">
+        <p style="font-family: sans-serif; font-size: 14px; font-weight: 700; color: #999;">
           You don't have any notes yet.</p>
       </div>
     @endif

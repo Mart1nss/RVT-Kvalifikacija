@@ -5,15 +5,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Welcome</title>
-  <!-- Fonts -->
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <link rel="stylesheet" href="{{ asset('css/welcome-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/components/buttons.css') }}">
-
-  <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.mjs"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf_viewer.min.css"
-    integrity="sha512-kQO2X6Ls8Fs1i/pPQaRWkT40U/SELsldCgg4njL8zT0q4AfABNuS+xuy+69PFT21dow9T6OiJF43jan67GX+Kw=="
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
@@ -22,8 +16,7 @@
   <header class="navbar">
     <h1 class="logo"
       style="font-family: sans-serif; color: white; cursor: pointer; font-weight: 800; font-size: 24px">
-      ELEVATE
-      READS</h1>
+      ELEVATE READS</h1>
 
     <nav class="nav-btn">
       @if (Route::has('login'))
@@ -58,7 +51,16 @@
       <div class="pdf-carousel">
         <div class="carousel-track-container">
           <div class="carousel-track">
-            @foreach ($data as $book)
+            @php
+              // Filter books to only show those from public categories, limited to 20
+              $publicBooks = $data->filter(function($book) {
+                // Check if the book belongs to a public category
+                return $book->category && $book->category->is_public == true;
+              })->take(20);
+            @endphp
+            
+            {{-- First set of books --}}
+            @foreach ($publicBooks as $book)
               <div class="pdf-item">
                 <div class="thumbnail">
                   <img src="{{ asset('book-thumbnails/' . str_replace('.pdf', '.jpg', $book->file)) }}"
@@ -66,18 +68,20 @@
                 </div>
               </div>
             @endforeach
-            <!-- Duplicate books for continuous scrolling -->
-            @foreach ($data as $book)
+            
+            {{-- Duplicate the same books to create a seamless loop --}}
+            @foreach ($publicBooks as $book)
               <div class="pdf-item">
-                <div class="thumbnail" data-pdfpath="/assets/{{ $book->file }}"></div>
+                <div class="thumbnail">
+                  <img src="{{ asset('book-thumbnails/' . str_replace('.pdf', '.jpg', $book->file)) }}"
+                    alt="{{ $book->title }}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
               </div>
             @endforeach
           </div>
         </div>
       </div>
     </section>
-
-
 
     <section class="why-choose">
       <h3 class="section-title">Why Choose Elevate Reads?</h3>
@@ -126,44 +130,43 @@
     </section>
 
     <section class="feature-spotlight">
-      <h3 class="section-title">Interactive Features</h3>
 
       <div class="feature-container notebook-feature">
         <div class="feature-content">
           <h4>Virtual Notebook</h4>
           <p>Take notes while reading with your personal virtual notebook. Every book comes with a dedicated note-taking
             space, allowing you to highlight key insights and save important thoughts without leaving the page.</p>
-          <p>All your notes are organized by book and easily accessible in one central location, making review and study
-            effortless.</p>
         </div>
-        <div class="feature-image">
-          <img src="https://placehold.co/200x300" alt="Virtual Notebook">
+        <div class="feature-image-container">
+          <div class="feature-image">
+            <img src="{{ asset('welcome-images/note2.png') }}" alt="Virtual Notebook">
+          </div>
         </div>
       </div>
 
       <div class="feature-container forum-feature">
-        <div class="feature-image">
-          <img src="https://placehold.co/500x300" alt="Community Forums">
-        </div>
         <div class="feature-content">
-          <h4>Community Forums</h4>
-          <p>Connect with fellow readers in our vibrant community forums. Create discussions, share insights, and gain
+          <h4>Forums</h4>
+          <p>Connect with fellow readers in our vibrant forums. Create discussions, share insights, and gain
             new perspectives on your favorite books.</p>
-          <p>Ask questions, participate in deep conversations, and build connections with like-minded individuals
-            passionate about personal growth and learning.</p>
+        </div>
+        <div class="feature-image-container">
+          <div class="feature-image">
+            <img src="{{ asset('welcome-images/forums.png') }}" alt="Community Forums">
+          </div>
         </div>
       </div>
 
       <div class="feature-container progress-feature">
         <div class="feature-content">
-          <h4>Personal Progress Tracking</h4>
-          <p>Monitor your reading journey with detailed progress statistics. Track the number of books you've read,
+          <h4>Personal Statistics</h4>
+          <p>Monitor your reading journey with progress statistics. Track the number of books you've read,
             reviews you've written, forums you've participated in, and much more.</p>
-          <p>Gain insights into your reading habits with metrics on your most-read genres, favorite authors, average
-            reading time, and login patterns — helping you optimize your learning experience.</p>
         </div>
-        <div class="feature-image">
-          <img src="https://placehold.co/500x300" alt="Progress Tracking">
+        <div class="feature-image-container">
+          <div class="feature-image">
+            <img src="{{ asset('welcome-images/progress.png') }}" alt="Progress Tracking">
+          </div>
         </div>
       </div>
     </section>
@@ -277,18 +280,6 @@
         </div>
         <div class="accordion-item">
           <button class="accordion-header">
-            Are the eBooks compatible with all devices?
-            <i class='bx bx-chevron-down'></i>
-          </button>
-          <div class="accordion-content">
-            <div class="content-wrapper">
-              <p>Our eBooks are available in PDF format, which is compatible with most devices, including
-                computers, tablets, and smartphones. </p>
-            </div>
-          </div>
-        </div>
-        <div class="accordion-item">
-          <button class="accordion-header">
             How often is new content added?
             <i class='bx bx-chevron-down'></i>
           </button>
@@ -344,7 +335,7 @@
     </div>
   </footer>
 
-  <script src="{{ asset('js/pdfThumbnails.js') }}" type="module"></script>
+  <script src="{{ asset('js/pdfThumbnails.js') }}"></script>
 
   <script>
     const accordionHeaders = document.querySelectorAll('.accordion-header');

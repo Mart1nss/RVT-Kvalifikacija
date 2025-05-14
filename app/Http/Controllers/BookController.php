@@ -49,7 +49,6 @@ class BookController extends Controller
     $product->title = $request->title;
     $product->author = $request->author;
     $product->category_id = $request->category_id;
-    $product->is_public = $request->has('is_public');
 
     if ($request->hasFile('file')) {
       $file = $request->file('file');
@@ -174,8 +173,8 @@ class BookController extends Controller
    * Display detailed view of a specific book.
    * Shows book information and reviews.
    * Handles visibility permissions:
-   * - Public books visible to all
-   * - Private books only visible to admins
+   * - Books visible if category is public
+   * - Books in private categories only visible to admins
    *
    * @param int $id
    * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
@@ -183,9 +182,10 @@ class BookController extends Controller
   public function view($id)
   {
     $product = Product::findOrFail($id);
+    $category = $product->category;
 
-    // Check if book is private and user is not admin
-    if (!$product->is_public && (!Auth::check() || Auth::user()->usertype !== 'admin')) {
+    // Check if category is private and user is not admin
+    if (!$category->is_public && (!Auth::check() || Auth::user()->usertype !== 'admin')) {
       return redirect()->route('library')->with('error', 'You do not have permission to view this book.');
     }
 

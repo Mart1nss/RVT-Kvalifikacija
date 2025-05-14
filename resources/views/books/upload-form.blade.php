@@ -36,16 +36,6 @@
       </span>
     </div>
 
-    <div class="form-group">
-      <div class="visibility-toggle">
-        <label class="switch">
-          <input type="checkbox" name="is_public" checked>
-          <span class="slider round"></span>
-        </label>
-        <span class="visibility-label">Public</span>
-      </div>
-    </div>
-
     <p class="max-file-size-text">max file size <span class="highlight-text">10 mb </span>| format <span
         class="highlight-text">pdf</span></p>
     <div class="file-input-container">
@@ -77,18 +67,3 @@
 </div>
 
 <script src="{{ asset('js/book-upload.js') }}"></script>
-<script>
-  // 1. Upload Form Visibility Toggle
-  const uploadFormToggle = document.querySelector(
-    '.upload-book-form .visibility-toggle input[type="checkbox"]'
-  );
-  if (uploadFormToggle) {
-    uploadFormToggle.addEventListener("change", function() {
-      const label =
-        this.closest(".visibility-toggle").querySelector(
-          ".visibility-label"
-        );
-      label.textContent = this.checked ? "Public" : "Private";
-    });
-  }
-</script>

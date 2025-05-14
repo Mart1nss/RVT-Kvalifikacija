@@ -45,7 +45,6 @@
     <script>
       document.addEventListener('DOMContentLoaded', function() {
         const pdfUrl = "/book-thumbnail/{{ $data->file }}";
-        // Initialize viewer and pass callback for post-load actions
         initPDFViewer(pdfUrl, handlePdfLoad);
       });
     </script>

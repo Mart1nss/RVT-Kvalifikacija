@@ -21,8 +21,7 @@ class Product extends Model
         'author',
         'category_id',
         'cover_image',
-        'file',
-        'is_public'
+        'file'
     ];
 
     public function reviews()

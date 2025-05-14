@@ -107,7 +107,7 @@ class HomeController extends Controller
 
     /**
      * Displays the welcome page carousel with books.
-     * Shows all books for admin users, but only public books for regular users.
+     * Shows books from public categories only.
      *
      * @param Request $request
      * @return \Illuminate\View\View
@@ -115,9 +115,12 @@ class HomeController extends Controller
     public function carousel(Request $request)
     {
         if (Auth::user() && Auth::user()->usertype === 'admin') {
-            $data = Product::all();
+            // For admin, load all books with their categories
+            $data = Product::with('category')->get();
         } else {
-            $data = Product::where('is_public', 1)->get();
+            // For regular users, we'll filter by category visibility in the view
+            // Just load all books with their categories for now
+            $data = Product::with('category')->get();
         }
 
         return view('welcome', compact('data'));

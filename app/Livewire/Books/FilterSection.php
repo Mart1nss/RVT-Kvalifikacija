@@ -39,9 +39,9 @@ class FilterSection extends Component
 
   // Visibility options
   public $visibilityOptions = [
-    ['value' => 'all', 'text' => 'All Books'],
-    ['value' => 'public', 'text' => 'Public Only'],
-    ['value' => 'private', 'text' => 'Private Only']
+    ['value' => 'all', 'text' => 'All Visibility'],
+    ['value' => 'public', 'text' => 'Public Visibility'],
+    ['value' => 'private', 'text' => 'Private Visibility']
   ];
 
   public function mount($sort = 'newest', $isAdmin = false, $visibility = 'all', $totalBooks = 0)
@@ -143,7 +143,7 @@ class FilterSection extends Component
   public function getVisibilityDisplayText()
   {
     $option = collect($this->visibilityOptions)->firstWhere('value', $this->visibility);
-    return $option ? $option['text'] : 'All Books';
+    return $option ? $option['text'] : 'All Categories';
   }
 
   public function hasActiveFilters()
