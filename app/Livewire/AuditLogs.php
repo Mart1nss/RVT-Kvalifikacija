@@ -36,6 +36,7 @@ class AuditLogs extends Component
         $this->actionType = 'all';
         $this->adminId = 'all';
         $this->resetPage();
+        $this->dispatch('filtersCleared');
     }
 
     public function render()

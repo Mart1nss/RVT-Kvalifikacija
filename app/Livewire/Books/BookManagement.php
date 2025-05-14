@@ -179,13 +179,13 @@ class BookManagement extends Component
     $bookAuthor = $this->bookToDelete->author;
     $bookFile = $this->bookToDelete->file;
 
-    // Store book info in associated notes before deletion
+    // Store book info in notes before deletion
     $this->bookToDelete->notes()->update([
       'book_title' => $bookTitle,
       'book_author' => $bookAuthor
     ]);
 
-    // Delete the book file from storage
+    // Delete book from storage
     if ($bookFile && Storage::exists('books/' . $bookFile)) {
       Storage::delete('books/' . $bookFile);
     }
@@ -204,9 +204,9 @@ class BookManagement extends Component
     app(AuditLogService::class)->log(
       "Deleted book",
       "book",
-      "Deleted book",
+      "Deleted book: {$bookTitle} by {$bookAuthor}",
       $bookId,
-      $bookTitle
+      "{$bookTitle} by {$bookAuthor}"
     );
 
     // Reset and show success message
@@ -229,12 +229,47 @@ class BookManagement extends Component
 
     $book = Product::find($this->editingBookId);
     if ($book) {
+      $originalTitle = $book->title;
+      $originalAuthor = $book->author;
+      $originalCategoryId = $book->category_id;
+      $originalVisibility = $book->is_public;
+
+      // Update the book
       $book->update([
         'title' => $this->title,
         'author' => $this->author,
         'category_id' => $this->category_id,
         'is_public' => $this->is_public,
       ]);
+
+      // Prepare description of changes for audit log
+      $changes = [];
+      if ($originalTitle !== $this->title) {
+        $changes[] = "Title changed from '{$originalTitle}' to '{$this->title}'";
+      }
+      if ($originalAuthor !== $this->author) {
+        $changes[] = "Author changed from '{$originalAuthor}' to '{$this->author}'";
+      }
+      if ($originalCategoryId !== $this->category_id) {
+        $oldCategory = Category::find($originalCategoryId)?->name ?? 'Unknown';
+        $newCategory = Category::find($this->category_id)?->name ?? 'Unknown';
+        $changes[] = "Category changed from '{$oldCategory}' to '{$newCategory}'";
+      }
+      if ($originalVisibility !== $this->is_public) {
+        $changes[] = "Visibility changed from '" . ($originalVisibility ? 'Public' : 'Private') . "' to '" . ($this->is_public ? 'Public' : 'Private') . "'";
+      }
+
+      // Create audit log if changes were made
+      if (!empty($changes)) {
+        $description = implode(", ", $changes);
+        app(AuditLogService::class)->log(
+          "Updated book",
+          "book",
+          $description,
+          $book->id,
+          $book->title
+        );
+      }
 
       $this->resetEditForm();
       $this->dispatch('alert', [

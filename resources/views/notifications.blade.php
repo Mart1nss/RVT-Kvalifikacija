@@ -18,7 +18,7 @@
   @include('components.alert')
 
   <div class="main-container">
-    <div class="text-container" style="background: transparent; padding: 0;">
+    <div class="text-container" style="background: transparent; padding: 0; margin-bottom: 20px;">
       <h1 class="text-container-title">Notifications</h1>
     </div>
 

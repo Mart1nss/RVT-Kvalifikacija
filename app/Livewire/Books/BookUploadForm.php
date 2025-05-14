@@ -60,9 +60,9 @@ class BookUploadForm extends Component
     app(\App\Services\AuditLogService::class)->log(
       "Uploaded book",
       "book",
-      "Uploaded new book",
+      "Uploaded new book: {$product->title} by {$product->author}",
       $product->id,
-      $product->title
+      "{$product->title} by {$product->author}"
     );
 
     // Reset form

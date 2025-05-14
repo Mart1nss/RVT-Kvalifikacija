@@ -9,7 +9,7 @@
 
       <!-- Action Type Filter -->
       <div class="sort-dropdown">
-        <select wire:model.live="actionType" class="filter-select">
+        <select wire:model.live="actionType" class="filter-select" id="actionTypeFilter">
           <option value="all">All Actions</option>
           <option value="book">Book</option>
           <option value="user">User</option>
@@ -20,7 +20,7 @@
 
       <!-- Admin Filter -->
       <div class="sort-dropdown">
-        <select wire:model.live="adminId" class="filter-select">
+        <select wire:model.live="adminId" class="filter-select" id="adminIdFilter">
           <option value="all">All Admins</option>
           @foreach ($admins as $admin)
             <option value="{{ $admin->id }}">{{ $admin->name }}</option>
@@ -59,7 +59,7 @@
     <div class="logs-container">
       @foreach ($logs as $log)
         <div
-          class="log-entry {{ str_contains($log->description, 'Changed') || str_contains($log->action_type, 'notification') ? 'expandable' : '' }}"
+          class="log-entry {{ str_contains(strtolower($log->description), 'changed') || str_contains($log->action_type, 'notification') || ($log->action_type === 'book' && $log->action === 'Updated book') ? 'expandable' : '' }}"
           x-data="{ expanded: false }" @click="expanded = !expanded">
           <div class="log-header">
             <div class="log-content">
@@ -79,24 +79,63 @@
                 </span>
                 <span class="admin-name">{{ $log->admin ? $log->admin->name : 'Unknown Admin' }}</span>
                 <span class="action">{{ $log->action }}</span>
-                @if ($log->affected_item_name)
+                @if ($log->affected_item_name && $log->action_type === 'book')
+                  @php
+                    // Extract book title and author if available
+                    $bookInfo = $log->affected_item_name;
+                    $description = $log->description;
+                    $authorInfo = '';
+                    
+                    // Try to extract author from description for edited books
+                    if ($log->action === 'Updated book') {
+                      // First check if author was changed in this update
+                      preg_match('/Author changed from \'(.*?)\' to \'(.*?)\'/', $description, $authorMatches);
+                      if (!empty($authorMatches)) {
+                        $authorInfo = " by " . $authorMatches[2];
+                      }
+                    }
+                    // For deleted books
+                    else if ($log->action === 'Deleted book') {
+                      // Author might be directly stored in the affected_item_name with format "title by author"
+                      if (strpos($bookInfo, ' by ') !== false) {
+                        list($title, $author) = explode(' by ', $bookInfo, 2);
+                        $bookInfo = $title;
+                        $authorInfo = " by " . $author;
+                      }
+                    }
+                    // For uploaded books, we currently don't have the author in the log
+                    // We would need to modify the AuditLogService to include the author when uploading
+                  @endphp
+                  <span class="affected-item">"{{ $bookInfo }}{{ $authorInfo }}"</span>
+                @elseif ($log->affected_item_name)
                   <span class="affected-item">"{{ $log->affected_item_name }}"</span>
                 @endif
               </div>
               <span class="timestamp">{{ $log->created_at->format('M d, Y H:i:s') }}</span>
             </div>
-            @if (str_contains($log->description, 'Changed') || str_contains($log->action_type, 'notification'))
+            @if (str_contains(strtolower($log->description), 'changed') || str_contains($log->action_type, 'notification') || ($log->action_type === 'book' && $log->action === 'Updated book'))
               <i class='bx bx-chevron-down accordion-icon' :style="expanded ? 'transform: rotate(180deg)' : ''"></i>
             @endif
           </div>
 
-          @if (str_contains($log->description, 'Changed'))
+          @if (str_contains(strtolower($log->description), 'changed'))
             <div class="log-details" x-cloak x-show="expanded" x-transition style="max-height: none;">
               <div class="changes-list">
                 @foreach (explode(', ', $log->description) as $change)
                   @if (str_starts_with($change, 'Changed'))
                     @php $change = str_replace('Changed ', '', $change); @endphp
                   @endif
+                  <div class="change-item">
+                    <i class='bx bx-right-arrow-alt'></i>
+                    <span>{{ ucfirst($change) }}</span>
+                  </div>
+                @endforeach
+              </div>
+            </div>
+          @elseif($log->action_type === 'book' && $log->action === 'Updated book')
+            <div class="log-details" x-cloak x-show="expanded" x-transition style="max-height: none;">
+              <div class="changes-list">
+                @foreach (explode(', ', $log->description) as $change)
                   <div class="change-item">
                     <i class='bx bx-right-arrow-alt'></i>
                     <span>{{ ucfirst($change) }}</span>
@@ -123,3 +162,13 @@
     </div>
   </div>
 </div>
+
+<script>
+  // Reset filter dropdowns when filters are cleared
+  document.addEventListener('livewire:initialized', function () {
+    Livewire.on('filtersCleared', function () {
+      document.getElementById('actionTypeFilter').value = 'all';
+      document.getElementById('adminIdFilter').value = 'all';
+    });
+  });
+</script>
