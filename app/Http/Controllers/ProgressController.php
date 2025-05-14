@@ -101,7 +101,7 @@ class ProgressController extends Controller
         // Count genres from read books and reviews
         $genreCounts = [];
         
-        // Process read books
+        // Process read books - these are explicitly marked as read
         foreach ($user->readBooks as $readBook) {
             if ($readBook->product && $readBook->product->category) {
                 $categoryName = $readBook->product->category->name;
@@ -109,21 +109,6 @@ class ProgressController extends Controller
                     $genreCounts[$categoryName] = 0;
                 }
                 $genreCounts[$categoryName]++;
-            }
-        }
-        
-        // Also include reviews for books that haven't been explicitly marked as read
-        foreach ($user->reviews as $review) {
-            if ($review->product && $review->product->category) {
-                $categoryName = $review->product->category->name;
-                if (!isset($genreCounts[$categoryName])) {
-                    $genreCounts[$categoryName] = 0;
-                }
-                // We give less weight to reviews if the book isn't explicitly marked as read
-                // to avoid double-counting books that have both read status and reviews
-                if (!$user->hasRead($review->product_id)) {
-                    $genreCounts[$categoryName] += 0.5;
-                }
             }
         }
         
@@ -138,7 +123,7 @@ class ProgressController extends Controller
             $topGenres[] = [
                 'position' => $position,
                 'name' => $genre,
-                'count' => round($count, 1) // Round to 1 decimal place
+                'count' => round($count, 0) // Display as whole numbers only
             ];
             $position++;
         }

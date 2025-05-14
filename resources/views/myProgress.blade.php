@@ -356,8 +356,7 @@ p {
         @endif
     </div>
 
-    <div class="button-container">
-        <button class="btn btn-primary btn-sm">Download</button>
+    <div class="button-container">  
         <p>Last updated: {{ now()->format('Y-m-d') }}</p>
     </div>
     

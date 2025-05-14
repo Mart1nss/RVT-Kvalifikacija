@@ -40,7 +40,7 @@ class AuthenticatedSessionController extends Controller
             'hour_of_day' => $now->hour,
         ]);
         
-        // Keep only the latest 20 login records
+        // Keep only the latest 7 login records
         $this->trimLoginRecords($user->id);
         
         if ($user->userPreferences()->count() === 0) {
@@ -65,17 +65,17 @@ class AuthenticatedSessionController extends Controller
     }
     
     /**
-     * Keep only the latest 20 login records for a user
+     * Keep only the latest 7 login records for a user
      *
      * @param int $userId
      * @return void
      */
     private function trimLoginRecords($userId)
     {
-        // Get login IDs to keep (the latest 20)
+        // Get login IDs to keep (the latest 7)
         $loginIdsToKeep = UserLogin::where('user_id', $userId)
             ->orderBy('created_at', 'desc')
-            ->limit(20)
+            ->limit(7)
             ->pluck('id');
             
         // Delete all older login records
