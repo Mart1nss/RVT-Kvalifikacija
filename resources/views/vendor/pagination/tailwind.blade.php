@@ -6,9 +6,9 @@
     <div class="pagination-links">
       {{-- Previous Page Link --}}
       @if (!$paginator->onFirstPage())
-        <a href="{{ $paginator->previousPageUrl() }}" class="pagination-btn">
+        <button wire:click="previousPage('page')" wire:loading.attr="disabled" class="pagination-btn">
           <i class='bx bxs-left-arrow-alt'></i>
-        </a>
+        </button>
       @endif
 
       {{-- Pagination Elements --}}
@@ -19,7 +19,9 @@
             @if ($page == $paginator->currentPage())
               <span class="pagination-btn active">{{ $page }}</span>
             @else
-              <a href="{{ $url }}" class="pagination-btn">{{ $page }}</a>
+              <button wire:click="gotoPage({{ $page }}, 'page')" wire:loading.attr="disabled" class="pagination-btn">
+                {{ $page }}
+              </button>
             @endif
           @endforeach
         @endif
@@ -27,9 +29,9 @@
 
       {{-- Next Page Link --}}
       @if ($paginator->hasMorePages())
-        <a href="{{ $paginator->nextPageUrl() }}" class="pagination-btn">
+        <button wire:click="nextPage('page')" wire:loading.attr="disabled" class="pagination-btn">
           <i class='bx bxs-right-arrow-alt'></i>
-        </a>
+        </button>
       @endif
     </div>
   </nav>

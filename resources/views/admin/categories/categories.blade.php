@@ -89,7 +89,7 @@
 
 <div class="main-container">
 <h1
-      style="margin-bottom: 10px; font-family: sans-serif; font-weight: 800; text-transform: uppercase; font-size: 32px;">
+      style="margin-bottom: 10px; font-family: sans-serif; font-weight: 800; text-transform: uppercase;">
       Manage Categories
     </h1>
   

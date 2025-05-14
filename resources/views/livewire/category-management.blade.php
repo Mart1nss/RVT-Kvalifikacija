@@ -52,8 +52,8 @@
           <select wire:model.live="sort" class="filter-select" wire:key="desktop-sort-{{ $sort }}">
             <option value="newest">Newest First</option>
             <option value="oldest">Oldest First</option>
-            <option value="count_asc">Book Count (Low to High)</option>
-            <option value="count_desc">Book Count (High to Low)</option>
+            <option value="count_asc">Book Count ASC</option>
+            <option value="count_desc">Book Count DESC</option>
           </select>
         </div>
       </div>
@@ -139,11 +139,13 @@
             @if ($editingCategoryId !== $category->id)
               <div class="category-display">
                 <h3>
-                  <span>{{ $category->name }}</span>
-                  <span class="book-count">({{ $category->products_count }} books)</span>
+                  <span>{{ $category->name }}
                   @if ($category->is_system)
                     <span class="system-badge">System</span>
                   @endif
+                  </span>
+                  <span class="book-count">{{ $category->products_count }} books</span>
+                  
                 </h3>
               </div>
             @else

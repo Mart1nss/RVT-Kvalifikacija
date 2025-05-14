@@ -28,20 +28,20 @@
 .pagination-btn {
     min-width: 35px;
     height: 35px;
+    border: none;
     background-color: #252525;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    text-decoration: none;
     font-size: 14px;
     border-radius: 4px;
-    transition: all 0.2s ease;
-    font-family: sans-serif;
+    transition: all 0.2s;
+    cursor: pointer;
 }
 
 .pagination-btn:not(.active):hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: #353535;
 }
 
 .pagination-btn.active {
