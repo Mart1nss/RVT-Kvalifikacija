@@ -33,7 +33,7 @@ class Ticket extends Model
 
     const STATUS_OPEN = 'open';
     const STATUS_IN_PROGRESS = 'in_progress';
-    const STATUS_RESOLVED = 'resolved';
+    const STATUS_CLOSED = 'closed'; // Changed from STATUS_RESOLVED = 'resolved'
 
     public function user()
     {

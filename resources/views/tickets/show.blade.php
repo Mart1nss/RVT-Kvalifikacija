@@ -55,11 +55,20 @@
       </div>
       <div class="info-group">
         <label>Created By:</label>
-        <span>{{ $ticket->user->name }}</span>
+        <span>{{ $ticket->user ? $ticket->user->name : 'Deleted User' }}</span>
       </div>
       <div class="info-group">
         <label>Assigned To:</label>
-        <span>{{ $ticket->assignedAdmin ? $ticket->assignedAdmin->name : 'Unassigned' }}</span>
+        <span>
+          @if ($ticket->assignedAdmin)
+            {{ $ticket->assignedAdmin->name }}
+          @elseif (is_null($ticket->assigned_admin_id))
+            <span style="color: red;">unassigned</span>
+          @else 
+            {{-- This case implies assigned_admin_id has a value, but the user model is gone, or our new logic hasn't run on this old ticket yet --}}
+            <span style="color: orange;">Assigned to deleted/unknown admin (ID: {{ $ticket->assigned_admin_id }})</span>
+          @endif
+        </span>
       </div>
       <div class="info-group">
         <label>Created At:</label>
@@ -86,7 +95,7 @@
         @foreach ($ticket->responses()->orderBy('created_at', 'asc')->get() as $response)
           <div class="response {{ $response->is_admin_response ? 'admin-response' : 'user-response' }}">
             <div class="response-header">
-              <span class="response-author">{{ $response->user->name }}</span>
+              <span class="response-author">{{ $response->user ? $response->user->name : ($response->is_admin_response ? 'Deleted Admin' : 'Deleted User') }}</span>
               <span class="response-time">{{ $response->created_at->format('M d, Y H:i') }}</span>
             </div>
             <div class="response-content">

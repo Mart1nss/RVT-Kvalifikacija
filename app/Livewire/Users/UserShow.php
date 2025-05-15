@@ -4,8 +4,13 @@ namespace App\Livewire\Users;
 
 use App\Models\User;
 use App\Models\Ban;
+use App\Models\Ticket; // Added Ticket model
 use App\Services\AuditLogService;
+use Illuminate\Support\Facades\Notification; // Added for sending notifications
+use App\Notifications\TicketUnassignedNotification; // We will create this notification
+use App\Notifications\UserRoleChangedNotification; // Added new notification
 use Livewire\Component;
+use Illuminate\Support\Facades\Log; // Added for logging
 
 /**
  * UserShow Component
@@ -18,12 +23,11 @@ use Livewire\Component;
  */
 class UserShow extends Component
 {
-    // Public properties that can be bound to the UI
-    public $user;                // Stores the user model being viewed
-    public $userId;              // Stores the ID of the user being viewed
-    public $showDeleteModal = false; // Controls visibility of delete confirmation modal
-    public $showBanModal = false;    // Controls visibility of ban confirmation modal
-    public $banReason = '';          // Stores the reason for banning a user
+    public $user;
+    public $userId;
+    public $showDeleteModal = false;
+    public $showBanModal = false;
+    public $banReason = '';
 
     /**
      * Initialize the component
@@ -35,8 +39,7 @@ class UserShow extends Component
     {
         $this->userId = $userId;
         
-        // Security check: Prevent admins from editing their own account
-        // This prevents accidental role changes or self-banning
+        // Prevent admins from editing their own account
         if (auth()->id() == $userId) {
             $this->dispatch('alert', [
                 [
@@ -76,6 +79,8 @@ class UserShow extends Component
      */
     public function updateUserType($userType)
     {
+        Log::info("[UserShow] updateUserType called for user ID {$this->user->id} ({$this->user->name}) with new type '{$userType}'. Current actual usertype: {$this->user->usertype}. Auth User: " . auth()->id());
+
         // Double-check that admin is not editing their own account
         if ($this->user->id === auth()->id()) {
             $this->dispatch('alert', [
@@ -93,6 +98,41 @@ class UserShow extends Component
         // Update and save the user's role
         $this->user->usertype = $userType;
         $this->user->save();
+
+        // If user was an admin and is no longer an admin, unassign their tickets
+        if ($oldRole === 'admin' && $userType !== 'admin') {
+            $adminUser = $this->user;
+            Log::info("[UserShow] updateUserType: Admin role change condition met for user ID {$adminUser->id} ({$adminUser->name}). Old role: '{$oldRole}', New type: '{$userType}'. Unassigning tickets.");
+            $ticketsToUnassign = Ticket::where('assigned_admin_id', $adminUser->id)->get();
+            foreach ($ticketsToUnassign as $ticket) {
+                $ticket->assigned_admin_id = null;
+                $ticket->status = Ticket::STATUS_OPEN; // Re-open the ticket
+                $ticket->save();
+            }
+
+            // Notify other admins
+            $otherAdmins = User::where('usertype', 'admin')->where('id', '!=', $adminUser->id)->get();
+            if ($otherAdmins->isNotEmpty()) {
+                Log::info("[UserShow] updateUserType: Dispatching AdminTicketsUnassigned event for user ID {$adminUser->id}. Ticket count: " . count($ticketsToUnassign) . ". Reason: role_changed.");
+                event(new \App\Events\AdminTicketsUnassigned($adminUser, count($ticketsToUnassign), 'role_changed'));
+                $this->dispatch('alert', [
+                    [
+                        'type' => 'info',
+                        'message' => "Tickets previously assigned to {$adminUser->name} have been unassigned due to role change."
+                    ]
+                ]);
+            }
+        }
+
+        // Notify the user whose role was changed
+        if ($oldRole !== $userType) { // Check if a role change actually occurred
+            try {
+                $this->user->notify(new UserRoleChangedNotification($this->user, $oldRole, $userType));
+                Log::info("[UserShow] updateUserType: Sent UserRoleChangedNotification to user ID {$this->user->id} for role change from '{$oldRole}' to '{$userType}'.");
+            } catch (\Exception $e) {
+                Log::error("[UserShow] updateUserType: Failed to send UserRoleChangedNotification to user ID {$this->user->id}. Error: " . $e->getMessage());
+            }
+        }
 
         // Log the role change in the audit log for accountability
         AuditLogService::log(
@@ -118,7 +158,6 @@ class UserShow extends Component
      */
     public function confirmDelete()
     {
-        // Double-check that admin is not deleting their own account
         if ($this->user->id === auth()->id()) {
             $this->dispatch('alert', [
                 [
@@ -129,7 +168,6 @@ class UserShow extends Component
             return;
         }
         
-        // Show the delete confirmation modal
         $this->showDeleteModal = true;
     }
 
@@ -148,7 +186,7 @@ class UserShow extends Component
      */
     public function deleteUser()
     {
-        // Check if the current user has admin privileges
+        Log::info("[UserShow] deleteUser called for user ID {$this->user->id} ({$this->user->name}). Auth User: " . auth()->id());
         if (!auth()->user()->isAdmin()) {
             $this->dispatch('alert', [
                 [
@@ -159,7 +197,6 @@ class UserShow extends Component
             return;
         }
 
-        // Final security check to prevent self-deletion
         if ($this->user->id === auth()->id()) {
             $this->dispatch('alert', [
                 [
@@ -170,7 +207,6 @@ class UserShow extends Component
             return;
         }
 
-        // Log the deletion in the audit log for accountability
         AuditLogService::log(
             "Deleted user",
             "user",
@@ -179,16 +215,17 @@ class UserShow extends Component
             $this->user->name
         );
 
-        // Store the name before deletion for the success message
         $userName = $this->user->name;
+        // The logic for unassigning tickets and dispatching AdminTicketsUnassigned event
+        // has been moved to the User model's 'deleting' event listener in User::booted().
+        // This ensures it runs globally whenever a user is deleted.
         
         // Delete the user from the database
+        // This will trigger the 'deleting' event in the User model.
         $this->user->delete();
         
-        // Close the modal
         $this->showDeleteModal = false;
 
-        // Show success message to the admin
         $this->dispatch('alert', [
             [
                 'type' => 'success',
@@ -196,7 +233,6 @@ class UserShow extends Component
             ]
         ]);
 
-        // Redirect to user management page after deletion
         return redirect()->route('user.management.livewire');
     }
 
@@ -206,7 +242,6 @@ class UserShow extends Component
      */
     public function confirmBan()
     {
-        // Double-check that admin is not banning their own account
         if ($this->user->id === auth()->id()) {
             $this->dispatch('alert', [
                 [
@@ -217,7 +252,6 @@ class UserShow extends Component
             return;
         }
         
-        // Show the ban confirmation modal
         $this->showBanModal = true;
     }
 
@@ -238,7 +272,6 @@ class UserShow extends Component
      */
     public function banUser()
     {
-        // Check if the current user has admin privileges
         if (!auth()->user()->isAdmin()) {
             $this->dispatch('alert', [
                 [
@@ -249,7 +282,6 @@ class UserShow extends Component
             return;
         }
 
-        // Final security check to prevent self-banning
         if ($this->user->id === auth()->id()) {
             $this->dispatch('alert', [
                 [
@@ -260,13 +292,11 @@ class UserShow extends Component
             return;
         }
         
-        // Validate that ban reason is provided
         if (empty($this->banReason)) {
             $this->addError('banReason', 'A reason for the ban is required.');
             return;
         }
 
-        // Create a new ban record
         Ban::create([
             'user_id' => $this->user->id,
             'reason' => $this->banReason,
@@ -274,7 +304,6 @@ class UserShow extends Component
             'is_active' => true
         ]);
 
-        // Log the ban action in the audit log for accountability
         AuditLogService::log(
             "Banned user",
             "user",
@@ -283,11 +312,9 @@ class UserShow extends Component
             $this->user->name
         );
 
-        // Reset modal state
         $this->showBanModal = false;
         $this->banReason = '';
 
-        // Show success message to the admin
         $this->dispatch('alert', [
             [
                 'type' => 'success',
@@ -295,7 +322,6 @@ class UserShow extends Component
             ]
         ]);
         
-        // Refresh user data to update UI
         $this->loadUser();
     }
 
@@ -306,7 +332,6 @@ class UserShow extends Component
      */
     public function unbanUser()
     {
-        // Check if the current user has admin privileges
         if (!auth()->user()->isAdmin()) {
             $this->dispatch('alert', [
                 [
@@ -317,10 +342,8 @@ class UserShow extends Component
             return;
         }
 
-        // Delete all ban records for this user
         Ban::where('user_id', $this->user->id)->delete();
 
-        // Log the unban action in the audit log for accountability
         AuditLogService::log(
             "Unbanned user",
             "user",
@@ -329,7 +352,6 @@ class UserShow extends Component
             $this->user->name
         );
 
-        // Show success message to the admin
         $this->dispatch('alert', [
             [
                 'type' => 'success',
@@ -337,7 +359,6 @@ class UserShow extends Component
             ]
         ]);
         
-        // Refresh user data to update UI
         $this->loadUser();
     }
 }

@@ -112,6 +112,8 @@ class NotificationList extends Component
 
       // Dispatch event for JavaScript alert
       $this->dispatch('notificationDeleted');
+      // Dispatch a global event for other components to refresh
+      $this->dispatch('refreshNotificationsGlobal');
 
     } catch (\Exception $e) {
       \Log::error('Error deleting sent notification: ' . $e->getMessage());
@@ -134,7 +136,7 @@ class NotificationList extends Component
    */
   public function render()
   {
-    $query = SentNotification::with(['sender', 'reads']);
+    $query = SentNotification::with('sender');
 
     // Apply recipient filter
     if (!empty($this->recipientFilter)) {

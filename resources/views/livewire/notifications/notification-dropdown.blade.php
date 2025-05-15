@@ -53,6 +53,12 @@
                           <i class='bx bx-link-external'></i> Go to ticket
                         </a>
                       </div>
+                    @elseif (isset($notification->data['link']))
+                      <div class="notification-actions-row">
+                        <a href="{{ $notification->data['link'] }}" class="go-to-btn">
+                          <i class='bx bx-link-external'></i> View Details
+                        </a>
+                      </div>
                     @endif
                   </div>
                   <div class="notification-actions">

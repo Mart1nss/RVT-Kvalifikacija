@@ -20,14 +20,16 @@ class SentNotification extends Model
     return $this->belongsTo(User::class, 'sender_id');
   }
 
-  public function reads()
-  {
-    return $this->hasMany(NotificationRead::class);
-  }
+  // Removed reads() relationship
 
   public function getReadCountAttribute()
   {
-    return $this->reads()->count();
+    // Count directly from the 'notifications' table
+    // This assumes 'sent_notification_id' is stored in the 'data' JSON column of the 'notifications' table
+    return \Illuminate\Support\Facades\DB::table('notifications')
+      ->whereJsonContains('data->sent_notification_id', $this->id)
+      ->whereNotNull('read_at')
+      ->count();
   }
 
   public function getTotalUsersAttribute()

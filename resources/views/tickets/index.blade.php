@@ -44,6 +44,12 @@
         <h2>My Tickets</h2>
       @endif
 
+      @if (request()->get('tab') === 'closed')
+        <p style="color: #cccccc; font-size: 0.85em; margin-top: 0.5rem; margin-bottom: 1rem; text-align: left;">
+          Note: Closed tickets older than 30 days are automatically deleted from the system.
+        </p>
+      @endif
+
       <div class="table-responsive">
         <table class="custom-table">
           <thead>
@@ -51,6 +57,7 @@
               <th class="mobile-hide">Ticket ID</th>
               @if (auth()->user()->isAdmin())
                 <th>User</th>
+                <th>Assigned To</th>
               @endif
               <th>Title</th>
               <th>Category</th>
@@ -65,6 +72,13 @@
                 <td class="mobile-hide">{{ $ticket->ticket_id }}</td>
                 @if (auth()->user()->isAdmin())
                   <td>{{ $ticket->user ? $ticket->user->name : 'Deleted User' }}</td>
+                  <td>
+                    @if ($ticket->assignedAdmin)
+                      {{ $ticket->assignedAdmin->name }}
+                    @else
+                      <span style="color: red;">unassigned</span>
+                    @endif
+                  </td>
                 @endif
                 <td class="title-cell " title="{{ $ticket->title }}">{{ \Str::limit($ticket->title, 50) }}</td>
                 <td>{{ $ticket->category }}</td>

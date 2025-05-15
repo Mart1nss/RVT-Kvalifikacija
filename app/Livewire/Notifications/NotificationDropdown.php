@@ -6,7 +6,7 @@ use Livewire\Component;
 use Livewire\Attributes\On;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
-use App\Models\NotificationRead;
+// Removed: use App\Models\NotificationRead;
 
 class NotificationDropdown extends Component
 {
@@ -80,15 +80,8 @@ class NotificationDropdown extends Component
   {
     $notifications = auth()->user()->unreadNotifications;
 
-    foreach ($notifications as $notification) {
-      if (isset($notification->data['sent_notification_id'])) {
-        NotificationRead::firstOrCreate([
-          'user_id' => auth()->id(),
-          'sent_notification_id' => $notification->data['sent_notification_id'],
-          'read_at' => now()
-        ]);
-      }
-    }
+    // Removed NotificationRead::firstOrCreate logic
+    // The markAsRead method on the collection handles updating 'read_at' in the 'notifications' table
 
     $notifications->markAsRead();
 
@@ -103,13 +96,8 @@ class NotificationDropdown extends Component
   {
     $notification = auth()->user()->notifications()->findOrFail($notificationId);
 
-    if (isset($notification->data['sent_notification_id'])) {
-      NotificationRead::firstOrCreate([
-        'user_id' => auth()->id(),
-        'sent_notification_id' => $notification->data['sent_notification_id'],
-        'read_at' => now()
-      ]);
-    }
+    // Removed NotificationRead::firstOrCreate logic
+    // The markAsRead method handles updating 'read_at' in the 'notifications' table
 
     $notification->markAsRead();
 
@@ -124,23 +112,8 @@ class NotificationDropdown extends Component
   {
     $notification = auth()->user()->notifications()->findOrFail($notificationId);
 
-    // Before deleting, check if we need to track the read status
-    if ($notification->read_at && isset($notification->data['sent_notification_id'])) {
-      try {
-        // Check if the sent notification exists before creating the read record
-        $sentNotificationExists = \App\Models\SentNotification::where('id', $notification->data['sent_notification_id'])->exists();
-
-        if ($sentNotificationExists) {
-          NotificationRead::firstOrCreate([
-            'user_id' => auth()->id(),
-            'sent_notification_id' => $notification->data['sent_notification_id'],
-            'read_at' => $notification->read_at
-          ]);
-        }
-      } catch (\Exception $e) {
-        \Log::error('Error creating notification read record: ' . $e->getMessage());
-      }
-    }
+    // Removed NotificationRead::firstOrCreate logic
+    // Deleting the notification from the 'notifications' table is sufficient
 
     $notification->delete();
 
@@ -160,29 +133,8 @@ class NotificationDropdown extends Component
   public function deleteAllNotifications()
   {
     try {
-      // Get all notifications with sent_notification_id before deleting
-      $notifications = auth()->user()->notifications()->get();
-
-      // Track read status for each notification with sent_notification_id
-      foreach ($notifications as $notification) {
-        if ($notification->read_at && isset($notification->data['sent_notification_id'])) {
-          try {
-            // Check if the sent notification exists before creating the read record
-            $sentNotificationExists = \App\Models\SentNotification::where('id', $notification->data['sent_notification_id'])->exists();
-
-            if ($sentNotificationExists) {
-              NotificationRead::firstOrCreate([
-                'user_id' => auth()->id(),
-                'sent_notification_id' => $notification->data['sent_notification_id'],
-                'read_at' => $notification->read_at
-              ]);
-            }
-          } catch (\Exception $e) {
-            \Log::error('Error creating notification read record: ' . $e->getMessage());
-            // Continue with the next notification even if this one fails
-          }
-        }
-      }
+      // Removed NotificationRead::firstOrCreate logic
+      // Deleting notifications from the 'notifications' table is sufficient
 
       // Delete all notifications
       auth()->user()->notifications()->delete();
@@ -208,6 +160,16 @@ class NotificationDropdown extends Component
     if ($this->isOpen) {
       $this->loadNotifications();
     }
+  }
+
+  #[On('refreshNotificationsGlobal')]
+  public function handleGlobalNotificationRefresh()
+  {
+    // Always reload notifications if a sent one was deleted,
+    // as it might affect the list even if the dropdown is closed (e.g. unread count)
+    $this->loadNotifications();
+    // Ensure unread count is also updated
+    // $this->dispatch('notificationsRead'); // This might be redundant if loadNotifications implicitly updates counts for render
   }
 
   /**

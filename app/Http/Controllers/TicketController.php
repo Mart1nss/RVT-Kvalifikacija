@@ -9,6 +9,7 @@ use App\Models\Notification;
 use App\Models\TicketResponse;
 use App\Notifications\TicketNotification;
 use App\Services\AuditLogService;
+use Illuminate\Support\Facades\Log; // Added for logging
 
 class TicketController extends Controller
 {
@@ -17,7 +18,8 @@ class TicketController extends Controller
         $user = auth()->user();
         $tab = $request->get('tab', 'active');
 
-        $query = $user->isAdmin() ? Ticket::query() : $user->tickets();
+        $baseQuery = $user->isAdmin() ? Ticket::query() : $user->tickets();
+        $query = $baseQuery->with(['user', 'assignedAdmin']);
 
         if ($tab === 'active') {
             $tickets = $query->whereIn('status', ['open', 'in_progress'])->latest()->get();
@@ -55,7 +57,7 @@ class TicketController extends Controller
             $admin->notify(new TicketNotification(
                 $ticket,
                 'new_ticket',
-                ['message' => "New support ticket #{$ticket->id} has been created"]
+                ['message' => "New support ticket {$ticket->ticket_id} has been created"] // Changed to ticket_id
             ));
         }
 
@@ -75,6 +77,7 @@ class TicketController extends Controller
         if (!auth()->user()->isAdmin() && auth()->id() !== $ticket->user_id) {
             abort(403);
         }
+        $ticket->load(['user', 'assignedAdmin', 'responses.user', 'resolved_by_user']);
 
         return view('tickets.show', compact('ticket'));
     }
@@ -99,23 +102,27 @@ class TicketController extends Controller
         }
         $ticket->save();
 
-        // If ticket is being accepted (changed to in_progress)
+        // If ticket is being accepted, change to in_progress and delete new ticket notifications for all admins
         if ($validatedData['status'] === 'in_progress' && $oldStatus === 'open') {
-            // Delete new ticket notifications for all admins
-            User::where('usertype', 'admin')->get()->each(function ($admin) use ($ticket) {
-                $admin->notifications()
+            Log::info("[TicketController@updateStatus] Ticket ID {$ticket->id} accepted by Auth User: " . auth()->id() . ". Attempting to delete 'new_ticket' notifications for all admins.");
+            $adminUsers = User::where('usertype', 'admin')->get();
+            $adminUsers->each(function ($adminUser) use ($ticket) {
+                $deletedCount = $adminUser->notifications()
                     ->where('type', 'App\Notifications\TicketNotification')
                     ->where('data->ticket_id', $ticket->id)
                     ->where('data->type', 'new_ticket')
                     ->delete();
+                if ($deletedCount > 0) {
+                    Log::info("[TicketController@updateStatus] Deleted 'new_ticket' notification for admin ID {$adminUser->id} regarding ticket ID {$ticket->id}.");
+                }
             });
-
-            // Notify the ticket creator
-            $ticket->user->notify(new TicketNotification(
-                $ticket,
-                'ticket_accepted',
-                ['message' => "Your ticket #{$ticket->id} has been accepted"]
-            ));
+            // Note: The user notification for 'ticket_accepted' is still here as it was not requested to be removed.
+            // If it was, it would be commented out like in assignTicket.
+            // $ticket->user->notify(new TicketNotification(
+            //     $ticket,
+            //     'ticket_accepted',
+            //     ['message' => "Your ticket {$ticket->ticket_id} has been accepted"] // Changed to ticket_id (though currently commented out)
+            // ));
         }
 
         // If ticket is being closed
@@ -123,7 +130,7 @@ class TicketController extends Controller
             $ticket->user->notify(new TicketNotification(
                 $ticket,
                 'ticket_closed',
-                ['message' => "Your ticket #{$ticket->id} has been closed"]
+                ['message' => "Your ticket {$ticket->ticket_id} has been closed"] // Changed to ticket_id
             ));
         }
 
@@ -160,7 +167,7 @@ class TicketController extends Controller
             $ticket->user->notify(new TicketNotification(
                 $ticket,
                 'admin_response',
-                ['message' => "An admin has responded to your ticket #{$ticket->id}"]
+                ['message' => "An admin has responded to your ticket {$ticket->ticket_id}"] // Changed to ticket_id
             ));
         }
         // If user responds, notify the assigned admin or all admins
@@ -170,14 +177,14 @@ class TicketController extends Controller
                 $notifyUser->notify(new TicketNotification(
                     $ticket,
                     'user_response',
-                    ['message' => "User has responded to ticket #{$ticket->id}"]
+                    ['message' => "User has responded to ticket {$ticket->ticket_id}"] // Changed to ticket_id
                 ));
             } else {
                 User::where('usertype', 'admin')->get()->each(function ($admin) use ($ticket) {
                     $admin->notify(new TicketNotification(
                         $ticket,
                         'user_response',
-                        ['message' => "User has responded to ticket #{$ticket->id}"]
+                        ['message' => "User has responded to ticket {$ticket->ticket_id}"] // Changed to ticket_id
                     ));
                 });
             }
@@ -206,20 +213,25 @@ class TicketController extends Controller
         ]);
 
         // Delete new ticket notifications for all admins
-        User::where('usertype', 'admin')->get()->each(function ($admin) use ($ticket) {
-            $admin->notifications()
+        Log::info("[TicketController@assignTicket] Ticket ID {$ticket->id} assigned to Auth User: " . auth()->id() . ". Attempting to delete 'new_ticket' notifications for all admins.");
+        $adminUsers = User::where('usertype', 'admin')->get();
+        $adminUsers->each(function ($adminUser) use ($ticket) {
+            $deletedCount = $adminUser->notifications()
                 ->where('type', 'App\Notifications\TicketNotification')
                 ->where('data->ticket_id', $ticket->id)
                 ->where('data->type', 'new_ticket')
                 ->delete();
+            if ($deletedCount > 0) {
+                Log::info("[TicketController@assignTicket] Deleted 'new_ticket' notification for admin ID {$adminUser->id} regarding ticket ID {$ticket->id}.");
+            }
         });
 
-        // Notify the ticket creator
-        $ticket->user->notify(new TicketNotification(
-            $ticket,
-            'ticket_assigned',
-            ['message' => "Your ticket #{$ticket->id} has been assigned to an admin"]
-        ));
+        // User feedback: Remove notification to user when ticket is assigned.
+        // $ticket->user->notify(new TicketNotification(
+        //     $ticket,
+        //     'ticket_assigned',
+        //     ['message' => "Your ticket #{$ticket->id} has been assigned to an admin"]
+        // ));
 
         AuditLogService::log(
             "Assigned ticket",

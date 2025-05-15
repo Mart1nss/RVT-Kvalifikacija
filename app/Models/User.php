@@ -16,6 +16,11 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Models\ReadBook;
+use App\Models\SentNotification;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log; // Added for logging
+use App\Events\AdminTicketsUnassigned; // Added for event dispatch
+use App\Models\TicketResponse; // Ensure TicketResponse is used
 
 class User extends Authenticatable
 {
@@ -58,6 +63,75 @@ class User extends Authenticatable
         'is_banned' => 'boolean',
     ];
 
+    /**
+     * The "booted" method of the model.
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+        static::deleting(function ($user) {
+            Log::info("[User Model Event] User ID {$user->id} ({$user->name}) is being deleted.");
+
+            // --- Logic for unassigning tickets if the deleting user is an admin ---
+            if ($user->isAdmin()) {
+                $ticketsAssignedToAdmin = Ticket::where('assigned_admin_id', $user->id)
+                                                ->get();
+                $unassignedCount = 0;
+
+                if ($ticketsAssignedToAdmin->isNotEmpty()) {
+                    Log::info("[User Model Event] Admin user ID {$user->id} ({$user->name}) is being deleted. Found {$ticketsAssignedToAdmin->count()} tickets assigned. Unassigning...");
+                    foreach ($ticketsAssignedToAdmin as $ticketToUnassign) {
+                        $ticketToUnassign->assigned_admin_id = null;
+                        $ticketToUnassign->status = Ticket::STATUS_OPEN; // Re-open the ticket
+                        $ticketToUnassign->save();
+                        $unassignedCount++;
+                    }
+                }
+
+                if ($unassignedCount > 0) {
+                    // Pass the user model being deleted, not a fresh instance
+                    $otherAdmins = User::where('usertype', 'admin')->where('id', '!=', $user->id)->get();
+                    if ($otherAdmins->isNotEmpty()) {
+                        Log::info("[User Model Event] Dispatching AdminTicketsUnassigned for deleted admin ID {$user->id}. Tickets unassigned: {$unassignedCount}. Reason: account_deleted_from_model_event.");
+                        event(new AdminTicketsUnassigned($user, $unassignedCount, 'account_deleted_from_model_event'));
+                    } else {
+                        Log::info("[User Model Event] Admin ID {$user->id} deleted, {$unassignedCount} tickets unassigned, but no other admins to notify.");
+                    }
+                } else {
+                     Log::info("[User Model Event] Admin ID {$user->id} deleted, no tickets were assigned to them to unassign.");
+                }
+            }
+            // --- End logic for unassigning tickets ---
+
+            // Original logic: Delete open or in-progress tickets CREATED BY the user
+            Log::info("[User Model Event] Checking for open/in-progress tickets created by user ID {$user->id} to delete.");
+            $user->tickets()->whereIn('status', [Ticket::STATUS_OPEN, Ticket::STATUS_IN_PROGRESS])->get()->each(function ($ticket) use ($user) {
+                Log::info("[User Model Event] Deleting ticket ID {$ticket->id} (custom ID: {$ticket->ticket_id}, created by user ID {$user->id}) as part of user deletion.");
+                // Proactively delete responses and notifications for this ticket
+                TicketResponse::where('ticket_id', $ticket->id)->delete();
+                \Illuminate\Notifications\DatabaseNotification::where('data->ticket_id', $ticket->id)->delete();
+                $ticket->delete();
+            });
+
+            // Original logic: If the user being deleted is an admin, clean up their sent notifications
+            if ($user->isAdmin()) {
+                Log::info("[User Model Event] Admin user ID {$user->id} ({$user->name}) is being deleted. Cleaning up sent notifications they created.");
+                $sentNotificationIdsByThisAdmin = SentNotification::where('sender_id', $user->id)
+                                                                    ->pluck('id');
+
+                if ($sentNotificationIdsByThisAdmin->isNotEmpty()) {
+                    DB::table('notifications')
+                        ->whereIn('data->sent_notification_id', $sentNotificationIdsByThisAdmin)
+                        ->delete();
+                    Log::info("[User Model Event] Deleted main notifications linked to SentNotifications by admin ID {$user->id}.");
+                }
+                // SentNotification records themselves and related NotificationRead records
+                // are expected to be handled by DB cascading deletes if sender_id FK has ON DELETE CASCADE.
+            }
+        });
+    }
+
     public function favorites()
     {
         return $this->hasMany(Favorite::class);
@@ -83,21 +157,11 @@ class User extends Authenticatable
         return $this->hasMany(Ticket::class);
     }
 
-    /**
-     * Get all forums created by the user.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
     public function forums()
     {
         return $this->hasMany(Forum::class);
     }
 
-    /**
-     * Get all forum replies created by the user.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
     public function forumReplies()
     {
         return $this->hasMany(ForumReply::class);
@@ -128,41 +192,21 @@ class User extends Authenticatable
         $this->notify(new CustomResetPassword($token));
     }
 
-    /**
-     * Get all user bans (active and inactive).
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
     public function bans()
     {
         return $this->hasMany(Ban::class);
     }
 
-    /**
-     * Get user's active ban if exists.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
     public function activeBan()
     {
         return $this->hasOne(Ban::class)->active();
     }
     
-    /**
-     * Check if the user is banned.
-     *
-     * @return bool True if the user is banned, false otherwise
-     */
     public function isBanned()
     {
         return $this->activeBan()->exists();
     }
     
-    /**
-     * Get the active ban reason if any.
-     *
-     * @return string|null
-     */
     public function getBanReason()
     {
         if ($ban = $this->activeBan()->first()) {
@@ -172,42 +216,21 @@ class User extends Authenticatable
         return null;
     }
 
-    /**
-     * Get the ban that this admin created.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
     public function createdBans()
     {
         return $this->hasMany(Ban::class, 'banned_by');
     }
 
-    /**
-     * Get all login records for the user.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
     public function logins()
     {
         return $this->hasMany(UserLogin::class);
     }
 
-    /**
-     * Get all read books for the user.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
     public function readBooks()
     {
         return $this->hasMany(ReadBook::class);
     }
     
-    /**
-     * Check if the user has read a specific book.
-     *
-     * @param int $productId
-     * @return bool
-     */
     public function hasRead($productId)
     {
         return $this->readBooks()->where('product_id', $productId)->exists();

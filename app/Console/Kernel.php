@@ -26,6 +26,12 @@ class Kernel extends ConsoleKernel
             ->appendOutputTo(storage_path('logs/scheduler.log'));
 
         $schedule->command('app:purge-old-login-records')->daily();
+
+        // Prune closed tickets daily
+        $schedule->command('tickets:prune-old')
+                 ->daily()
+                 ->at('02:00')
+                 ->appendOutputTo(storage_path('logs/scheduler.log'));
     }
 
     /**
@@ -39,7 +45,7 @@ class Kernel extends ConsoleKernel
     }
 
     protected $commands = [
-            // Register your commands here
         Commands\GenerateBookThumbnails::class,
+        Commands\PruneOldTickets::class,
     ];
 }
