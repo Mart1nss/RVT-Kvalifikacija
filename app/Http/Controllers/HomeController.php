@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Category;
+use App\Models\ReadBook; // Added for top genres
+use App\Models\Forum; // Added for forum count
+use Illuminate\Support\Facades\DB; // Added for DB facade
 
 class HomeController extends Controller
 {
@@ -100,8 +103,22 @@ class HomeController extends Controller
         if ($user->usertype == 'admin') {
             $bookCount = Product::count();
             $userCount = User::count();
-            return view('admin.adminhome', compact('bookCount', 'userCount', 'recentBooks', 'preferredBooks'));
+            $categoryCount = Category::count();
+            $forumCount = Forum::count(); // Added forum count
+
+            // Calculate Top Read Genres
+            $topGenres = DB::table('read_books')
+                ->join('products', 'read_books.product_id', '=', 'products.id')
+                ->join('categories', 'products.category_id', '=', 'categories.id')
+                ->select('categories.name', DB::raw('count(DISTINCT read_books.user_id) as user_read_count')) // Count distinct users per genre
+                ->groupBy('categories.name')
+                ->orderBy('user_read_count', 'desc')
+                ->take(3) // Top 3 genres
+                ->get();
+
+            return view('admin.adminhome', compact('bookCount', 'userCount', 'categoryCount', 'forumCount', 'recentBooks', 'preferredBooks', 'topGenres'));
         } else {
+            // For regular users, potentially different logic or no topGenres
             return view('dashboard', compact('recentBooks', 'preferredBooks'));
         }
     }

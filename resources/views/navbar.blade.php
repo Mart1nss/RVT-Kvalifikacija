@@ -9,13 +9,21 @@
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 @livewireStyles
 
+@php
+    $currentRouteName = Route::currentRouteName();
+    // Show logo on 'home' (admin/user dashboards) and on the root '/' (welcome page)
+    $isHomePage = $currentRouteName === 'home';
+    $isWelcomePage = Request::is('/'); 
+    $shouldShowLogo = $isHomePage || $isWelcomePage;
+@endphp
+
 <div class="navbar">
 
   <h1 class="logo"
-    style="font-family: sans-serif; color: white; cursor: pointer; font-weight: 800; white-space: nowrap;">ELEVATE READS
+    style="font-family: sans-serif; color: white; cursor: pointer; font-weight: 800; white-space: nowrap; display: {{ $shouldShowLogo ? 'flex' : 'none' }};">ELEVATE READS
   </h1>
 
-  <div class="back-btn-div">
+  <div class="back-btn-div" style="display: {{ !$shouldShowLogo ? 'flex' : 'none' }};">
     <span id="back-btn" class='bx bxs-left-arrow-alt '></span>
   </div>
 

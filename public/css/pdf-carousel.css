@@ -22,11 +22,11 @@
 }
 
 .h1-text {
-    color: white;
+    color: #e0e0e0; 
     text-transform: uppercase;
-    font-family: sans-serif;
-    font-weight: 800;
-    font-size: 32px;
+    font-family: sans-serif; 
+    font-weight: 700; 
+    font-size: 26px; 
 }
 
 .carousel-nav {
@@ -143,15 +143,16 @@
     align-items: center;
     justify-content: center;
     gap: 5px;
-    background-color: white;
-    color: black;
+    background-color: #ffffff; 
+    color: rgb(0, 0, 0); 
     text-transform: uppercase;
     font-family: sans-serif;
     transition: all 0.2s;
 }
 
 .carousel-item .view-btn:hover {
-    opacity: 0.5;
+    background-color: #f0f0f0; 
+    color: #191919; 
 }
 
 .carousel-item .favorite-btn {
@@ -174,8 +175,8 @@
 }
 
 .carousel-button {
-    background: white;
-    color: black;
+    background: #2f2f2f; 
+    color: white; 
     border: none;
     width: 36px;
     height: 36px;
@@ -186,11 +187,12 @@
     justify-content: center;
     font-weight: 700;
     font-size: 20px;
-    transition: 0.2s;
+    transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .carousel-button:hover {
-    opacity: 0.5;
+    background: #444; 
+    transform: scale(1.05);
 }
 
 .carousel-button.prev {
