@@ -27,6 +27,13 @@
 
     <form method="POST" action="{{ route('register') }}">
       @csrf
+
+      <!-- Honeypot -->
+      <div style="position: absolute; left: -5000px;" aria-hidden="true">
+        <label for="middle_name">Middle Name</label>
+        <input id="middle_name" type="text" name="middle_name" tabindex="-1" autocomplete="off">
+      </div>
+
       <!-- Name -->
       <div class="form-group">
         <x-text-input id="name" class="form-control" placeholder="NAME" type="text" name="name"

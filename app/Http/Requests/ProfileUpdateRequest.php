@@ -22,6 +22,7 @@ class ProfileUpdateRequest extends FormRequest
                 'min:3',
                 'max:10',
                 'regex:/^[a-zA-Z0-9]+$/',
+                Rule::unique(User::class)->ignore($this->user()->id)
             ],
             'email' => [
                 'required',
@@ -46,6 +47,7 @@ class ProfileUpdateRequest extends FormRequest
             'name.min' => 'NAME MUST BE AT LEAST 3 CHARACTERS',
             'name.max' => 'NAME CANNOT BE MORE THAN 10 CHARACTERS',
             'name.regex' => 'NAME CAN ONLY CONTAIN LETTERS AND NUMBERS (NO SPACES OR SYMBOLS)',
+            'name.unique' => 'THIS USERNAME IS ALREADY TAKEN.',
             'email.email' => 'PLEASE ENTER A VALID EMAIL ADDRESS',
             'email.regex' => 'PLEASE ENTER A VALID EMAIL WITH PROPER DOMAIN',
             'email.unique' => 'THIS EMAIL IS ALREADY TAKEN',
