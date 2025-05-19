@@ -70,7 +70,6 @@ class ReadBookController extends Controller
             ReadBook::create([
                 'user_id' => $user->id,
                 'product_id' => $productId,
-                'completed_at' => now()
             ]);
             $message = 'Book marked as read.';
             $isRead = true;

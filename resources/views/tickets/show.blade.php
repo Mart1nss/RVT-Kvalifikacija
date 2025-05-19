@@ -17,7 +17,7 @@
 
   <div class="main-container">
     <div class="ticket-header">
-      <h1>Ticket {{ $ticket->ticket_id }}</h1>
+      <h1>Ticket #{{ $ticket->id }}</h1>
       <div class="ticket-actions">
         @if (auth()->user()->isAdmin())
           @if (!$ticket->assigned_admin_id && $ticket->status !== 'closed')

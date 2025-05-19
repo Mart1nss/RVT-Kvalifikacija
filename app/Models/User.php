@@ -107,7 +107,7 @@ class User extends Authenticatable
             // Original logic: Delete open or in-progress tickets CREATED BY the user
             Log::info("[User Model Event] Checking for open/in-progress tickets created by user ID {$user->id} to delete.");
             $user->tickets()->whereIn('status', [Ticket::STATUS_OPEN, Ticket::STATUS_IN_PROGRESS])->get()->each(function ($ticket) use ($user) {
-                Log::info("[User Model Event] Deleting ticket ID {$ticket->id} (custom ID: {$ticket->ticket_id}, created by user ID {$user->id}) as part of user deletion.");
+                Log::info("[User Model Event] Deleting ticket #{$ticket->id} (created by user ID {$user->id}) as part of user deletion.");
                 // Proactively delete responses and notifications for this ticket
                 TicketResponse::where('ticket_id', $ticket->id)->delete();
                 \Illuminate\Notifications\DatabaseNotification::where('data->ticket_id', $ticket->id)->delete();

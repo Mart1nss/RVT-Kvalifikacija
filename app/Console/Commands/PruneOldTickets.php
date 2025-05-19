@@ -68,7 +68,7 @@ class PruneOldTickets extends Command
         $this->info("Found {$oldClosedTickets->count()} ticket(s) to prune.");
 
         foreach ($oldClosedTickets as $ticket) {
-            $this->line("Processing ticket ID: {$ticket->id} (Ticket #: {$ticket->ticket_id}) resolved at {$ticket->resolved_at}");
+            $this->line("Processing ticket #{$ticket->id} resolved at {$ticket->resolved_at}");
 
             try {
                 // 1. Delete associated notifications

@@ -47,17 +47,16 @@
                     <span
                       class="notification-time">{{ \Carbon\Carbon::parse($notification->created_at)->diffForHumans() }}</span>
 
-                    @if (isset($notification->data['ticket_id']))
+                    @if (isset($notification->data['ticket_id']) || isset($notification->data['link']))
                       <div class="notification-actions-row">
-                        <a href="{{ route('tickets.show', $notification->data['ticket_id']) }}" class="go-to-btn">
-                          <i class='bx bx-link-external'></i> Go to ticket
-                        </a>
-                      </div>
-                    @elseif (isset($notification->data['link']))
-                      <div class="notification-actions-row">
-                        <a href="{{ $notification->data['link'] }}" class="go-to-btn">
-                          <i class='bx bx-link-external'></i> View Details
-                        </a>
+                        <button wire:click.prevent="viewNotification('{{ $notification->id }}')" class="go-to-btn">
+                          <i class='bx bx-link-external'></i> 
+                          @if (isset($notification->data['ticket_id']))
+                            Go to ticket
+                          @else
+                            View Details
+                          @endif
+                        </button>
                       </div>
                     @endif
                   </div>
@@ -87,3 +86,51 @@
     @endif
   </div>
 </div>
+
+@script
+<script>
+  document.addEventListener('livewire:navigated', () => { // Use livewire:navigated for SPA, or DOMContentLoaded for initial full page loads
+    // Ensure listeners are set up after Livewire component is initialized or navigated to
+    if (typeof Livewire !== 'undefined') {
+      Livewire.on('navigateTo', (event) => {
+        if (event.url) {
+          window.location.href = event.url;
+        } else {
+          console.error('navigateTo event triggered without a URL', event);
+        }
+      });
+
+      Livewire.on('showToast', (event) => {
+        // Basic alert, replace with a proper toast notification system if available
+        alert(event.message || 'An update occurred.'); 
+        // Example: if using a global toast function like window.showToast(message, type)
+        // if (window.showToast && typeof window.showToast === 'function') {
+        //   window.showToast(event.message, event.type || 'info');
+        // } else {
+        //   alert((event.type ? event.type.toUpperCase() + ': ' : '') + event.message);
+        // }
+      });
+    }
+  });
+
+  // Fallback for initial load if livewire:navigated doesn't cover it
+  // (though for Livewire 3, livewire:navigated should be sufficient for components within SPA mode)
+  if (typeof Livewire !== 'undefined' && !Livewire.all().length) { // Check if Livewire has already initialized components
+      document.addEventListener('DOMContentLoaded', () => {
+          if (typeof Livewire !== 'undefined') {
+              Livewire.on('navigateTo', (event) => {
+                  if (event.url) {
+                      window.location.href = event.url;
+                  } else {
+                      console.error('navigateTo event triggered without a URL during DOMContentLoaded', event);
+                  }
+              });
+
+              Livewire.on('showToast', (event) => {
+                  alert(event.message || 'An update occurred on initial load.');
+              });
+          }
+      });
+  }
+</script>
+@endscript

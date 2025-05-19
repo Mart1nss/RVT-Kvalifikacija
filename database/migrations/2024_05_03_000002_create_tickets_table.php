@@ -12,7 +12,6 @@ return new class extends Migration {
   {
     Schema::create('tickets', function (Blueprint $table) {
       $table->bigIncrements('id');
-      $table->string('ticket_id', 255)->unique(); // Unique constraint
       $table->bigInteger('user_id')->unsigned()->nullable();
       $table->string('title', 255);
       $table->string('category', 255);

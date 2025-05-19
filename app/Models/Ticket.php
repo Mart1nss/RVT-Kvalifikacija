@@ -12,7 +12,6 @@ class Ticket extends Model
     use HasFactory;
 
     protected $fillable = [
-        'ticket_id',
         'user_id',
         'title',
         'category',
@@ -55,20 +54,9 @@ class Ticket extends Model
         return $this->belongsTo(User::class, 'resolved_by');
     }
 
-    protected static function boot()
-    {
-        parent::boot();
+    // Removed the boot method that generated custom ticket_id
 
-        static::creating(function ($ticket) {
-            // Get the latest ticket ID
-            $latestTicket = static::orderBy('id', 'desc')->first();
-            $nextId = $latestTicket ? intval(substr($latestTicket->ticket_id, 1)) + 1 : 1;
-            $ticket->ticket_id = '#' . $nextId;
-
-            // Set default status
-            if (!$ticket->status) {
-                $ticket->status = self::STATUS_OPEN;
-            }
-        });
-    }
+    // Set default status if not provided - this can be handled by database default or in controller
+    // If you still need default status logic here, it should be adjusted.
+    // For now, assuming database default or controller logic handles it.
 }

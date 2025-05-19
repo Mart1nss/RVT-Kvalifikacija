@@ -73,17 +73,17 @@ class TicketNotification extends Notification
         // Otherwise generate a message based on the type
         switch ($this->type) {
             case self::TYPE_NEW_TICKET:
-                return "New support ticket ({$this->ticket->ticket_id}) created by {$this->ticket->user->name}";
+                return "New support ticket (#{$this->ticket->id}) created by {$this->ticket->user->name}";
 
             case self::TYPE_STATUS_UPDATED:
-                return "Your ticket ({$this->ticket->ticket_id}) status has been updated to {$this->ticket->status}";
+                return "Your ticket (#{$this->ticket->id}) status has been updated to {$this->ticket->status}";
 
             case self::TYPE_NEW_RESPONSE:
                 $responder = $this->data['responder'] ?? 'Someone';
-                return "New response on ticket ({$this->ticket->ticket_id}) from {$responder}";
+                return "New response on ticket (#{$this->ticket->id}) from {$responder}";
 
             default:
-                return "Update on ticket ({$this->ticket->ticket_id})";
+                return "Update on ticket (#{$this->ticket->id})";
         }
     }
 

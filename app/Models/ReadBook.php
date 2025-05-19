@@ -12,11 +12,9 @@ class ReadBook extends Model
     protected $fillable = [
         'user_id',
         'product_id',
-        'completed_at'
     ];
     
     protected $casts = [
-        'completed_at' => 'datetime'
     ];
     
     /**

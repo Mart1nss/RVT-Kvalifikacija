@@ -15,10 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
-            $table->timestamp('completed_at')->useCurrent();
             $table->timestamps();
-            
-            // Make sure a user can only mark a book as read once
             $table->unique(['user_id', 'product_id']);
         });
     }

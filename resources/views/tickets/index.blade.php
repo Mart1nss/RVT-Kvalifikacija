@@ -69,7 +69,7 @@
           <tbody>
             @foreach ($tickets as $ticket)
               <tr>
-                <td class="mobile-hide">{{ $ticket->ticket_id }}</td>
+                <td class="mobile-hide">#{{ $ticket->id }}</td>
                 @if (auth()->user()->isAdmin())
                   <td>{{ $ticket->user ? $ticket->user->name : 'Deleted User' }}</td>
                   <td>

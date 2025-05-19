@@ -6,6 +6,9 @@ use Livewire\Component;
 use Livewire\Attributes\On;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
+use App\Models\SentNotification;
+use App\Models\Ticket;
+use Illuminate\Support\Facades\Log; // Added
 // Removed: use App\Models\NotificationRead;
 
 class NotificationDropdown extends Component
@@ -94,15 +97,76 @@ class NotificationDropdown extends Component
    */
   public function markAsRead($notificationId)
   {
-    $notification = auth()->user()->notifications()->findOrFail($notificationId);
+    $notification = auth()->user()->notifications()->find($notificationId);
 
     // Removed NotificationRead::firstOrCreate logic
     // The markAsRead method handles updating 'read_at' in the 'notifications' table
+    if ($notification) {
+        $notification->markAsRead();
+        // Emit event to update notification count
+        $this->dispatch('notificationsRead');
+    }
+  }
 
-    $notification->markAsRead();
+  /**
+   * View a specific notification and navigate if its target exists
+   */
+  public function viewNotification($userNotificationId)
+  {
+    Log::debug("viewNotification called for userNotificationId: {$userNotificationId}");
+    $userNotification = auth()->user()->notifications()->find($userNotificationId);
 
-    // Emit event to update notification count
-    $this->dispatch('notificationsRead');
+    if (!$userNotification) {
+      Log::warning("User notification not found for ID: {$userNotificationId}");
+      $this->dispatch('showToast', message: 'Notification not found.', type: 'error');
+      return;
+    }
+
+    Log::debug("User notification data: ", $userNotification->data);
+
+    $targetLink = $userNotification->data['link'] ?? null;
+    $ticketId = $userNotification->data['ticket_id'] ?? null;
+    $sentNotificationId = $userNotification->data['sent_notification_id'] ?? null;
+
+    Log::debug("TargetLink: {$targetLink}, TicketID: {$ticketId}, SentNotificationID: {$sentNotificationId}");
+
+    if ($ticketId) {
+      Log::debug("Handling ticket notification for ticket ID: {$ticketId}");
+      $ticket = Ticket::find($ticketId);
+      if (!$ticket) {
+        Log::info("Ticket ID: {$ticketId} not found. Deleting user notification {$userNotificationId}.");
+        $this->deleteNotification($userNotificationId); // Remove from user's list
+        $this->dispatch('showToast', message: 'The associated ticket is no longer available.', type: 'info');
+        return;
+      }
+      Log::debug("Ticket ID: {$ticketId} found. Marking as read and navigating.");
+      $this->markAsRead($userNotificationId);
+      $this->dispatch('navigateTo', url: route('tickets.show', $ticketId));
+    } elseif ($sentNotificationId && $targetLink) {
+      Log::debug("Handling sent notification for sentNotificationId: {$sentNotificationId}");
+      $sentNotification = SentNotification::find($sentNotificationId);
+      if (!$sentNotification) {
+        Log::info("SentNotification ID: {$sentNotificationId} not found. Deleting user notification {$userNotificationId}.");
+        $this->deleteNotification($userNotificationId); // Remove from user's list
+        $this->dispatch('showToast', message: 'This notification is no longer available.', type: 'info');
+        return;
+      }
+      Log::debug("SentNotification ID: {$sentNotificationId} found. Marking as read and navigating to: {$targetLink}");
+      $this->markAsRead($userNotificationId);
+      $this->dispatch('navigateTo', url: $targetLink);
+    } elseif ($targetLink) {
+      Log::debug("Handling generic link notification: {$targetLink}");
+      // Generic link, attempt to navigate after marking as read
+      // This might still lead to 404 if the target is gone and we can't verify it
+      $this->markAsRead($userNotificationId);
+      $this->dispatch('navigateTo', url: $targetLink);
+    } else {
+      Log::debug("No actionable link for userNotificationId: {$userNotificationId}. Marking as read.");
+      // No actionable link, just mark as read if not already
+      $this->markAsRead($userNotificationId);
+      // Optionally, provide feedback if there's no link but user tried to "view" it
+      // $this->dispatch('showToast', message: 'No further details for this notification.', type: 'info');
+    }
   }
 
   /**
@@ -110,21 +174,25 @@ class NotificationDropdown extends Component
    */
   public function deleteNotification($notificationId)
   {
-    $notification = auth()->user()->notifications()->findOrFail($notificationId);
+    Log::debug("deleteNotification called for notificationId: {$notificationId}");
+    $notification = auth()->user()->notifications()->find($notificationId); // Changed from findOrFail
 
-    // Removed NotificationRead::firstOrCreate logic
-    // Deleting the notification from the 'notifications' table is sufficient
+    if ($notification) {
+      Log::debug("Notification {$notificationId} found, deleting.");
+      $notification->delete();
 
-    $notification->delete();
+      // Remove the deleted notification from the local array
+      $this->notifications = collect($this->notifications)
+        ->filter(function ($item) use ($notificationId) {
+          return $item->id !== $notificationId;
+        })->values()->all();
 
-    // Remove the deleted notification from the local array
-    $this->notifications = collect($this->notifications)
-      ->filter(function ($item) use ($notificationId) {
-        return $item->id !== $notificationId;
-      })->values()->all();
-
-    // Emit event to update notification count
-    $this->dispatch('notificationsRead');
+      // Emit event to update notification count
+      $this->dispatch('notificationsRead');
+      Log::debug("Notification {$notificationId} deleted and list updated.");
+    } else {
+      Log::warning("Notification {$notificationId} not found for deletion.");
+    }
   }
 
   /**

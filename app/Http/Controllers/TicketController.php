@@ -57,7 +57,7 @@ class TicketController extends Controller
             $admin->notify(new TicketNotification(
                 $ticket,
                 'new_ticket',
-                ['message' => "New support ticket {$ticket->ticket_id} has been created"] // Changed to ticket_id
+                ['message' => "New support ticket #{$ticket->id} has been created"]
             ));
         }
 
@@ -121,7 +121,7 @@ class TicketController extends Controller
             // $ticket->user->notify(new TicketNotification(
             //     $ticket,
             //     'ticket_accepted',
-            //     ['message' => "Your ticket {$ticket->ticket_id} has been accepted"] // Changed to ticket_id (though currently commented out)
+            //     ['message' => "Your ticket #{$ticket->id} has been accepted"]
             // ));
         }
 
@@ -130,7 +130,7 @@ class TicketController extends Controller
             $ticket->user->notify(new TicketNotification(
                 $ticket,
                 'ticket_closed',
-                ['message' => "Your ticket {$ticket->ticket_id} has been closed"] // Changed to ticket_id
+                ['message' => "Your ticket #{$ticket->id} has been closed"]
             ));
         }
 
@@ -167,7 +167,7 @@ class TicketController extends Controller
             $ticket->user->notify(new TicketNotification(
                 $ticket,
                 'admin_response',
-                ['message' => "An admin has responded to your ticket {$ticket->ticket_id}"] // Changed to ticket_id
+                ['message' => "An admin has responded to your ticket #{$ticket->id}"]
             ));
         }
         // If user responds, notify the assigned admin or all admins
@@ -177,14 +177,14 @@ class TicketController extends Controller
                 $notifyUser->notify(new TicketNotification(
                     $ticket,
                     'user_response',
-                    ['message' => "User has responded to ticket {$ticket->ticket_id}"] // Changed to ticket_id
+                    ['message' => "User has responded to ticket #{$ticket->id}"]
                 ));
             } else {
                 User::where('usertype', 'admin')->get()->each(function ($admin) use ($ticket) {
                     $admin->notify(new TicketNotification(
                         $ticket,
                         'user_response',
-                        ['message' => "User has responded to ticket {$ticket->ticket_id}"] // Changed to ticket_id
+                        ['message' => "User has responded to ticket #{$ticket->id}"]
                     ));
                 });
             }
