@@ -81,9 +81,9 @@ class UserManagement extends Component
 
         // Apply ban status filter - active or banned users
         if ($this->filterBanStatus === 'banned') {
-            $query->where('is_banned', true);
+            $query->whereHas('activeBan');
         } elseif ($this->filterBanStatus === 'active') {
-            $query->where('is_banned', false);
+            $query->whereDoesntHave('activeBan');
         }
 
         // Apply sorting based on selected field and direction
@@ -116,9 +116,9 @@ class UserManagement extends Component
 
         // Apply ban status filter
         if ($this->filterBanStatus === 'banned') {
-            $query->where('is_banned', true);
+            $query->whereHas('activeBan');
         } elseif ($this->filterBanStatus === 'active') {
-            $query->where('is_banned', false);
+            $query->whereDoesntHave('activeBan');
         }
 
         // Return the total count

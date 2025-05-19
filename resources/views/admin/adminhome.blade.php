@@ -278,9 +278,11 @@
         </button>
       </div>
     </div>
+    @if (auth()->user()->lastReadBook)
     <div class="continue-reading-wrapper"> {{-- Wrapper for continue reading --}}
         @include('components.continue-reading')
     </div>
+    @endif
   </div>
 
   <!-- Row 2: Top Genres & Stats Section -->

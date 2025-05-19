@@ -73,6 +73,17 @@ class UserShow extends Component
     }
 
     /**
+     * Livewire lifecycle hook that runs when the `showBanModal` property is updated.
+     * Dispatches a browser event when the modal is opened.
+     */
+    public function updatedShowBanModal($value)
+    {
+        if ($value === true) {
+            $this->dispatchBrowserEvent('banModalOpened');
+        }
+    }
+
+    /**
      * Update the user's role (admin/user)
      * 
      * @param string $userType The new user type/role

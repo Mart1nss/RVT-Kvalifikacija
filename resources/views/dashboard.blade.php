@@ -158,9 +158,11 @@
       </div>
     </div>
 
+    @if (auth()->user()->lastReadBook)
     <div class="continue-reading-wrapper">
         @include('components.continue-reading')
     </div>
+    @endif
   </div>
 
   <!-- Book Carousels -->

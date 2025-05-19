@@ -6,7 +6,10 @@
 
     <div class="form-group">
       <label class="form-label" for="titleInput">Title</label>
-      <input class="form-control" type="text" name="title" id="titleInput" placeholder="Title">
+      <input class="form-control" type="text" name="title" id="titleInput" placeholder="Title" maxlength="100">
+      <div style="text-align: right; font-size: 0.8em; color: #ccc;">
+        <span id="titleCharCount">0</span>/100
+      </div>
       <span class="error-message" id="titleError">
         @error('title')
           {{ $message }}
@@ -16,7 +19,10 @@
 
     <div class="form-group">
       <label class="form-label" for="authorInput">Author</label>
-      <input class="form-control" type="text" name="author" id="authorInput" placeholder="Author">
+      <input class="form-control" type="text" name="author" id="authorInput" placeholder="Author" maxlength="50">
+      <div style="text-align: right; font-size: 0.8em; color: #ccc;">
+        <span id="authorCharCount">0</span>/50
+      </div>
       <span class="error-message" id="authorError">
         @error('author')
           {{ $message }}
@@ -70,3 +76,32 @@
 </div>
 
 <script src="{{ asset('js/book-upload.js') }}"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const titleInput = document.getElementById('titleInput');
+    const titleCharCount = document.getElementById('titleCharCount');
+    const authorInput = document.getElementById('authorInput');
+    const authorCharCount = document.getElementById('authorCharCount');
+
+    titleInput.addEventListener('input', function () {
+      const currentLength = this.value.length;
+      titleCharCount.textContent = currentLength;
+      if (currentLength >= 100) {
+        titleCharCount.parentElement.style.color = '#dc2626';
+      } else {
+        titleCharCount.parentElement.style.color = '#ccc';
+      }
+    });
+
+    authorInput.addEventListener('input', function () {
+      const currentLength = this.value.length;
+      authorCharCount.textContent = currentLength;
+      if (currentLength >= 50) {
+        authorCharCount.parentElement.style.color = '#dc2626';
+      } else {
+        authorCharCount.parentElement.style.color = '#ccc';
+      }
+    });
+  });
+</script>

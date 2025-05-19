@@ -166,7 +166,7 @@
               <td class="hide-small">{{ $user->created_at->format('M d, Y') }}</td>
               <td>{{ ucfirst($user->usertype) }}</td>
               <td>
-                @if ($user->is_banned)
+                @if ($user->isBanned())
                   <span class="status-badge banned">Banned</span>
                 @else
                   <span class="status-badge active">Active</span>

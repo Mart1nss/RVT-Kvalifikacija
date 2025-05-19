@@ -142,8 +142,11 @@
                 <p>Are you sure you want to ban user <span class="text-alert">{{ $user->name }}</span>?</p>
                 <p>Banned users will not be able to log in to the website.</p>
                 <div class="ban-reason-input">
-                    <label for="banReason">Reason for ban:</label>
-                    <textarea id="banReason" wire:model="banReason" rows="3" placeholder="Enter reason for banning this user..." required></textarea>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                        <label for="banReason">Reason for ban:</label>
+                        <span id="banReasonCharCountDisplay" style="font-size: 0.8em; color: #ccc;">0/250</span>
+                    </div>
+                    <textarea id="banReason" wire:model.live="banReason" rows="3" placeholder="Enter reason for banning this user..." required maxlength="250"></textarea>
                     @error('banReason') <span class="error">{{ $message }}</span> @enderror
                 </div>
             </div>
@@ -159,5 +162,42 @@
         .error {
             color: #dc2626;
         }
+        .ban-reason-input textarea {
+            padding-right: 60px;
+        }
     </style>
+
+    @push('scripts')
+    <script>
+        document.addEventListener('livewire:initialized', function() {
+            window.addEventListener('banModalOpened', function() {
+                setTimeout(setupBanReasonCounter, 100);
+            });
+        });
+
+        function setupBanReasonCounter() {
+            const banReasonInput = document.getElementById('banReason');
+            const banReasonCharCountDisplay = document.getElementById('banReasonCharCountDisplay');
+            const maxLength = 250;
+
+            if (banReasonInput && banReasonCharCountDisplay) {
+                const updateDisplay = () => {
+                    const currentLength = banReasonInput.value.length;
+                    banReasonCharCountDisplay.textContent = currentLength + '/' + maxLength;
+                    if (currentLength >= maxLength) {
+                        banReasonCharCountDisplay.style.color = '#dc2626';
+                    } else {
+                        banReasonCharCountDisplay.style.color = '#ccc';
+                    }
+                };
+
+                updateDisplay();
+
+                banReasonInput.removeEventListener('input', updateDisplay);
+                
+                banReasonInput.addEventListener('input', updateDisplay);
+            }
+        }
+    </script>
+    @endpush
 </div>

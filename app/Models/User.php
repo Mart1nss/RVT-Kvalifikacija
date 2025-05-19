@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Favorite;
 use App\Models\Review;
 use App\Models\Ticket;
@@ -18,9 +17,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Models\ReadBook;
 use App\Models\SentNotification;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log; // Added for logging
-use App\Events\AdminTicketsUnassigned; // Added for event dispatch
-use App\Models\TicketResponse; // Ensure TicketResponse is used
+use Illuminate\Support\Facades\Log;
+use App\Events\AdminTicketsUnassigned;
+use App\Models\TicketResponse;
 
 class User extends Authenticatable
 {
@@ -59,8 +58,6 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'last_online' => 'datetime',
-        'banned_at' => 'datetime',
-        'is_banned' => 'boolean',
     ];
 
     /**

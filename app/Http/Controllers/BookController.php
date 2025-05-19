@@ -34,9 +34,18 @@ class BookController extends Controller
    */
   public function store(Request $request)
   {
+    // Check if book already exists
+    $existingBook = Product::where('title', $request->title)
+                             ->where('author', $request->author)
+                             ->first();
+
+    if ($existingBook) {
+      return redirect()->back()->with('error', 'This book has already been uploaded.')->withInput();
+    }
+
     $request->validate([
-      'title' => 'required|string|max:255',
-      'author' => 'required|string|max:255',
+      'title' => 'required|string|max:100',
+      'author' => 'required|string|max:50',
       'category_id' => 'required|exists:categories,id',
       'file' => 'required|mimes:pdf|max:10240'
     ], [
