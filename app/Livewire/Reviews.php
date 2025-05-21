@@ -65,6 +65,23 @@ class Reviews extends Component
   {
     $this->validate();
 
+    // Check if the user has already reviewed this product
+    $existingReview = Review::where('user_id', auth()->id())
+      ->where('product_id', $this->product->id)
+      ->first();
+
+    if ($existingReview) {
+      $this->dispatch('alert', [
+        'type' => 'error',
+        'message' => 'You have already reviewed this book.'
+      ]);
+      // Optionally, reset form fields if desired
+      // $this->review_text = '';
+      // $this->review_score = null;
+      // $this->resetValidation();
+      return;
+    }
+
     Review::create([
       'review_score' => $this->review_score,
       'review_text' => $this->review_text,
