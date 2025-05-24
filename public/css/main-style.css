@@ -68,7 +68,10 @@ body {
     padding: 0.5rem;
     border-radius: 8px;
     border: none;
+    text-transform: uppercase;
+    font-weight: 800;
     height: 40px;
+    font-size: 12px;
     color: white;
     background-color: #252525;
     min-width: 160px;

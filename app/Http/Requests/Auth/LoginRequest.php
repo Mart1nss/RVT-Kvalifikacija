@@ -34,6 +34,19 @@ class LoginRequest extends FormRequest
     }
 
     /**
+     * Get the custom messages for validator errors.
+     *
+     * @return array
+     */
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'The email field is required.',
+            'password.required' => 'The password field is required.',
+        ];
+    }
+
+    /**
      * Attempt to authenticate the request's credentials.
      *
      * @throws \Illuminate\Validation\ValidationException
@@ -42,21 +55,11 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        // Check if user exists by email
-        $user = User::where('email', $this->input('email'))->first();
-
-        if (!$user) {
-            RateLimiter::hit($this->throttleKey());
-            throw ValidationException::withMessages([
-                'email' => trans('auth.failed'), // "These credentials do not match our records."
-            ]);
-        }
-
-        // Attempt to authenticate
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
+
             throw ValidationException::withMessages([
-                'password' => 'Wrong password.', // Custom message for wrong password
+                'email' => 'Invalid email or password.',
             ]);
         }
 

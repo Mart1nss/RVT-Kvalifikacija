@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name', 255);
+            $table->string('name', 30);
             $table->boolean('is_public')->default(true);
             $table->boolean('is_system')->default(false);
             $table->timestamps();

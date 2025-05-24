@@ -101,6 +101,42 @@
     padding: 0 16px 16px 16px;
 }
 
+.delete-confirmation-footer .delete-btn {
+    background-color: rgb(126, 6, 6);
+    color: white;
+    border: none;
+    width: 120px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    transition: all 0.2s;
+}
+
+.delete-confirmation-footer .delete-btn:hover {
+    background-color: rgb(80, 80, 80);
+}
+
+.delete-confirmation-footer .cancel-btn {
+    background-color: transparent;
+    color: white;
+    width: 120px;
+    border: 1px solid #999;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    transition: all 0.2s;
+}
+
+.delete-confirmation-footer .cancel-btn:hover {
+    background-color: #252525; 
+}
+
 /* Animation Keyframes */
 @keyframes deleteModalFadeIn {
     from {

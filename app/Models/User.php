@@ -34,7 +34,6 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'last_online',
         'has_genre_preference_set',
         'last_read_book_id',
     ];
@@ -57,7 +56,6 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
-        'last_online' => 'datetime',
     ];
 
     /**
@@ -101,15 +99,9 @@ class User extends Authenticatable
             }
             // --- End logic for unassigning tickets ---
 
-            // Original logic: Delete open or in-progress tickets CREATED BY the user
-            Log::info("[User Model Event] Checking for open/in-progress tickets created by user ID {$user->id} to delete.");
-            $user->tickets()->whereIn('status', [Ticket::STATUS_OPEN, Ticket::STATUS_IN_PROGRESS])->get()->each(function ($ticket) use ($user) {
-                Log::info("[User Model Event] Deleting ticket #{$ticket->id} (created by user ID {$user->id}) as part of user deletion.");
-                // Proactively delete responses and notifications for this ticket
-                TicketResponse::where('ticket_id', $ticket->id)->delete();
-                \Illuminate\Notifications\DatabaseNotification::where('data->ticket_id', $ticket->id)->delete();
-                $ticket->delete();
-            });
+            // Tickets created by the user will have their user_id set to null by the database
+            // due to onDelete('set null') constraint. Same for reviews, forums, forum_replies.
+            // Ticket responses associated with the user will also have their user_id set to null.
 
             // Original logic: If the user being deleted is an admin, clean up their sent notifications
             if ($user->isAdmin()) {

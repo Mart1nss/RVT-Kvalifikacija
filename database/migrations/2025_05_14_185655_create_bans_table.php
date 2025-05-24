@@ -14,12 +14,11 @@ return new class extends Migration
         Schema::create('bans', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->text('reason')->nullable(false);
+            $table->text('reason', 250)->nullable(false);
             $table->unsignedBigInteger('banned_by')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             
-            // Foreign keys
             $table->foreign('user_id')
                 ->references('id')
                 ->on('users')

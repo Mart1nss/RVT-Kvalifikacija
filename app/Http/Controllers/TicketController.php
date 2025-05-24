@@ -9,7 +9,7 @@ use App\Models\Notification;
 use App\Models\TicketResponse;
 use App\Notifications\TicketNotification;
 use App\Services\AuditLogService;
-use Illuminate\Support\Facades\Log; // Added for logging
+use Illuminate\Support\Facades\Log;
 
 class TicketController extends Controller
 {
@@ -51,7 +51,7 @@ class TicketController extends Controller
             'status' => 'open'
         ]);
 
-        // Notify all admins about the new ticket
+        // Paziņot visiem administratoriem par jauno biļeti
         $admins = User::where('usertype', 'admin')->get();
         foreach ($admins as $admin) {
             $admin->notify(new TicketNotification(
@@ -94,7 +94,7 @@ class TicketController extends Controller
 
         $oldStatus = $ticket->status;
 
-        // Update the ticket status and related fields
+        // Atjaunina biļetes statusu un saistītos laukus
         $ticket->status = $validatedData['status'];
         if ($validatedData['status'] === 'closed') {
             $ticket->resolved_at = now();
@@ -102,7 +102,7 @@ class TicketController extends Controller
         }
         $ticket->save();
 
-        // If ticket is being accepted, change to in_progress and delete new ticket notifications for all admins
+        // Ja biļete tiek pieņemta, maina statusu uz "in_progress" un dzēš jauno biļešu paziņojumus visiem administratoriem
         if ($validatedData['status'] === 'in_progress' && $oldStatus === 'open') {
             Log::info("[TicketController@updateStatus] Ticket ID {$ticket->id} accepted by Auth User: " . auth()->id() . ". Attempting to delete 'new_ticket' notifications for all admins.");
             $adminUsers = User::where('usertype', 'admin')->get();
@@ -116,22 +116,19 @@ class TicketController extends Controller
                     Log::info("[TicketController@updateStatus] Deleted 'new_ticket' notification for admin ID {$adminUser->id} regarding ticket ID {$ticket->id}.");
                 }
             });
-            // Note: The user notification for 'ticket_accepted' is still here as it was not requested to be removed.
-            // If it was, it would be commented out like in assignTicket.
-            // $ticket->user->notify(new TicketNotification(
-            //     $ticket,
-            //     'ticket_accepted',
-            //     ['message' => "Your ticket #{$ticket->id} has been accepted"]
-            // ));
         }
 
-        // If ticket is being closed
+        // Ja biļete tiek slēgta
         if ($validatedData['status'] === 'closed') {
-            $ticket->user->notify(new TicketNotification(
-                $ticket,
-                'ticket_closed',
-                ['message' => "Your ticket #{$ticket->id} has been closed"]
-            ));
+            if ($ticket->user) { // Check if user exists
+                $ticket->user->notify(new TicketNotification(
+                    $ticket,
+                    'ticket_closed',
+                    ['message' => "Your ticket #{$ticket->id} has been closed"]
+                ));
+            } else {
+                Log::info("[TicketController@updateStatus] Ticket ID {$ticket->id} closed, but original user (ID: {$ticket->user_id}) is deleted. No notification sent.");
+            }
         }
 
         AuditLogService::log(
@@ -162,15 +159,19 @@ class TicketController extends Controller
             'is_admin_response' => auth()->user()->isAdmin()
         ]);
 
-        // If admin responds, notify the ticket creator
+        // Ja administrators atbild, paziņo biļetes izveidotājam
         if (auth()->user()->isAdmin()) {
-            $ticket->user->notify(new TicketNotification(
-                $ticket,
-                'admin_response',
-                ['message' => "An admin has responded to your ticket #{$ticket->id}"]
-            ));
+            if ($ticket->user) { // Check if user exists
+                $ticket->user->notify(new TicketNotification(
+                    $ticket,
+                    'admin_response',
+                    ['message' => "An admin has responded to your ticket #{$ticket->id}"]
+                ));
+            } else {
+                Log::info("[TicketController@addResponse] Admin responded to ticket ID {$ticket->id}, but original user (ID: {$ticket->user_id}) is deleted. No notification sent.");
+            }
         }
-        // If user responds, notify the assigned admin or all admins
+        // Ja lietotājs atbild, paziņo piešķirtajam administratoram vai visiem administratoriem
         else {
             $notifyUser = $ticket->assigned_admin_id ? User::find($ticket->assigned_admin_id) : null;
             if ($notifyUser) {
@@ -212,7 +213,7 @@ class TicketController extends Controller
             'status' => 'in_progress'
         ]);
 
-        // Delete new ticket notifications for all admins
+        // Dzēst jauno biļešu paziņojumus visiem administratoriem
         Log::info("[TicketController@assignTicket] Ticket ID {$ticket->id} assigned to Auth User: " . auth()->id() . ". Attempting to delete 'new_ticket' notifications for all admins.");
         $adminUsers = User::where('usertype', 'admin')->get();
         $adminUsers->each(function ($adminUser) use ($ticket) {
@@ -225,13 +226,6 @@ class TicketController extends Controller
                 Log::info("[TicketController@assignTicket] Deleted 'new_ticket' notification for admin ID {$adminUser->id} regarding ticket ID {$ticket->id}.");
             }
         });
-
-        // User feedback: Remove notification to user when ticket is assigned.
-        // $ticket->user->notify(new TicketNotification(
-        //     $ticket,
-        //     'ticket_assigned',
-        //     ['message' => "Your ticket #{$ticket->id} has been assigned to an admin"]
-        // ));
 
         AuditLogService::log(
             "Assigned ticket",

@@ -26,7 +26,7 @@
           </div>
           <div class="forum-meta">
             <div class="forum-meta-left">
-              <span>{{ $forum->user->name }}</span>
+              <span>{{ $forum->user ? $forum->user->name : 'Deleted User' }}</span>
               <span>&#8226;</span>
               <span>{{ $forum->created_at->diffForHumans() }}</span>
             </div>

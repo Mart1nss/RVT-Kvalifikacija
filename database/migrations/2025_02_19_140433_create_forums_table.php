@@ -12,8 +12,8 @@ return new class extends Migration {
     {
         Schema::create('forums', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->text('description');
+            $table->string('title', 50);
+            $table->text('description', 1000);
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

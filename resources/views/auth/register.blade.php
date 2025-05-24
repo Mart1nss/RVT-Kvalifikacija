@@ -17,7 +17,6 @@
   </div>
 
 
-
   <div class="login-container">
 
     <h1 class="logo">ELEVATE READS</h1>
@@ -25,7 +24,7 @@
       ELEVATE READS
     </p>
 
-    <form method="POST" action="{{ route('register') }}">
+    <form method="POST" action="{{ route('register') }}" novalidate>
       @csrf
 
       <!-- Honeypot -->
@@ -39,7 +38,7 @@
         <x-text-input id="name" class="form-control" placeholder="NAME" type="text" name="name"
           :value="old('name')" required autofocus autocomplete="name" />
         @error('name')
-          <div class="error-message">{{ $message }}</div>
+          <div class="error-message" style="text-transform: uppercase; margin-top: 0px;">{{ $message }}</div>
         @enderror
       </div>
 
@@ -48,7 +47,7 @@
         <x-text-input id="email" class="form-control" placeholder="EMAIL" type="email" name="email"
           :value="old('email')" required autocomplete="username" />
         @error('email')
-          <div class="error-message">{{ $message }}</div>
+          <div class="error-message" style="text-transform: uppercase; margin-top: 0px;">{{ $message }}</div>
         @enderror
       </div>
 
@@ -60,7 +59,7 @@
           <i class='bx bx-hide toggle-password' onclick="togglePassword('password', this)"></i>
         </div>
         @error('password')
-          <div class="error-message">{{ $message }}</div>
+          <div class="error-message" style="text-transform: uppercase; margin-top: 0px;">{{ $message }}</div>
         @enderror
       </div>
 
@@ -72,15 +71,16 @@
           <i class='bx bx-hide toggle-password' onclick="togglePassword('password_confirmation', this)"></i>
         </div>
         @error('password_confirmation')
-          <div class="error-message">{{ $message }}</div>
+          <div class="error-message"style="text-transform: uppercase; margin-top: 0px;">{{ $message }}</div>
         @enderror
+
       </div>
 
       <button class="btn-primary">
         Register
       </button>
 
-      <button class="btn-secondary" onclick="window.location.href='{{ route('login') }}'">
+      <button type="button" class="btn-secondary" onclick="window.location.href='{{ route('login') }}'">
         Already registered?
       </button>
 

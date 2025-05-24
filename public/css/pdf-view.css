@@ -53,20 +53,6 @@
     width: 100%;
 }
 
-.toolbar {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 10px;
-}
-
-.toolbar button {
-    padding: 8px 12px;
-    margin: 0 5px;
-    border: 1px solid #ccc;
-    background-color: #f0f0f0;
-    cursor: pointer;
-}
-
 .notes-div {
     background-color: #151515;
     width: 40%;
@@ -217,7 +203,16 @@
     color: white;
     cursor: pointer;
     padding: 5px 10px;
-    font-size: 1.2em;
+    transition: all 0.2s;
+}
+
+#pdf-toolbar button i {
+    font-size: 20px;
+}
+
+#pdf-toolbar button:hover {
+    background-color: #252525;
+    border-radius: 8px;
 }
 
 #pdf-toolbar span {
@@ -341,6 +336,14 @@
 
 .metadata button:hover {
     background-color: rgb(56, 56, 56);
+}
+
+@media (max-width: 769px) {
+    .metadata {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
 }
 
 /*FOCUS MODE*/

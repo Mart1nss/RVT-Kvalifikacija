@@ -49,6 +49,12 @@ class AuditLogs extends Component
             $logsQuery = AuditLog::with('admin')
                 ->whereIn('admin_id', $adminIds);
 
+            // Exclude "Added ticket response" logs
+            $logsQuery->whereNot(function ($query) {
+                $query->where('action', 'Added ticket response')
+                      ->where('affected_item_name', 'Ticket response');
+            });
+
             // Apply action type filter
             if ($this->actionType !== 'all') {
                 $logsQuery->where('action_type', $this->actionType);

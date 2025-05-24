@@ -9,8 +9,20 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
+/**
+ * Profila kontrolieris
+ * 
+ * Šis kontrolieris apstrādā lietotāja profila darbības - profila skatīšanu, 
+ * rediģēšanu, atjaunināšanu un dzēšanu.
+ */
 class ProfileController extends Controller
 {
+    /**
+     * Parāda lietotāja profila rediģēšanas skatu.
+     *
+     * @param Request
+     * @return View
+     */
     public function edit(Request $request): View
     {
         return view('profile.edit', [
@@ -18,19 +30,29 @@ class ProfileController extends Controller
         ]);
     }
 
+    /**
+     * Atjaunina lietotāja profila informāciju.
+     *
+     * @param ProfileUpdateRequest
+     * @return RedirectResponse 
+     */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $request->user()->fill($request->validated());
-
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
-
         $request->user()->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
+    /**
+     * Dzēš lietotāja kontu un saistītos datus.
+     * 
+     * Pirms dzēšanas tiek verificēta lietotāja parole. Pēc dzēšanas lietotājs tiek
+     * izrakstīts no sistēmas un notiek sesijas datu attīrīšana.
+     *
+     * @param Request
+     * @return RedirectResponse
+     */
     public function destroy(Request $request): RedirectResponse
     {
         $request->validateWithBag('userDeletion', [
@@ -38,8 +60,6 @@ class ProfileController extends Controller
         ]);
 
         $user = $request->user();
-
-        $user->reviews()->delete();
         
         $user->notes()->delete();
 

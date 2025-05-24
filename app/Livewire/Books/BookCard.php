@@ -6,6 +6,10 @@ use Livewire\Component;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Grāmatu kartiņas komponente, kas attēlo vienu grāmatu sarakstā
+ * Un nodrošina ar to saistītās darbības
+ */
 class BookCard extends Component
 {
   public $book;
@@ -17,6 +21,12 @@ class BookCard extends Component
 
   protected $listeners = ['refreshBooks' => 'refreshBookData'];
 
+  /**
+   * 
+   * @param object
+   * @param bool
+   * @param string
+   */
   public function mount($book, $showAdminActions = false, $source = 'library')
   {
     $this->book = $book;
@@ -24,12 +34,15 @@ class BookCard extends Component
     $this->showAdminActions = $showAdminActions;
     $this->source = $source;
 
-    // Check if book is in read later list
+    // Pārbauda, vai grāmata ir lietotāja "Lasīt vēlāk" sarakstā
     if (Auth::check()) {
       $this->isInReadLater = $book->isInReadLaterOf(Auth::user());
     }
   }
 
+  /**
+   * Pārslēdz grāmatas statusu "Lasīt vēlāk" sarakstā
+   */
   public function toggleReadLater()
   {
     if (!Auth::check()) {
@@ -48,11 +61,9 @@ class BookCard extends Component
     $user = Auth::user();
 
     if ($this->isInReadLater) {
-      // Remove from read later
       $this->book->readLater()->where('user_id', $user->id)->delete();
       $message = 'Book removed from read later list';
     } else {
-      // Add to read later
       $this->book->readLater()->create(['user_id' => $user->id]);
       $message = 'Book added to read later list';
     }
@@ -69,6 +80,9 @@ class BookCard extends Component
     );
   }
 
+  /**
+   * Dzēš grāmatu no "Lasīt vēlāk" saraksta
+   */
   public function deleteFromReadLater()
   {
     if (!Auth::check())
@@ -84,10 +98,12 @@ class BookCard extends Component
       ]
     );
 
-    // Refresh parent component
     $this->dispatch('refreshBooks');
   }
 
+  /**
+   * Dzēš grāmatu no izlases saraksta
+   */
   public function deleteFromFavorites()
   {
     if (!Auth::check())
@@ -103,32 +119,40 @@ class BookCard extends Component
       ]
     );
 
-    // Refresh parent component
     $this->dispatch('refreshBooks');
   }
 
+  /**
+   * Apstiprina grāmatas dzēšanu
+   */
   public function confirmDelete()
   {
-    // Send book ID to parent
     $this->dispatch('confirmBookDeletion', ['bookId' => $this->book->id]);
   }
 
+  /**
+   * Pāriet uz grāmatas rediģēšanas skatu
+   */
   public function editBook()
   {
     if ($this->book && $this->book->id) {
-      // Just dispatch the event to the parent component
       $this->dispatch('editBook', ['bookId' => $this->book->id]);
     }
   }
 
+  /**
+   * Atsvaidzina grāmatas datus
+   */
   public function refreshBookData()
   {
     if ($this->bookId) {
-      // Refresh book from database to get latest data
       $this->book = Product::find($this->bookId);
     }
   }
 
+  /**
+   * Renderē komponentes skatu
+   */
   public function render()
   {
     return view('livewire.books.book-card');

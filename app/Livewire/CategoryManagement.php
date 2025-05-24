@@ -10,6 +10,12 @@ use App\Services\AuditLogService;
 use Livewire\Attributes\Rule;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Kategoriju pārvaldības komponente
+ * 
+ * Nodrošina kategoriju izveidošanu, rediģēšanu, dzēšanu un filtru pielietošanu
+ * Ļauj arī pārvaldīt kategoriju redzamību un pārvietot grāmatas starp kategorijām
+ */
 class CategoryManagement extends Component
 {
     use WithPagination;
@@ -20,13 +26,14 @@ class CategoryManagement extends Component
     public $search = '';
     public $status = 'all';
     public $sort = 'newest';
+    public $visibility = 'all';
+    
     public $editingCategoryId = null;
     public $editingCategoryName = '';
     public $showDeleteModal = false;
     public $categoryToDelete = null;
     #[Rule('nullable|exists:categories,id')]
     public $selectedNewCategoryId = null;
-    public $visibility = 'all';
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -49,54 +56,64 @@ class CategoryManagement extends Component
         'selectedNewCategoryId.required' => 'Please select a category for reassigning books.'
     ];
 
+    /**
+     * Atiestata lapošanu, kad tiek atjaunināta meklēšana
+     */
     public function updatingSearch()
     {
         $this->resetPage();
     }
 
+    /**
+     * Atiestata lapošanu, kad tiek atjaunināts statusa filtrs
+     */
     public function updatingStatus()
     {
         $this->resetPage();
     }
 
+    /**
+     * Atiestata lapošanu, kad tiek atjaunināta kārtošana
+     */
     public function updatingSort()
     {
         $this->resetPage();
     }
 
+    /**
+     * Izveido jaunu kategoriju
+     */
     public function store()
     {
-        try {
-            $validated = $this->validate([
-                'name' => 'required|string|max:30|unique:categories,name'
-            ]);
+        $validated = $this->validate([
+            'name' => 'required|string|max:30|unique:categories,name'
+        ]);
 
-            $category = Category::create([
-                'name' => $this->name,
-                'is_public' => true
-            ]);
+        $category = Category::create([
+            'name' => $this->name,
+            'is_public' => true
+        ]);
 
-            AuditLogService::log(
-                "Created category",
-                "category",
-                "Created new category",
-                $category->id,
-                $category->name
-            );
+        AuditLogService::log(
+            "Created category",
+            "category",
+            "Created new category",
+            $category->id,
+            $category->name
+        );
 
-            $this->name = '';
-            $this->dispatch('alert', [
-                'type' => 'success',
-                'message' => 'Category created successfully.'
-            ]);
-        } catch (\Exception $e) {
-            $this->dispatch('alert', [
-                'type' => 'error',
-                'message' => 'Failed to create category. Please try again.'
-            ]);
-        }
+        $this->name = '';
+        $this->dispatch('alert', [
+            'type' => 'success',
+            'message' => 'Category created successfully.'
+        ]);
     }
 
+    /**
+     * Uzsāk kategorijas rediģēšanu
+     * 
+     * @param int
+     */
     public function startEditing($categoryId)
     {
         $category = Category::find($categoryId);
@@ -104,6 +121,9 @@ class CategoryManagement extends Component
         $this->editingCategoryName = $category->name;
     }
 
+    /**
+     * Atceļ kategorijas rediģēšanu
+     */
     public function cancelEditing()
     {
         $this->editingCategoryId = null;
@@ -111,6 +131,9 @@ class CategoryManagement extends Component
         $this->resetValidation('editingCategoryName');
     }
 
+    /**
+     * Atjaunina kategorijas informāciju
+     */
     public function updateCategory()
     {
         $this->validate([
@@ -140,6 +163,11 @@ class CategoryManagement extends Component
         ]);
     }
 
+    /**
+     * Parāda kategorijas dzēšanas apstiprinājuma modālo logu
+     * 
+     * @param int
+     */
     public function confirmDelete($categoryId)
     {
         $this->reset(['selectedNewCategoryId']);
@@ -149,6 +177,9 @@ class CategoryManagement extends Component
         $this->showDeleteModal = true;
     }
 
+    /**
+     * Atceļ kategorijas dzēšanu
+     */
     public function cancelDelete()
     {
         $this->showDeleteModal = false;
@@ -156,6 +187,11 @@ class CategoryManagement extends Component
         $this->selectedNewCategoryId = null;
     }
 
+    /**
+     * Pārslēdz kategorijas redzamību (publiska/privāta)
+     * 
+     * @param int
+     */
     public function toggleVisibility($categoryId)
     {
         $category = Category::findOrFail($categoryId);
@@ -182,9 +218,9 @@ class CategoryManagement extends Component
             $category->name
         );
 
-        // If the category is being made private, we should clean up user preferences
+        // Ja kategorija kļūst privāta, attīrām lietotāju preferences
         if ($isBecomingPrivate) {
-            // Remove this category from user preferences
+            // Noņem šo kategoriju no lietotāju preferencēm
             $affectedUsers = \App\Models\UserPreference::where('category_id', $categoryId)->count();
             \App\Models\UserPreference::where('category_id', $categoryId)->delete();
             
@@ -205,6 +241,11 @@ class CategoryManagement extends Component
         ]);
     }
 
+    /**
+     * Iegūst pieejamās kategorijas pārvietošanai
+     * 
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
     public function getAvailableCategories()
     {
         return Category::where(function ($query) {
@@ -216,6 +257,11 @@ class CategoryManagement extends Component
             ->get();
     }
 
+    /**
+     * Apstrādā jaunās kategorijas izvēli pārvietošanai
+     * 
+     * @param mixed
+     */
     public function updatedSelectedNewCategoryId($value)
     {
         if ($value === '') {
@@ -231,6 +277,9 @@ class CategoryManagement extends Component
         }
     }
 
+    /**
+     * Dzēš kategoriju un, ja nepieciešams, pārvieto tās grāmatas uz citu kategoriju
+     */
     public function deleteCategory()
     {
         if (!$this->categoryToDelete) {
@@ -245,96 +294,85 @@ class CategoryManagement extends Component
             return;
         }
 
-        try {
-            DB::beginTransaction();
+        DB::beginTransaction();
 
-            // Refresh the category to ensure we have the latest data
-            $this->categoryToDelete = Category::withCount('products')
-                ->with('products')
-                ->findOrFail($this->categoryToDelete->id);
+        // Atsvaidzina kategoriju, lai pārliecinātos, ka ir jaunākie dati
+        $this->categoryToDelete = Category::withCount('products')
+            ->with('products')
+            ->findOrFail($this->categoryToDelete->id);
 
-            $categoryName = $this->categoryToDelete->name;
-            $categoryId = $this->categoryToDelete->id;
-            $hasBooks = $this->categoryToDelete->products_count > 0;
+        $categoryName = $this->categoryToDelete->name;
+        $categoryId = $this->categoryToDelete->id;
+        $hasBooks = $this->categoryToDelete->products_count > 0;
 
-            // Step 1: Validate and prepare for book reassignment if needed
-            if ($hasBooks) {
-                if (!$this->selectedNewCategoryId) {
-                    $this->dispatch('alert', [
-                        'type' => 'error',
-                        'message' => 'Please select a category for reassigning books.'
-                    ]);
-                    DB::rollBack();
-                    return;
-                }
-
-                $newCategory = Category::find($this->selectedNewCategoryId);
-                if (!$newCategory) {
-                    $this->dispatch('alert', [
-                        'type' => 'error',
-                        'message' => 'Selected category for reassignment not found.'
-                    ]);
-                    DB::rollBack();
-                    return;
-                }
-
-                if ($newCategory->id === $this->categoryToDelete->id) {
-                    $this->dispatch('alert', [
-                        'type' => 'error',
-                        'message' => 'Cannot reassign books to the category being deleted.'
-                    ]);
-                    DB::rollBack();
-                    return;
-                }
-
-                // Step 2: Reassign books
-                $updatedCount = DB::table('products')
-                    ->where('category_id', $categoryId)
-                    ->update([
-                        'category_id' => $this->selectedNewCategoryId,
-                        'updated_at' => now()
-                    ]);
-
-                if ($updatedCount === 0 && $this->categoryToDelete->products_count > 0) {
-                    throw new \Exception("Failed to reassign books. Expected to move {$this->categoryToDelete->products_count} books.");
-                }
-
-                // Log the reassignment
-                AuditLogService::log(
-                    "Reassigned category books",
-                    "category",
-                    "Reassigned {$updatedCount} books from '{$categoryName}' to '{$newCategory->name}'",
-                    $categoryId,
-                    $categoryName
-                );
+        // Validē un sagatavo grāmatu pārvietošanu, ja nepieciešams
+        if ($hasBooks) {
+            if (!$this->selectedNewCategoryId) {
+                $this->dispatch('alert', [
+                    'type' => 'error',
+                    'message' => 'Please select a category for reassigning books.'
+                ]);
+                DB::rollBack();
+                return;
             }
 
-            // Step 3: Delete the category
-            if (!$this->categoryToDelete->delete()) {
-                throw new \Exception('Failed to delete the category.');
+            $newCategory = Category::find($this->selectedNewCategoryId);
+            if (!$newCategory) {
+                $this->dispatch('alert', [
+                    'type' => 'error',
+                    'message' => 'Selected category for reassignment not found.'
+                ]);
+                DB::rollBack();
+                return;
             }
 
-            DB::commit();
+            if ($newCategory->id === $this->categoryToDelete->id) {
+                $this->dispatch('alert', [
+                    'type' => 'error',
+                    'message' => 'Cannot reassign books to the category being deleted.'
+                ]);
+                DB::rollBack();
+                return;
+            }
 
-            $this->showDeleteModal = false;
-            $this->categoryToDelete = null;
-            $this->selectedNewCategoryId = null;
+            // Pārvieto grāmatas
+            $updatedCount = DB::table('products')
+                ->where('category_id', $categoryId)
+                ->update([
+                    'category_id' => $this->selectedNewCategoryId,
+                    'updated_at' => now()
+                ]);
 
-            $this->dispatch('alert', [
-                'type' => 'success',
-                'message' => $hasBooks
-                    ? "Category '{$categoryName}' deleted and {$updatedCount} books reassigned successfully."
-                    : "Category '{$categoryName}' deleted successfully."
-            ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            $this->dispatch('alert', [
-                'type' => 'error',
-                'message' => 'An error occurred: ' . $e->getMessage()
-            ]);
+            // Reģistrē pārvietošanu
+            AuditLogService::log(
+                "Reassigned category books",
+                "category",
+                "Reassigned {$updatedCount} books from '{$categoryName}' to '{$newCategory->name}'",
+                $categoryId,
+                $categoryName
+            );
         }
+
+        // Dzēš kategoriju
+        $this->categoryToDelete->delete();
+
+        DB::commit();
+
+        $this->showDeleteModal = false;
+        $this->categoryToDelete = null;
+        $this->selectedNewCategoryId = null;
+
+        $this->dispatch('alert', [
+            'type' => 'success',
+            'message' => $hasBooks
+                ? "Category '{$categoryName}' deleted and {$updatedCount} books reassigned successfully."
+                : "Category '{$categoryName}' deleted successfully."
+        ]);
     }
 
+    /**
+     * Notīra visus filtrus
+     */
     public function clearFilters()
     {
         $this->search = '';
@@ -344,6 +382,11 @@ class CategoryManagement extends Component
         $this->resetPage();
     }
 
+    /**
+     * Iegūst statusa filtra tekstu
+     * 
+     * @return string
+     */
     public function getStatusText()
     {
         return match ($this->status) {
@@ -353,6 +396,11 @@ class CategoryManagement extends Component
         };
     }
 
+    /**
+     * Iegūst redzamības filtra tekstu
+     * 
+     * @return string
+     */
     public function getVisibilityText()
     {
         return match ($this->visibility) {
@@ -362,6 +410,11 @@ class CategoryManagement extends Component
         };
     }
 
+    /**
+     * Iegūst kārtošanas filtra tekstu
+     * 
+     * @return string
+     */
     public function getSortText()
     {
         return match ($this->sort) {
@@ -372,6 +425,11 @@ class CategoryManagement extends Component
         };
     }
 
+    /**
+     * Renderē komponentes skatu
+     * 
+     * @return \Illuminate\View\View
+     */
     public function render()
     {
         $query = Category::withCount('products');

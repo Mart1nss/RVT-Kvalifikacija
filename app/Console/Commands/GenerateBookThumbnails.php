@@ -104,54 +104,10 @@ class GenerateBookThumbnails extends Command
       exec($command, $output, $return_var);
 
       if ($return_var === 0 && file_exists($thumbnailPath)) {
-        // Optimize the thumbnail size if needed
-        $this->resizeThumbnail($thumbnailPath);
         return true;
       }
     }
 
     return false;
-  }
-
-  /**
-   * Resize a thumbnail image to standard dimensions
-   *
-   * @param string $thumbnailPath
-   * @return bool
-   */
-  private function resizeThumbnail($thumbnailPath)
-  {
-    if (!extension_loaded('imagick')) {
-      return false;
-    }
-
-    $maxWidth = 400;
-    $maxHeight = 566;
-
-    $imagick = new \Imagick($thumbnailPath);
-    $imagick->setImageFormat('jpg');
-    $imagick->setImageCompression(\Imagick::COMPRESSION_JPEG);
-    $imagick->setImageCompressionQuality(85);
-
-    $width = $imagick->getImageWidth();
-    $height = $imagick->getImageHeight();
-
-    if ($width > $maxWidth || $height > $maxHeight) {
-      // Resize while maintaining aspect ratio
-      $ratioWidth = $maxWidth / $width;
-      $ratioHeight = $maxHeight / $height;
-      $ratio = min($ratioWidth, $ratioHeight);
-
-      $newWidth = $width * $ratio;
-      $newHeight = $height * $ratio;
-
-      $imagick->resizeImage($newWidth, $newHeight, \Imagick::FILTER_LANCZOS, 1);
-    }
-
-    $imagick->writeImage($thumbnailPath);
-    $imagick->clear();
-    $imagick->destroy();
-
-    return true;
   }
 }

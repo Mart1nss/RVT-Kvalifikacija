@@ -4,22 +4,18 @@ namespace App\Livewire\Users;
 
 use App\Models\User;
 use App\Models\Ban;
-use App\Models\Ticket; // Added Ticket model
+use App\Models\Ticket;
 use App\Services\AuditLogService;
-use Illuminate\Support\Facades\Notification; // Added for sending notifications
-use App\Notifications\TicketUnassignedNotification; // We will create this notification
-use App\Notifications\UserRoleChangedNotification; // Added new notification
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\TicketUnassignedNotification;
+use App\Notifications\UserRoleChangedNotification;
 use Livewire\Component;
-use Illuminate\Support\Facades\Log; // Added for logging
+use Illuminate\Support\Facades\Log;
 
 /**
- * UserShow Component
+ * Lietotāja profila skatīšanas komponente
  * 
- * This Livewire component handles displaying and managing a single user's details:
- * - Viewing user information
- * - Changing user role (admin/user)
- * - Banning/unbanning users
- * - Deleting users
+ * Šī Livewire komponente nodrošina atsevišķa lietotāja detaļu attēlošanu un pārvaldību.
  */
 class UserShow extends Component
 {
@@ -30,16 +26,16 @@ class UserShow extends Component
     public $banReason = '';
 
     /**
-     * Initialize the component
-     * This method is called when the component is first loaded
+     * Inicializē komponenti
+     * Šī metode tiek izsaukta, kad komponente tiek pirmoreiz ielādēta
      * 
-     * @param int $userId The ID of the user to display
+     * @param int
      */
     public function mount($userId)
     {
         $this->userId = $userId;
         
-        // Prevent admins from editing their own account
+        // Novērš administratoru iespēju rediģēt pašiem savu kontu
         if (auth()->id() == $userId) {
             $this->dispatch('alert', [
                 [
@@ -55,8 +51,8 @@ class UserShow extends Component
     }
 
     /**
-     * Load the user data from the database
-     * This method fetches the user by ID or shows a 404 if not found
+     * Ielādē lietotāja datus no datu bāzes
+     * Šī metode iegūst lietotāju pēc ID vai parāda 404 kļūdu, ja netiek atrasts
      */
     public function loadUser()
     {
@@ -64,8 +60,7 @@ class UserShow extends Component
     }
 
     /**
-     * Render the component view
-     * This method is called whenever the component needs to be re-rendered
+     * Renderē komponentes skatu
      */
     public function render()
     {
@@ -73,8 +68,8 @@ class UserShow extends Component
     }
 
     /**
-     * Livewire lifecycle hook that runs when the `showBanModal` property is updated.
-     * Dispatches a browser event when the modal is opened.
+     * Livewire dzīves cikla āķis, kas darbojas, kad `showBanModal` īpašība tiek atjaunināta
+     * Nosūta pārlūkprogrammas notikumu, kad modālais logs tiek atvērts
      */
     public function updatedShowBanModal($value)
     {
@@ -84,15 +79,12 @@ class UserShow extends Component
     }
 
     /**
-     * Update the user's role (admin/user)
+     * Atjaunina lietotāja lomu (administrators/lietotājs)
      * 
-     * @param string $userType The new user type/role
+     * @param string
      */
     public function updateUserType($userType)
     {
-        Log::info("[UserShow] updateUserType called for user ID {$this->user->id} ({$this->user->name}) with new type '{$userType}'. Current actual usertype: {$this->user->usertype}. Auth User: " . auth()->id());
-
-        // Double-check that admin is not editing their own account
         if ($this->user->id === auth()->id()) {
             $this->dispatch('alert', [
                 [
@@ -103,28 +95,24 @@ class UserShow extends Component
             return;
         }
         
-        // Save the old role for logging purposes
         $oldRole = $this->user->usertype;
         
-        // Update and save the user's role
         $this->user->usertype = $userType;
         $this->user->save();
 
-        // If user was an admin and is no longer an admin, unassign their tickets
+        // Ja lietotājs bija administrators un vairs nav administrators, noņem viņa piešķirtos pieteikumus
         if ($oldRole === 'admin' && $userType !== 'admin') {
             $adminUser = $this->user;
-            Log::info("[UserShow] updateUserType: Admin role change condition met for user ID {$adminUser->id} ({$adminUser->name}). Old role: '{$oldRole}', New type: '{$userType}'. Unassigning tickets.");
             $ticketsToUnassign = Ticket::where('assigned_admin_id', $adminUser->id)->get();
             foreach ($ticketsToUnassign as $ticket) {
                 $ticket->assigned_admin_id = null;
-                $ticket->status = Ticket::STATUS_OPEN; // Re-open the ticket
+                $ticket->status = Ticket::STATUS_OPEN;
                 $ticket->save();
             }
 
-            // Notify other admins
+            // Paziņo citiem administratoriem
             $otherAdmins = User::where('usertype', 'admin')->where('id', '!=', $adminUser->id)->get();
             if ($otherAdmins->isNotEmpty()) {
-                Log::info("[UserShow] updateUserType: Dispatching AdminTicketsUnassigned event for user ID {$adminUser->id}. Ticket count: " . count($ticketsToUnassign) . ". Reason: role_changed.");
                 event(new \App\Events\AdminTicketsUnassigned($adminUser, count($ticketsToUnassign), 'role_changed'));
                 $this->dispatch('alert', [
                     [
@@ -135,17 +123,12 @@ class UserShow extends Component
             }
         }
 
-        // Notify the user whose role was changed
-        if ($oldRole !== $userType) { // Check if a role change actually occurred
-            try {
-                $this->user->notify(new UserRoleChangedNotification($this->user, $oldRole, $userType));
-                Log::info("[UserShow] updateUserType: Sent UserRoleChangedNotification to user ID {$this->user->id} for role change from '{$oldRole}' to '{$userType}'.");
-            } catch (\Exception $e) {
-                Log::error("[UserShow] updateUserType: Failed to send UserRoleChangedNotification to user ID {$this->user->id}. Error: " . $e->getMessage());
-            }
+        // Paziņo lietotājam, kura loma tika mainīta
+        if ($oldRole !== $userType) { 
+            $this->user->notify(new UserRoleChangedNotification($this->user, $oldRole, $userType));
         }
 
-        // Log the role change in the audit log for accountability
+        // Reģistrē lomas maiņu audita žurnālā pārskatatbildības nolūkos
         AuditLogService::log(
             "Changed user role for",
             "user",
@@ -154,7 +137,6 @@ class UserShow extends Component
             $this->user->name
         );
 
-        // Show success message to the admin
         $this->dispatch('alert', [
             [
                 'type' => 'success',
@@ -164,8 +146,8 @@ class UserShow extends Component
     }
 
     /**
-     * Show the delete confirmation modal
-     * This method is triggered when the admin clicks the "Delete User" button
+     * Parāda dzēšanas apstiprinājuma modālo logu
+     * Šī metode tiek izsaukta, kad administrators noklikšķina uz pogas "Dzēst lietotāju"
      */
     public function confirmDelete()
     {
@@ -183,8 +165,8 @@ class UserShow extends Component
     }
 
     /**
-     * Cancel the delete process and close the modal
-     * This method is triggered when the admin clicks "Cancel" in the delete modal
+     * Atceļ dzēšanas procesu un aizver modālo logu
+     * Šī metode tiek izsaukta, kad administrators noklikšķina uz "Atcelt" dzēšanas modālajā logā
      */
     public function cancelDelete()
     {
@@ -192,12 +174,11 @@ class UserShow extends Component
     }
 
     /**
-     * Delete the user from the database
-     * This method is triggered when the admin confirms deletion in the modal
+     * Dzēš lietotāju no datu bāzes
+     * Šī metode tiek izsaukta, kad administrators apstiprina dzēšanu modālajā logā
      */
     public function deleteUser()
     {
-        Log::info("[UserShow] deleteUser called for user ID {$this->user->id} ({$this->user->name}). Auth User: " . auth()->id());
         if (!auth()->user()->isAdmin()) {
             $this->dispatch('alert', [
                 [
@@ -227,29 +208,18 @@ class UserShow extends Component
         );
 
         $userName = $this->user->name;
-        // The logic for unassigning tickets and dispatching AdminTicketsUnassigned event
-        // has been moved to the User model's 'deleting' event listener in User::booted().
-        // This ensures it runs globally whenever a user is deleted.
-        
-        // Delete the user from the database
-        // This will trigger the 'deleting' event in the User model.
         $this->user->delete();
         
         $this->showDeleteModal = false;
 
-        $this->dispatch('alert', [
-            [
-                'type' => 'success',
-                'message' => "User {$userName} deleted successfully."
-            ]
-        ]);
+        // Ievieto veiksmīgu ziņojumu sesijā
+        session()->flash('message', "User {$userName} deleted successfully.");
 
         return redirect()->route('user.management.livewire');
     }
 
     /**
-     * Show the ban confirmation modal
-     * This method is triggered when the admin clicks the "Ban User" button
+     * Parāda bloķēšanas apstiprinājuma modālo logu
      */
     public function confirmBan()
     {
@@ -267,8 +237,7 @@ class UserShow extends Component
     }
 
     /**
-     * Cancel the ban process and close the modal
-     * This method is triggered when the admin clicks "Cancel" in the ban modal
+     * Atceļ bloķēšanas procesu un aizver modālo logu
      */
     public function cancelBan()
     {
@@ -277,9 +246,7 @@ class UserShow extends Component
     }
 
     /**
-     * Ban the user
-     * This method is triggered when the admin confirms the ban in the modal
-     * It creates a new Ban record and logs the action
+     * Bloķē lietotāju
      */
     public function banUser()
     {
@@ -337,9 +304,7 @@ class UserShow extends Component
     }
 
     /**
-     * Unban the user
-     * This method is triggered when the admin clicks the "Unban User" button
-     * It deactivates all active bans for the user and logs the action
+     * Atbloķē lietotāju
      */
     public function unbanUser()
     {

@@ -10,7 +10,7 @@ class PreferenceController extends Controller
 {
     public function show()
     {
-        // If user has already made a decision, redirect to home
+        // Ja lietotājs ir izvēlējies kategorijas, pārvirzīt uz sākumlapu
         if (auth()->user()->has_genre_preference_set) {
             return redirect('/home');
         }
@@ -28,7 +28,7 @@ class PreferenceController extends Controller
             return back()->with('error', 'Please select exactly 3 categories.');
         }
 
-        // Validate that all selected categories are public
+        // Validē, ka visas izvēlētās kategorijas ir publiskas
         $publicCategoryIds = Category::where('is_public', true)->pluck('id')->toArray();
         foreach ($categories as $categoryId) {
             if (!in_array($categoryId, $publicCategoryIds)) {
@@ -36,10 +36,10 @@ class PreferenceController extends Controller
             }
         }
 
-        // Delete existing preferences if any
+        // Dzēst esošās izvēles, ja tādas ir
         UserPreference::where('user_id', auth()->id())->delete();
 
-        // Add new preferences
+        // Pievienot jaunas izvēles
         foreach ($categories as $categoryId) {
             UserPreference::create([
                 'user_id' => auth()->id(),
@@ -47,7 +47,6 @@ class PreferenceController extends Controller
             ]);
         }
 
-        // Set the flag
         auth()->user()->update(['has_genre_preference_set' => true]);
 
         if ($request->input('from') === 'edit') {
@@ -57,9 +56,9 @@ class PreferenceController extends Controller
         return redirect('/home');
     }
 
+     // izlaist izvēli
     public function skip()
     {
-        // Set the flag even when skipping
         auth()->user()->update(['has_genre_preference_set' => true]);
         return redirect('/home');
     }

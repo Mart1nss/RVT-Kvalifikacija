@@ -33,9 +33,6 @@ Route::get('/', function () {
 // Redirect to the 'dashboard' method instead of 'index'
 Route::get('/home', [HomeController::class, 'dashboard'])->middleware('auth')->name('home');
 
-Route::get('/testpage', function () {
-    return view('testpage');
-});
 
 Route::get('/myprogress', [App\Http\Controllers\ProgressController::class, 'index'])->middleware('auth')->name('myprogress');
 
@@ -77,9 +74,6 @@ Route::get('/user/{userId}', function ($userId) {
     return view('admin.users.user-show', ['userId' => $userId]);
 })->name('user.show')->middleware(['auth', 'admin']);
 
-// File Routes
-Route::get('/redirect-back', [HomeController::class, 'redirectAfterBack'])->name('redirect.back');
-
 //My Collection Routes
 Route::get('/my-collection', [FavoritesController::class, 'favorites'])->name('my-collection');
 Route::post('/my-collection/{id}', [FavoritesController::class, 'add'])->name('my-collection.add');
@@ -97,10 +91,6 @@ Route::post('/notes', [NoteController::class, 'store']);
 Route::get('/notes/{productId}', [NoteController::class, 'show']);
 Route::put('/notes/{productId}', [NoteController::class, 'store']);
 Route::get('/viewnotes', [NoteController::class, 'index'])->name('viewnotes')->middleware('auth');
-
-// Peec Logina
-Route::get('/home', [HomeController::class, 'index'])->middleware('auth')->name('home');
-Route::get('post', [HomeController::class, 'post'])->middleware(['auth', 'admin']);
 
 //Profile Routes
 Route::middleware('auth')->group(function () {

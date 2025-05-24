@@ -20,7 +20,7 @@
       @endif
     </div>
     <div class="forum-info">
-      <span>{{ $forum->user->name }}</span>
+      <span>{{ $forum->user ? $forum->user->name : 'Deleted User' }}</span>
       <span>&#8226;</span>
       <span>{{ $forum->created_at->diffForHumans() }}</span>
     </div>
@@ -38,8 +38,8 @@
           <div style="width: 100%;">
             <div class="input-wrapper">
               <textarea id="replyContent" wire:model="newReply" class="reply-textarea @error('newReply') error @enderror"
-                placeholder="Write your reply..." rows="4" maxlength="250" data-counter="replyCounter"></textarea>
-              <span class="char-counter" id="replyCounter">0/250</span>
+                placeholder="Write your reply..." rows="4" maxlength="500" data-counter="replyCounter"></textarea>
+              <span class="char-counter" id="replyCounter">0/500</span>
             </div>
             @error('newReply')
               <p class="error-message" style="color: #EF4444; margin-top: 0.5rem; font-size: 0.875rem;">
@@ -67,7 +67,7 @@
         @forelse($replies as $reply)
           <div class="reply-item">
             <div class="reply-header">
-              <span class="reply-author">{{ $reply->user->name }}</span>
+              <span class="reply-author">{{ $reply->user ? $reply->user->name : 'Deleted User' }}</span>
               <span class="reply-date">{{ $reply->created_at->diffForHumans() }}</span>
               @if (auth()->check() && (auth()->id() === $reply->user_id || auth()->user()->usertype === 'admin'))
                 <div class="review-options" x-data="{ optionsOpen: false }" @click.away="optionsOpen = false">
@@ -106,7 +106,7 @@
       document.querySelectorAll('textarea[data-counter]').forEach(textarea => {
         const counterId = textarea.dataset.counter;
         const counter = document.getElementById(counterId);
-        const maxLength = textarea.getAttribute('maxlength') || 250;
+        const maxLength = textarea.getAttribute('maxlength') || 500;
         
         if (!counter) return;
         
@@ -127,7 +127,7 @@
           const counterId = textarea.dataset.counter;
           const counter = document.getElementById(counterId);
           if (counter) {
-            const maxLength = textarea.getAttribute('maxlength') || 250;
+            const maxLength = textarea.getAttribute('maxlength') || 500;
             counter.textContent = `0/${maxLength}`;
           }
         }

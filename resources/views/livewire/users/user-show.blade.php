@@ -25,10 +25,6 @@
                     <span class="detail-value">{{ $user->email }}</span>
                 </div>
                 <div class="detail-row">
-                    <span class="detail-label">Last Online:</span>
-                    <span class="detail-value">{{ $user->last_online ? $user->last_online->diffForHumans() : 'Never' }}</span>
-                </div>
-                <div class="detail-row">
                     <span class="detail-label">Created At:</span>
                     <span class="detail-value">{{ $user->created_at->format('M d, Y') }}</span>
                 </div>
@@ -68,8 +64,8 @@
                             @endphp
                             <p><strong>Banned at:</strong> {{ $activeBan->created_at->format('M d, Y H:i') }}</p>
                             <p><strong>Reason:</strong> {{ $activeBan->reason }}</p>
-                            @if($activeBan->admin)
-                                <p><strong>Banned by:</strong> {{ $activeBan->admin->name }}</p>
+                            @if($activeBan->admin_id) {{-- Check if admin_id exists first --}}
+                                <p><strong>Banned by:</strong> {{ $activeBan->admin ? $activeBan->admin->name : 'Deleted Admin' }}</p>
                             @endif
                         </div>
                     @endif

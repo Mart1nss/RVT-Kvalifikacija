@@ -15,7 +15,7 @@ use Illuminate\View\View;
 class AuthenticatedSessionController extends Controller
 {
     /**
-     * Display the login view.
+     * Parāda pieteikšanās skatu.
      */
     public function create(): View
     {
@@ -23,7 +23,7 @@ class AuthenticatedSessionController extends Controller
     }
 
     /**
-     * Handle an incoming authentication request.
+     * Apstrādā ienākošo autentifikācijas pieprasījumu.
      */
     public function store(LoginRequest $request): RedirectResponse
     {
@@ -33,14 +33,14 @@ class AuthenticatedSessionController extends Controller
 
         $user = auth()->user();
         
-        // Record login time in UTC
+        // Reģistrē pieteikšanās laiku UTC
         $now = Carbon::now('UTC');
         UserLogin::create([
             'user_id' => $user->id,
             'hour_of_day' => $now->hour,
         ]);
         
-        // Keep only the latest 7 login records
+        // Saglabā tikai pēdējos 7 pieteikšanās ierakstus
         $this->trimLoginRecords($user->id);
         
         if ($user->userPreferences()->count() === 0) {
@@ -51,7 +51,7 @@ class AuthenticatedSessionController extends Controller
     }
 
     /**
-     * Destroy an authenticated session.
+     * Iznīcina autentificētu sesiju.
      */
     public function destroy(Request $request): RedirectResponse
     {
@@ -65,20 +65,20 @@ class AuthenticatedSessionController extends Controller
     }
     
     /**
-     * Keep only the latest 7 login records for a user
+     * Saglabā tikai pēdējos 7 pieteikšanās ierakstus lietotājam
      *
      * @param int $userId
      * @return void
      */
     private function trimLoginRecords($userId)
     {
-        // Get login IDs to keep (the latest 7)
+        // Iegūst saglabājamos pieteikšanās ID (pēdējos 7)
         $loginIdsToKeep = UserLogin::where('user_id', $userId)
             ->orderBy('created_at', 'desc')
             ->limit(7)
             ->pluck('id');
             
-        // Delete all older login records
+        // Dzēš visus vecākos pieteikšanās ierakstus
         UserLogin::where('user_id', $userId)
             ->whereNotIn('id', $loginIdsToKeep)
             ->delete();

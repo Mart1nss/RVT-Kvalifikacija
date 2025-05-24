@@ -9,20 +9,29 @@ use Auth;
 
 class NoteController extends Controller
 {
+    /**
+     * Saglabā vai atjaunina piezīmi konkrētam produktam (grāmatai).
+     * Ja piezīmes teksts ir tukšs un piezīme pastāv, tā tiek dzēsta.
+     *
+     * @param  \App\Http\Requests\StoreNoteRequest
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(StoreNoteRequest $request)
     {
         $note = Note::where('product_id', $request->product_id)
             ->where('user_id', Auth::id())
             ->first();
 
+        // Ja pieprasījumā nav piezīmes teksta
         if (empty($request->note_text)) {
             if ($note) {
                 $note->delete();
-                return response()->json(['message' => 'Note deleted.']);
+                return response()->json(['message' => 'Piezīme dzēsta.']);
             }
-            return response()->json(['message' => 'No note to delete.']);
+            return response()->json(['message' => 'Nav piezīmes, ko dzēst.']);
         }
 
+        // Ja piezīme pastāv, atjaunina tās tekstu
         if ($note) {
             $note->note_text = $request->note_text;
             $note->save();
@@ -34,10 +43,15 @@ class NoteController extends Controller
             ]);
         }
 
-        return response()->json(['message' => 'Note saved.', 'note' => $note]);
+        return response()->json(['message' => 'Piezīme saglabāta.', 'note' => $note]);
     }
 
-
+    /**
+     * Parāda konkrēta produkta piezīmi autentificētam lietotājam.
+     *
+     * @param  int 
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function show($productId)
     {
         $note = Note::where('product_id', $productId)
@@ -47,6 +61,12 @@ class NoteController extends Controller
         return response()->json($note);
     }
 
+    /**
+     * Parāda visas autentificētā lietotāja piezīmes.
+     * Piezīmes tiek kārtotas pēc pēdējās atjaunināšanas datuma dilstošā secībā.
+     *
+     * @return \Illuminate\View\View
+     */
     public function index()
     {
         $notes = Auth::user()->notes()->orderBy('updated_at', 'desc')->get();

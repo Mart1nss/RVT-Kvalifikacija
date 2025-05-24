@@ -6,8 +6,20 @@ use App\Models\ReadLater;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * "Lasīt vēlāk" saraksta kontrolieris
+ * 
+ * Šis kontrolieris apstrādā grāmatu pievienošanu un noņemšanu no lietotāja 
+ * "Lasīt vēlāk" saraksta, izmantojot tradicionālo Laravel pieeju.
+ */
 class ReadLaterController extends Controller
 {
+  /**
+   * Pievieno grāmatu lietotāja "Lasīt vēlāk" sarakstam
+   *
+   * @param int
+   * @return \Illuminate\Http\RedirectResponse
+   */
   public function add($id)
   {
     $user = Auth::user();
@@ -20,6 +32,12 @@ class ReadLaterController extends Controller
     return redirect()->back()->with('success', 'Book added to read later list!');
   }
 
+  /**
+   * Noņem grāmatu no lietotāja "Lasīt vēlāk" saraksta
+   *
+   * @param int
+   * @return \Illuminate\Http\RedirectResponse
+   */
   public function delete($id)
   {
     $readLater = ReadLater::where('user_id', Auth::user()->id)
@@ -32,6 +50,11 @@ class ReadLaterController extends Controller
       ->withInput(['tab' => request('current_tab', 'readlater')]);
   }
 
+  /**
+   * Iegūst visas lietotāja "Lasīt vēlāk" sarakstā esošās grāmatas
+   *
+   * @return \Illuminate\Database\Eloquent\Collection
+   */
   public function getReadLater()
   {
     $user = Auth::user();

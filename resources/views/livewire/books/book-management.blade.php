@@ -107,8 +107,8 @@
         <p class="delete-confirmation-text">This action cannot be undone.</p>
       </div>
       <div class="delete-confirmation-footer">
-        <button type="button" class="btn-secondary" wire:click="$set('confirmingBookDeletion', false)">Cancel</button>
-        <button type="button" class="btn-delete" wire:click="deleteBook" wire:loading.attr="disabled">
+        <button type="button" class="cancel-btn" wire:click="$set('confirmingBookDeletion', false)">Cancel</button>
+        <button type="button" class="delete-btn" wire:click="deleteBook" wire:loading.attr="disabled">
           <span wire:loading.remove>Delete</span>
           <span wire:loading>Deleting...</span>
         </button>

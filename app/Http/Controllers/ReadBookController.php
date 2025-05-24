@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\Auth;
 class ReadBookController extends Controller
 {
     /**
-     * Get the read status of a book for the authenticated user
+     * Iegūst grāmatas lasīšanas statusu autentificētam lietotājam
      * 
-     * @param int $productId
+     * @param int
      * @return \Illuminate\Http\JsonResponse
      */
     public function status($productId)
@@ -37,9 +37,9 @@ class ReadBookController extends Controller
     }
     
     /**
-     * Toggle the read status of a book for the authenticated user
+     * Pārslēdz grāmatas lasīšanas statusu autentificētam lietotājam
      * 
-     * @param int $productId
+     * @param int
      * @return \Illuminate\Http\JsonResponse
      */
     public function toggle($productId)
@@ -61,12 +61,12 @@ class ReadBookController extends Controller
             ->first();
             
         if ($readBook) {
-            // If already marked as read, remove it
+            // Ja jau atzīmēta kā izlasīta, noņem to
             $readBook->delete();
             $message = 'Book marked as unread.';
             $isRead = false;
         } else {
-            // Mark as read
+            // Atzīmēt kā izlasītu
             ReadBook::create([
                 'user_id' => $user->id,
                 'product_id' => $productId,

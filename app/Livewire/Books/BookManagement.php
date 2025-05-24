@@ -10,12 +10,17 @@ use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Storage;
 use App\Services\AuditLogService;
 
+/**
+ * Grāmatu pārvaldības komponente
+ * Nodrošina grāmatu saraksta attēlošanu, filtrēšanu, kārtošanu, 
+ * kā arī grāmatu pievienošanu, rediģēšanu un dzēšanu
+ */
 class BookManagement extends Component
 {
   use WithPagination;
   use WithFileUploads;
 
-  // Properties for book management
+  // Grāmatas pārvaldības īpašības
   public $title;
   public $author;
   public $category_id;
@@ -25,14 +30,13 @@ class BookManagement extends Component
   public $bookToDelete;
   public $editingBookId;
 
-  // Filter properties
+  // Filtrēšanas īpašības
   public $search = '';
   public $selectedGenres = [];
   public $sort = 'newest';
   public $visibility = 'all';
   public $categories = [];
 
-  // Listeners for events from child components
   protected $listeners = [
     'refreshBooks' => '$refresh',
     'filterUpdated' => 'updateFilters',
@@ -40,23 +44,30 @@ class BookManagement extends Component
     'editBook' => 'showEditModal'
   ];
 
+  /**
+   * Inicializē komponenti ar sākotnējiem datiem
+   */
   public function mount()
   {
     $this->loadCategories();
-
-    // Initialize from query parameters if they exist
     $this->search = request()->query('query', '');
     $this->selectedGenres = request()->query('genres') ? explode(',', request()->query('genres')) : [];
     $this->sort = request()->query('sort', 'newest');
     $this->visibility = request()->query('visibility', 'all');
   }
 
+  /**
+   * Ielādē visas kategorijas
+   */
   public function loadCategories()
   {
-    // Load all categories for admin, including private ones
     $this->categories = Category::orderBy('name')->get();
   }
 
+  /**
+   * Atjaunina filtrus no filtru komponentes
+   * @param array
+   */
   public function updateFilters($filters)
   {
     $this->search = $filters['search'] ?? '';
@@ -66,31 +77,32 @@ class BookManagement extends Component
     $this->resetPage();
   }
 
+  /**
+   * Iegūst filtrētas un kārtotas grāmatas
+   * @return \Illuminate\Pagination\LengthAwarePaginator
+   */
   public function getBooks()
   {
     $query = Product::query()
       ->withAvg('reviews', 'review_score');
 
-    // Apply search filter
     if ($this->search) {
       $query->where('title', 'like', '%' . $this->search . '%');
     }
 
-    // Apply genre filter
     if (!empty($this->selectedGenres)) {
       $query->whereHas('category', function ($q) {
         $q->whereIn('name', $this->selectedGenres);
       });
     }
 
-    // Apply visibility filter (for admin)
     if ($this->visibility !== 'all') {
       $query->whereHas('category', function ($q) {
         $q->where('is_public', $this->visibility === 'public');
       });
     }
 
-    // Apply sorting
+    // Pielieto kārtošanu
     switch ($this->sort) {
       case 'oldest':
         $query->orderBy('created_at', 'asc');
@@ -113,12 +125,13 @@ class BookManagement extends Component
       case 'rating_desc':
         $query->orderBy('reviews_avg_review_score', 'desc');
         break;
-      default: // 'newest'
+      default:
         $query->orderBy('created_at', 'desc');
     }
 
     $books = $query->paginate(15);
 
+    // Pievieno vērtējuma datus katrai grāmatai
     $books->each(function ($book) {
       $book->rating = $book->reviews_avg_review_score ?? 0;
     });
@@ -126,12 +139,15 @@ class BookManagement extends Component
     return $books;
   }
 
+  /**
+   * Renderē komponentes skatu
+   * @return \Illuminate\View\View
+   */
   public function render()
   {
     $books = $this->getBooks();
     $totalBooks = $books->total();
 
-    // Dispatch the updated count to the filter section
     $this->dispatch('updateTotalBooks', $totalBooks);
 
     return view('livewire.books.book-management', [
@@ -141,12 +157,20 @@ class BookManagement extends Component
     ]);
   }
 
+  /**
+   * Parāda grāmatas dzēšanas apstiprinājuma modālo logu
+   * @param array
+   */
   public function showDeleteModal($data)
   {
     $this->bookToDelete = Product::find($data['bookId']);
     $this->confirmingBookDeletion = true;
   }
 
+  /**
+   * Parāda grāmatas rediģēšanas modālo logu
+   * @param array
+   */
   public function showEditModal($data)
   {
     $book = Product::find($data['bookId']);
@@ -159,13 +183,16 @@ class BookManagement extends Component
     }
   }
 
+  /**
+   * Atiestata rediģēšanas formas lauku vērtības
+   */
   public function resetEditForm()
   {
     $this->reset(['editingBookId', 'title', 'author', 'category_id', 'showEditModal']);
   }
 
   /**
-   * Delete the selected book
+   * Dzēš izvēlēto grāmatu
    */
   public function deleteBook()
   {
@@ -173,34 +200,34 @@ class BookManagement extends Component
       return;
     }
 
-    // Get book information for logging and thumbnail deletion
+    // Iegūst grāmatas informāciju auditam un sīktēla dzēšanai
     $bookId = $this->bookToDelete->id;
     $bookTitle = $this->bookToDelete->title;
     $bookAuthor = $this->bookToDelete->author;
     $bookFile = $this->bookToDelete->file;
 
-    // Store book info in notes before deletion
+    // Saglabā grāmatas informāciju piezīmēs pirms dzēšanas
     $this->bookToDelete->notes()->update([
       'book_title' => $bookTitle,
       'book_author' => $bookAuthor
     ]);
 
-    // Delete book from storage
+    // Dzēš grāmatu no glabātuves
     if ($bookFile && Storage::exists('books/' . $bookFile)) {
       Storage::delete('books/' . $bookFile);
     }
 
-    // Delete the thumbnail if it exists
+    // Dzēš sīktēlu, ja tas eksistē
     $thumbnailFilename = str_replace('.pdf', '.jpg', $bookFile);
     $thumbnailPath = public_path('book-thumbnails/' . $thumbnailFilename);
     if (file_exists($thumbnailPath)) {
       unlink($thumbnailPath);
     }
 
-    // Delete the book record
+    // Dzēš grāmatas ierakstu
     $this->bookToDelete->delete();
 
-    // Log the deletion
+    // Reģistrē dzēšanu audita žurnālā
     app(AuditLogService::class)->log(
       "Deleted book",
       "book",
@@ -209,7 +236,7 @@ class BookManagement extends Component
       "{$bookTitle} by {$bookAuthor}"
     );
 
-    // Reset and show success message
+    // Atiestata un parāda veiksmīgu ziņojumu
     $this->confirmingBookDeletion = false;
     $this->bookToDelete = null;
 
@@ -219,6 +246,9 @@ class BookManagement extends Component
     ]);
   }
 
+  /**
+   * Atjaunina grāmatas informāciju
+   */
   public function updateBook()
   {
     $this->validate([
@@ -233,14 +263,13 @@ class BookManagement extends Component
       $originalAuthor = $book->author;
       $originalCategoryId = $book->category_id;
 
-      // Update the book
       $book->update([
         'title' => $this->title,
         'author' => $this->author,
         'category_id' => $this->category_id,
       ]);
 
-      // Prepare description of changes for audit log
+      // Sagatavo izmaiņu aprakstu audita žurnālam
       $changes = [];
       if ($originalTitle !== $this->title) {
         $changes[] = "Title changed from '{$originalTitle}' to '{$this->title}'";
@@ -254,7 +283,6 @@ class BookManagement extends Component
         $changes[] = "Category changed from '{$oldCategory}' to '{$newCategory}'";
       }
 
-      // Create audit log if changes were made
       if (!empty($changes)) {
         $description = implode(", ", $changes);
         app(AuditLogService::class)->log(

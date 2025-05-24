@@ -24,12 +24,12 @@
       <div id="pdf-toolbar">
         <button id="zoom-in"><i class='bx bx-zoom-in'></i></button>
         <button id="zoom-out"><i class='bx bx-zoom-out'></i></button>
-        <span>Page: <span id="page-num">1</span> / <span id="page-count"></span></span>
+        <span>Page <span id="page-num">1</span> of <span id="page-count"></span></span>
         <button id="bookmark-btn" data-product-id="{{ $data->id }}">
-          <i class='bx bx-bookmark-alt'></i> <!-- Default icon -->
+          <i class='bx bx-bookmark-alt'></i>
         </button>
         <button id="read-btn" data-product-id="{{ $data->id }}">
-          <i class='bx bx-check-circle'></i> <!-- Default icon -->
+          <i class='bx bx-check-circle'></i>
         </button>
       </div>
 
@@ -408,7 +408,6 @@
     });
   </script>
 
-  <!-- Add styles for character counter -->
   <style>
     .notes-name {
       display: flex;
@@ -427,7 +426,6 @@
       font-weight: bold;
     }
     
-    /* Style for the "Mark as Read" button */
     #read-btn {
       background-color: transparent;
       border: none;
@@ -439,7 +437,6 @@
     }
     
     #read-btn:hover {
-      transform: scale(1.2);
       color: #4caf50;
     }
     

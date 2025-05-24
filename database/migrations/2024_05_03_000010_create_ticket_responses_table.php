@@ -12,13 +12,12 @@ return new class extends Migration {
   {
     Schema::create('ticket_responses', function (Blueprint $table) {
       $table->bigIncrements('id');
-      $table->bigInteger('ticket_id')->unsigned()->nullable(); //Nullable Foreign Key
-      $table->bigInteger('user_id')->unsigned()->nullable(); //Nullable Foreign Key
-      $table->text('response');
-      $table->boolean('is_admin_response')->default(0); // TINYINT(1) -> boolean
+      $table->bigInteger('ticket_id')->unsigned()->nullable();
+      $table->bigInteger('user_id')->unsigned()->nullable();
+      $table->text('response', 1000);
+      $table->boolean('is_admin_response')->default(0);
       $table->timestamps();
 
-      // Foreign Key Constraints - SET NULL
       $table->foreign('ticket_id')->references('id')->on('tickets')->onDelete('set null');
       $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
     });

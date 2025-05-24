@@ -116,11 +116,16 @@
 
       @if ($canUserRespond || $canAdminRespond)
         <div class="response-form">
-          <h2>Add Response</h2>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <h2>Add Response</h2>
+            <span class="char-counter" id="ticketResponseCounter" style="font-size: 14px; color: #aaa;">0/1000</span>
+          </div>
           <form action="{{ route('tickets.respond', $ticket) }}" method="POST">
             @csrf
-            <textarea name="response" rows="4" required placeholder="Type your response here..."></textarea>
-            <button type="submit" class="btn btn-primary btn-md">Submit Response</button>
+            <div class="input-wrapper">
+              <textarea name="response" id="ticketResponseTextarea" rows="4" required placeholder="Type your response here..." maxlength="1000" data-counter="ticketResponseCounter"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-md" style="margin-top: 10px;">Submit Response</button>
           </form>
         </div>
       @elseif (!auth()->user()->isAdmin())
@@ -268,7 +273,7 @@
     textarea {
       width: 100%;
       background-color: #191919;
-      border: 1px solid #3d3d3d;
+      border: 1px solid #3d3d3d;  
       color: white;
       padding: 1rem;
       border-radius: 8px;
@@ -373,9 +378,34 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      // Scroll to bottom of responses
       const responsesList = document.getElementById('responses-list');
       if (responsesList) {
         responsesList.scrollTop = responsesList.scrollHeight;
+      }
+
+      // Character counter for ticket response
+      const ticketTextarea = document.getElementById('ticketResponseTextarea');
+          const ticketCounter = document.getElementById('ticketResponseCounter');
+      
+      if (ticketTextarea && ticketCounter) {
+        const maxLength = parseInt(ticketTextarea.getAttribute('maxlength') || "1000", 10);
+        
+        const updateCount = () => {
+          const count = ticketTextarea.value.length;
+          ticketCounter.textContent = `${count}/${maxLength}`;
+          if (count > maxLength) {
+            ticketCounter.style.color = 'red';
+            // Optionally disable submit button if over limit
+            // document.querySelector('.response-form button[type="submit"]').disabled = true;
+          } else {
+            ticketCounter.style.color = '#aaa';
+            // document.querySelector('.response-form button[type="submit"]').disabled = false;
+          }
+        };
+        
+        ticketTextarea.addEventListener('input', updateCount);
+        updateCount(); // Initial count
       }
     });
   </script>

@@ -14,9 +14,7 @@
           <select class="filter-select" wire:model.live="recipientFilter">
             <option value="">Filter by recipient</option>
             <option value="all">All Users</option>
-            <option value="users">Users Only</option>
             <option value="admins">Admins Only</option>
-            <option value="self">Yourself</option>
           </select>
         </div>
       </div>
@@ -32,11 +30,9 @@
             <span class="filter-tag">
               {{ $recipientFilter === 'all'
                   ? 'All Users'
-                  : ($recipientFilter === 'users'
-                      ? 'Users Only'
-                      : ($recipientFilter === 'admins'
-                          ? 'Admins Only'
-                          : 'Yourself')) }}
+                  : ($recipientFilter === 'admins'
+                      ? 'Admins Only'
+                      : '') }}
             </span>
           </div>
         @endif

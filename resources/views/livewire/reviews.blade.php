@@ -26,22 +26,20 @@
         </div>
       </div>
       <div class="review-input-button">
-        <textarea class="review-textbox" wire:model.live="review_text" placeholder="Write your review here..." required
+        <textarea id="reviewTextarea" class="review-textbox" wire:model="review_text" placeholder="Write your review here..." required
           maxlength="250" x-data="{}" x-init="$el.style.height = '40px';
           $el.addEventListener('input', function() {
               $el.style.height = '40px';
               $el.style.height = $el.scrollHeight + 'px';
           });
           
-          // Listen for Livewire reset
           Livewire.on('reviewAdded', () => {
-              $el.value = '';
-              $el.style.height = '40px';
+              $el.value = ''; // Clear textarea
+              $el.style.height = '40px'; // Reset height
+              const event = new Event('input', { bubbles: true, cancelable: true });
+              $el.dispatchEvent(event);
           });" wire:loading.class="disabled" wire:target="addReview"></textarea>
-        <div class="char-count" :class="{ 'text-danger': {{ strlen($review_text) >= 250 ? 'true' : 'false' }} }"
-          wire:key="char-count">
-          {{ strlen($review_text) }} / 250
-        </div>
+        <div id="charCount" class="char-count">0 / 250</div>
         <button class="btn btn-primary btn-sm btn-responsive" type="submit" wire:loading.attr="disabled"
           wire:target="addReview">
           <span wire:loading.remove wire:target="addReview">Submit</span>
@@ -51,13 +49,41 @@
     </form>
 
     <script>
-      // Reset star ratings UI after review is submitted
       document.addEventListener('livewire:initialized', () => {
+        // Function to update the character counter for reviews
+        const updateReviewCharCounter = () => {
+          const textarea = document.getElementById('reviewTextarea');
+          const charCountDisplay = document.getElementById('charCount');
+          
+          if (textarea && charCountDisplay) {
+            const currentLength = textarea.value.length;
+            const maxLength = textarea.getAttribute('maxlength') || 250;
+            charCountDisplay.textContent = `${currentLength} / ${maxLength}`;
+            
+            if (currentLength >= maxLength) {
+              charCountDisplay.classList.add('text-danger');
+            } else {
+              charCountDisplay.classList.remove('text-danger');
+            }
+          }
+        };
+
+        updateReviewCharCounter();
+
+        const reviewTextarea = document.getElementById('reviewTextarea');
+        if (reviewTextarea) {
+          reviewTextarea.addEventListener('input', updateReviewCharCounter);
+        }
+
         Livewire.on('reviewAdded', () => {
           const stars = document.querySelectorAll('input[name="review_score"]');
           stars.forEach(star => {
             star.checked = false;
           });
+        });
+
+        Livewire.hook('message.processed', (message, component) => {
+          updateReviewCharCounter();
         });
       });
     </script>
@@ -107,7 +133,7 @@
               </div>
             @endif
           @endif
-          <p class="reviewed-by">{{ $review->user->name }}</p>
+          <p class="reviewed-by">{{ $review->user ? $review->user->name : 'Deleted User' }}</p>
           <div class="star-rating">
             @for ($i = 1; $i <= 5; $i++)
               <span class="star {{ $i <= $review->review_score ? 'filled' : '' }}">
@@ -144,6 +170,9 @@
     .disabled {
       opacity: 0.7;
       cursor: not-allowed;
+    }
+    .text-danger {
+      color: #dc2626 !important;
     }
   </style>
 </div>

@@ -12,7 +12,7 @@ use Carbon\Carbon;
 class ProgressController extends Controller
 {
     /**
-     * Display user progress statistics
+     * Parāda lietotāja progresa statistiku
      * 
      * @return \Illuminate\View\View
      */
@@ -24,32 +24,31 @@ class ProgressController extends Controller
             return redirect()->route('login');
         }
         
-        // Load relationships needed for stats if not already loaded
+        // Ielādē attiecības, kas nepieciešamas statistikai, ja tās vēl nav ielādētas
         if (!$user->relationLoaded('reviews')) {
             $user->load(['reviews', 'favorites', 'notes', 'forums', 'forumReplies', 'tickets', 'readBooks']);
         }
         
-        // Basic stats
+        // Pamata statistika
         $stats = [
-            'books_read' => $user->readBooks->count(), // Now using actual read books count
+            'books_read' => $user->readBooks->count(),
             'favorites' => $user->favorites->count(),
             'notes' => $user->notes->count(),
             'reviews' => $user->reviews->count(),
-            'forums' => $user->forums->count() + $user->forumReplies->count(), // Total forum activity
+            'forums' => $user->forums->count() + $user->forumReplies->count(),
             'tickets' => $user->tickets->count(),
         ];
         
-        // Account information
+        // Konta informācija
         $createdAt = $user->created_at;
         $accountAge = $this->calculateAccountAge($createdAt);
         
-        // Calculate top genres if available
+        // Aprēķina populārākos žanrus, ja pieejami
         $topGenres = $this->getTopGenres($user);
         
-        // Get login hour distribution for the chart
         $loginHours = $this->getLoginHourDistribution($user);
         
-        // Get most active hour in UTC - will be converted in the view
+        // Iegūst aktīvāko stundu UTC laikā - tiks konvertēta skatā
         $typicalActiveTimeUTC = $this->getMostActiveHour($user);
         
         return view('myProgress', compact(
@@ -63,7 +62,7 @@ class ProgressController extends Controller
     }
     
     /**
-     * Calculate account age in a human-readable format
+     * Aprēķina konta vecumu cilvēkam lasāmā formātā
      *
      * @param Carbon $createdAt
      * @return string
@@ -88,20 +87,17 @@ class ProgressController extends Controller
     }
     
     /**
-     * Get top 3 genres based on user's read books and reviews
+     * Iegūst populārākos 3 žanrus, pamatojoties uz lietotāja izlasītajām grāmatām un atsauksmēm
      *
      * @param User $user
      * @return array
      */
     private function getTopGenres($user)
     {
-        // Load user's read books and reviews with product and category information
         $user->load('readBooks.product.category', 'reviews.product.category');
         
-        // Count genres from read books and reviews
         $genreCounts = [];
-        
-        // Process read books - these are explicitly marked as read
+
         foreach ($user->readBooks as $readBook) {
             if ($readBook->product && $readBook->product->category) {
                 $categoryName = $readBook->product->category->name;
@@ -112,10 +108,9 @@ class ProgressController extends Controller
             }
         }
         
-        // Sort by count (descending)
         arsort($genreCounts);
         
-        // Get top 3 genres with their counts
+        // Iegūst populārākos 3 žanrus ar to skaitu
         $topGenres = [];
         $position = 1;
         foreach ($genreCounts as $genre => $count) {
@@ -123,7 +118,7 @@ class ProgressController extends Controller
             $topGenres[] = [
                 'position' => $position,
                 'name' => $genre,
-                'count' => round($count, 0) // Display as whole numbers only
+                'count' => round($count, 0)
             ];
             $position++;
         }
@@ -132,14 +127,13 @@ class ProgressController extends Controller
     }
     
     /**
-     * Get most active hour from login history (in UTC)
+     * Iegūst aktīvāko stundu no pieteikšanās vēstures (UTC laikā)
      *
      * @param User $user
      * @return int|null
      */
     private function getMostActiveHour($user)
     {
-        // Get login data from all available records
         $loginData = DB::table('user_logins')
             ->where('user_id', $user->id)
             ->select('hour_of_day', DB::raw('count(*) as login_count'))
@@ -151,7 +145,7 @@ class ProgressController extends Controller
     }
     
     /**
-     * Get login hour distribution for all user logins
+     * Iegūst pieteikšanās stundu sadalījumu visiem lietotāja pieteikumiem
      *
      * @param User $user
      * @return array
@@ -166,7 +160,6 @@ class ProgressController extends Controller
             ->pluck('login_count', 'hour_of_day')
             ->toArray();
             
-        // Fill in missing hours with zero
         $result = [];
         for ($i = 0; $i < 24; $i++) {
             $result[$i] = $distribution[$i] ?? 0;

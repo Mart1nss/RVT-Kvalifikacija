@@ -141,7 +141,7 @@
         </h2>
 
         <p class="content-text">
-          {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.') }}
+          {{ __('Once your account is deleted, your personal data will be permanently removed. Your reviews, forum posts, replies, and support tickets will remain, but your username will be replaced with "Deleted User". Please enter your password to confirm you want to delete your account.') }}
         </p>
 
         <div class="div-content-2">

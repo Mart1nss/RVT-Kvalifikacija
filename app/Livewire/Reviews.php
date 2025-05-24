@@ -7,6 +7,12 @@ use App\Models\Product;
 use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Atsauksmju komponente
+ * 
+ * Šī komponente nodrošina grāmatu atsauksmju attēlošanu, pievienošanu un dzēšanu
+ * Ļauj lietotājiem novērtēt grāmatas un kārtot atsauksmes pēc dažādiem kritērijiem
+ */
 class Reviews extends Component
 {
   public $product;
@@ -26,11 +32,21 @@ class Reviews extends Component
     'review_score.required' => 'Please select a rating',
   ];
 
+  /**
+   * Inicializē komponenti ar grāmatas datiem
+   * 
+   * @param Product
+   */
   public function mount(Product $product)
   {
     $this->product = $product;
   }
 
+  /**
+   * Renderē komponentes skatu
+   * 
+   * @return \Illuminate\View\View
+   */
   public function render()
   {
     $reviews = $this->getReviews();
@@ -39,6 +55,11 @@ class Reviews extends Component
     ]);
   }
 
+  /**
+   * Iegūst sakārtotas atsauksmes atbilstoši izvēlētajai kārtošanai
+   * 
+   * @return \Illuminate\Database\Eloquent\Collection
+   */
   public function getReviews()
   {
     $reviewsQuery = $this->product->reviews()->with('user');
@@ -61,11 +82,13 @@ class Reviews extends Component
     return $reviewsQuery->get();
   }
 
+  /**
+   * Pievieno jaunu atsauksmi grāmatai
+   */
   public function addReview()
   {
     $this->validate();
 
-    // Check if the user has already reviewed this product
     $existingReview = Review::where('user_id', auth()->id())
       ->where('product_id', $this->product->id)
       ->first();
@@ -75,10 +98,7 @@ class Reviews extends Component
         'type' => 'error',
         'message' => 'You have already reviewed this book.'
       ]);
-      // Optionally, reset form fields if desired
-      // $this->review_text = '';
-      // $this->review_score = null;
-      // $this->resetValidation();
+
       return;
     }
 
@@ -89,21 +109,24 @@ class Reviews extends Component
       'product_id' => $this->product->id
     ]);
 
-    // Reset the form completely
     $this->review_text = '';
     $this->review_score = null;
     $this->resetValidation();
 
-    // Force a re-render to reset the star ratings properly
     $this->dispatch('reviewAdded');
 
-    // Dispatch event for alert system
     $this->dispatch('alert', [
       'type' => 'success',
       'message' => 'Review added successfully!'
     ]);
   }
 
+  /**
+   * Parāda atsauksmes dzēšanas apstiprinājuma dialogu
+   * 
+   * @param int
+   * @param string
+   */
   public function confirmDelete($reviewId, $reviewText)
   {
     $this->deleteReviewId = $reviewId;
@@ -111,16 +134,21 @@ class Reviews extends Component
     $this->showDeleteModal = true;
   }
 
+  /**
+   * Atceļ atsauksmes dzēšanas procesu
+   */
   public function cancelDelete()
   {
     $this->reset(['deleteReviewId', 'deleteReviewText', 'showDeleteModal']);
   }
 
+  /**
+   * Dzēš atsauksmi pēc apstiprinājuma
+   */
   public function deleteReview()
   {
     $review = Review::findOrFail($this->deleteReviewId);
 
-    // Allow admins to delete any review, regular users can only delete their own
     if (!auth()->user()->isAdmin() && $review->user_id != Auth::id()) {
       $this->dispatch('alert', [
         'type' => 'error',
@@ -133,15 +161,9 @@ class Reviews extends Component
     $review->delete();
     $this->cancelDelete();
 
-    // Dispatch event for alert system
     $this->dispatch('alert', [
       'type' => 'success',
       'message' => 'Review deleted successfully!'
     ]);
-  }
-
-  public function updatedSortOrder()
-  {
-    // No additional code needed here as the render method will get the sorted reviews
   }
 }

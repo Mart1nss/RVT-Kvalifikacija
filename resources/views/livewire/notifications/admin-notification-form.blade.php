@@ -14,9 +14,7 @@
       <div class="select-container">
         <select class="filter-select" wire:model="recipientType">
           <option value="all">All Users</option>
-          <option value="users">Users Only</option>
           <option value="admins">Admins Only</option>
-          <option value="self">Yourself (Testing)</option>
         </select>
       </div>
 

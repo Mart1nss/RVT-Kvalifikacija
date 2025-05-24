@@ -3,6 +3,12 @@
     <h1 class="text-container-title">USER MANAGEMENT</h1>
   </div>
 
+  @if (session()->has('message'))
+    <div class="alert alert-success">
+        {{ session('message') }}
+    </div>
+  @endif
+
   <!-- Mobile Filter Drawer Component -->
   <x-filters.mobile-filter-drawer title="Filter Options">
     <!-- Sort Options -->
@@ -12,7 +18,6 @@
         <option value="oldest">Oldest</option>
         <option value="nameAZ">Name (A-Z)</option>
         <option value="nameZA">Name (Z-A)</option>
-        <option value="lastOnline">Last Online</option>
       </select>
     </x-filters.filter-item>
 
@@ -68,7 +73,6 @@
       <option value="oldest">Oldest</option>
       <option value="nameAZ">Name (A-Z)</option>
       <option value="nameZA">Name (Z-A)</option>
-      <option value="lastOnline">Last Online</option>
     </select>
   </div>
 
@@ -124,10 +128,6 @@
             @case('nameZA')
               Name (Z-A)
             @break
-
-            @case('lastOnline')
-              Last Online
-            @break
           @endswitch
         </span>
       @endif
@@ -147,7 +147,6 @@
             <th class="hide-small">ID</th>
             <th>NAME</th>
             <th>EMAIL</th>
-            <th class="hide-small">LAST ONLINE</th>
             <th class="hide-small">CREATED AT</th>
             <th>USER TYPE</th>
             <th>STATUS</th>
@@ -161,8 +160,6 @@
               <td class="hide-small">{{ $user->id }}</td>
               <td>{{ $user->name }}</td>
               <td>{{ $user->email }}</td>
-              <td class="hide-small">{{ $user->last_online ? $user->last_online->diffForHumans() : 'Never' }}
-              </td>
               <td class="hide-small">{{ $user->created_at->format('M d, Y') }}</td>
               <td>{{ ucfirst($user->usertype) }}</td>
               <td>

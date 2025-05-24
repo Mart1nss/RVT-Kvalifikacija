@@ -19,13 +19,13 @@
 
         <div class="book-details-container">
           <h4>{{ auth()->user()->lastReadBook->title }}</h4>
-          <p class="author">By: {{ auth()->user()->lastReadBook->author }}</p>
+          <p class="author">{{ auth()->user()->lastReadBook->author }}</p>
           @if(auth()->user()->lastReadBook->category)
-            <p class="category">Category: {{ auth()->user()->lastReadBook->category->name }}</p>
+            <p class="category">{{ auth()->user()->lastReadBook->category->name }}</p>
           @endif
           <div class="rating">
             <i class='bx bxs-star'></i>
-            <span>{{ number_format(auth()->user()->lastReadBook->rating ?? 0, 1) }}/5</span>
+            <span>{{ number_format(auth()->user()->lastReadBook->average_rating ?? 0, 1) }}/5</span>
           </div>
         </div>
       </div>

@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('notes', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->text('note_text');
-            $table->string('book_title')->nullable();
-            $table->string('book_author')->nullable();
+            $table->text('note_text', 7500);
+            $table->string('book_title', 100)->nullable();
+            $table->string('book_author', 50)->nullable();
             $table->timestamps();
             $table->bigInteger('user_id')->unsigned()->nullable();
             $table->bigInteger('product_id')->unsigned()->nullable();

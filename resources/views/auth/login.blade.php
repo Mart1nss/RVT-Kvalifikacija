@@ -42,7 +42,7 @@
       ELEVATE READS
     </p>
 
-    <form method="POST" action="{{ route('login') }}">
+    <form method="POST" action="{{ route('login') }}" novalidate>
       @csrf
 
       <!-- Email Address -->
@@ -50,7 +50,7 @@
         <input placeholder="EMAIL" id="email" class="form-control" type="email" name="email"
           value="{{ session('registered_email', old('email')) }}" required autofocus autocomplete="email" />
         @error('email')
-          <div class="error-message">{{ $message }}</div>
+          <div class="error-message" style="text-transform: uppercase; margin-top: 0px;">{{ $message }}</div>
         @enderror
       </div>
 
@@ -62,7 +62,7 @@
           <i class='bx bx-hide toggle-password' onclick="togglePassword('password', this)"></i>
         </div>
         @error('password')
-          <div class="error-message">{{ $message }}</div>
+          <div class="error-message" style="text-transform: uppercase; margin-top: 0px;">{{ $message }}</div>
         @enderror
       </div>
 

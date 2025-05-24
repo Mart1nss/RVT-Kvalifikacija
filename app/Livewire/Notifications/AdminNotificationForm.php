@@ -8,6 +8,10 @@ use App\Models\SentNotification;
 use App\Notifications\AdminBroadcastNotification;
 use App\Services\AuditLogService;
 
+/**
+ * Administratora paziņojumu formas komponente
+ * Nodrošina iespēju administratoriem sūtīt paziņojumus lietotājiem
+ */
 class AdminNotificationForm extends Component
 {
   public $message = '';
@@ -15,15 +19,15 @@ class AdminNotificationForm extends Component
   public $isSending = false;
 
   /**
-   * Validation rules
+   * Validācijas noteikumi
    */
   protected $rules = [
     'message' => 'required|max:250',
-    'recipientType' => 'required|in:all,users,admins,self'
+    'recipientType' => 'required|in:all,admins'
   ];
 
   /**
-   * Send notification to selected recipients
+   * Nosūta paziņojumu izvēlētajiem saņēmējiem
    */
   public function sendNotification()
   {
@@ -31,75 +35,60 @@ class AdminNotificationForm extends Component
 
     $this->isSending = true;
 
-    try {
-      // Store in sent notifications with recipient type
-      $sentNotification = SentNotification::create([
-        'sender_id' => auth()->id(),
-        'message' => $this->message,
-        'recipient_type' => $this->recipientType
-      ]);
+    $sentNotification = SentNotification::create([
+      'sender_id' => auth()->id(),
+      'message' => $this->message,
+      'recipient_type' => $this->recipientType
+    ]);
 
-      // Get recipients based on type
-      $users = $this->getRecipients($this->recipientType);
+    $users = $this->getRecipients($this->recipientType);
 
-      // Send notifications to recipients
-      foreach ($users as $user) {
-        $user->notify(new AdminBroadcastNotification($this->message, $sentNotification->id));
-      }
-
-      // Log the action
-      AuditLogService::log(
-        "Sent notification",
-        "notification",
-        $this->message,
-        null,
-        "Notification to " . $this->recipientType
-      );
-
-      // Reset form
-      $this->reset('message');
-
-      // Show success message
-      session()->flash('success', 'Notification sent successfully!');
-
-      // Emit event to refresh notification list
-      $this->dispatch('notificationSent');
-
-      // Dispatch event for JavaScript alert
-      $this->dispatch('notificationSent');
-
-    } catch (\Exception $e) {
-      // Log error
-      \Log::error('Error sending notification: ' . $e->getMessage());
-
-      // Show error message
-      session()->flash('error', 'Failed to send notification. Please try again.');
+    foreach ($users as $user) {
+      $user->notify(new AdminBroadcastNotification($this->message, $sentNotification->id));
     }
+
+    // Reģistrē darbību audita žurnālā
+    AuditLogService::log(
+      "Sent notification",
+      "notification",
+      $this->message,
+      null,
+      "Notification to " . $this->recipientType
+    );
+
+    $this->reset('message');
+
+    session()->flash('success', 'Notification sent successfully!');
+
+    // Nosūta notikumu, lai atjauninātu paziņojumu sarakstu
+    $this->dispatch('notificationSent');
+
+    // Nosūta notikumu JavaScript paziņojumam
+    $this->dispatch('notificationSent');
 
     $this->isSending = false;
   }
 
   /**
-   * Get recipients based on type
+   * Iegūst saņēmējus atkarībā no veida
+   * @param string
+   * @return \Illuminate\Database\Eloquent\Collection
    */
   private function getRecipients($type)
   {
     switch ($type) {
       case 'all':
         return User::all();
-      case 'users':
-        return User::where('usertype', '!=', 'admin')->get();
       case 'admins':
         return User::where('usertype', 'admin')->get();
-      case 'self':
-        return User::where('id', auth()->id())->get();
       default:
         return collect();
     }
   }
 
   /**
-   * Render the component
+   * Renderē komponenti
+   * @return \Illuminate\View\View
    */
   public function render()
   {

@@ -12,11 +12,10 @@ return new class extends Migration {
   {
     Schema::create('user_preferences', function (Blueprint $table) {
       $table->bigIncrements('id');
-      $table->bigInteger('user_id')->unsigned(); // NOT nullable
-      $table->bigInteger('category_id')->unsigned(); // NOT nullable
+      $table->bigInteger('user_id')->unsigned();
+      $table->bigInteger('category_id')->unsigned();
       $table->timestamps();
 
-      // Foreign Key Constraints - CASCADE
       $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
       $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
     });

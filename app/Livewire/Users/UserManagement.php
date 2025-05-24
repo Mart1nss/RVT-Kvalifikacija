@@ -7,19 +7,18 @@ use Livewire\Component;
 use Livewire\WithPagination;
 
 /**
- * UserManagement Component
+ * Lietotāju pārvaldības komponente
  * 
- * This Livewire component handles the user management functionality including:
- * - Displaying a list of users with pagination
- * - Searching users by name or email
- * - Filtering users by type (admin/user) and status (active/banned)
- * - Sorting users by different criteria
+ * Šī Livewire komponente nodrošina lietotāju pārvaldības funkcionalitāti, tajā skaitā:
+ * - Lietotāju saraksta attēlošanu ar lapošanu
+ * - Lietotāju meklēšanu pēc vārda vai e-pasta
+ * - Lietotāju filtrēšanu pēc tipa (administrators/lietotājs) un statusa (aktīvs/bloķēts)
+ * - Lietotāju kārtošanu pēc dažādiem kritērijiem
  */
 class UserManagement extends Component
 {
     use WithPagination;
 
-    // Public properties that can be bound to the UI
     public $searchQuery = '';
     public $sortField = 'created_at';
     public $sortDirection = 'desc';
@@ -27,8 +26,6 @@ class UserManagement extends Component
     public $filterBanStatus = '';
     public $sortOption = 'newest';
 
-    // Define which properties should be included in the URL query string
-    // This allows filters to persist when sharing URLs or refreshing the page
     protected $queryString = [
         'searchQuery' => ['except' => ''],
         'sortOption' => ['except' => 'newest'],
@@ -37,8 +34,8 @@ class UserManagement extends Component
     ];
 
     /**
-     * Initialize the component
-     * This method is called when the component is first loaded
+     * Inicializē komponenti
+     * Šī metode tiek izsaukta, kad komponente tiek pirmoreiz ielādēta
      */
     public function mount()
     {
@@ -46,8 +43,8 @@ class UserManagement extends Component
     }
 
     /**
-     * Render the component view
-     * This method is called whenever the component needs to be re-rendered
+     * Renderē komponentes skatu
+     * Šī metode tiek izsaukta, kad komponenti nepieciešams pārrenderēt
      */
     public function render()
     {
@@ -59,14 +56,13 @@ class UserManagement extends Component
     }
 
     /**
-     * Get filtered and sorted users with pagination
-     * This method applies all active filters and sorting to the user query
+     * Iegūst filtrētus un kārtotus lietotājus ar lapošanu
+     * Šī metode pielieto visus aktīvos filtrus un kārtošanu lietotāju vaicājumam
      */
     public function getUsers()
     {
         $query = User::query();
 
-        // Apply search filter - looks for matching name or email
         if (!empty($this->searchQuery)) {
             $query->where(function ($q) {
                 $q->where('name', 'like', "%{$this->searchQuery}%")
@@ -74,34 +70,29 @@ class UserManagement extends Component
             });
         }
 
-        // Apply user type filter - admin or regular user
         if (!empty($this->filterUserType) && in_array($this->filterUserType, ['admin', 'user'])) {
             $query->where('usertype', $this->filterUserType);
         }
 
-        // Apply ban status filter - active or banned users
         if ($this->filterBanStatus === 'banned') {
             $query->whereHas('activeBan');
         } elseif ($this->filterBanStatus === 'active') {
             $query->whereDoesntHave('activeBan');
         }
 
-        // Apply sorting based on selected field and direction
         $query->orderBy($this->sortField, $this->sortDirection);
 
-        // Return paginated results (10 users per page)
         return $query->paginate(10);
     }
 
     /**
-     * Get total count of filtered users
-     * This method applies the same filters as getUsers() but returns a count instead
+     * Iegūst kopējo filtrēto lietotāju skaitu
+     * Šī metode pielieto tos pašus filtrus, ko getUsers(), bet atgriež skaitu
      */
     public function getTotalUsers()
     {
         $query = User::query();
 
-        // Apply search filter
         if (!empty($this->searchQuery)) {
             $query->where(function ($q) {
                 $q->where('name', 'like', "%{$this->searchQuery}%")
@@ -109,25 +100,22 @@ class UserManagement extends Component
             });
         }
 
-        // Apply user type filter
         if (!empty($this->filterUserType) && in_array($this->filterUserType, ['admin', 'user'])) {
             $query->where('usertype', $this->filterUserType);
         }
 
-        // Apply ban status filter
         if ($this->filterBanStatus === 'banned') {
             $query->whereHas('activeBan');
         } elseif ($this->filterBanStatus === 'active') {
             $query->whereDoesntHave('activeBan');
         }
 
-        // Return the total count
         return $query->count();
     }
 
     /**
-     * Reset pagination when search query changes
-     * This ensures we start from page 1 when applying a new search
+     * Atiestata lapošanu, kad mainās meklēšanas vaicājums
+     * Tas nodrošina, ka sākam no 1. lapas, kad tiek pielietots jauns meklējums
      */
     public function updatedSearchQuery()
     {
@@ -135,7 +123,7 @@ class UserManagement extends Component
     }
 
     /**
-     * Reset pagination when user type filter changes
+     * Atiestata lapošanu, kad mainās lietotāja tipa filtrs
      */
     public function updatedFilterUserType()
     {
@@ -143,7 +131,7 @@ class UserManagement extends Component
     }
 
     /**
-     * Reset pagination when ban status filter changes
+     * Atiestata lapošanu, kad mainās bloķēšanas statusa filtrs
      */
     public function updatedFilterBanStatus()
     {
@@ -151,7 +139,7 @@ class UserManagement extends Component
     }
 
     /**
-     * Update sort settings and reset pagination when sort option changes
+     * Atjaunina kārtošanas iestatījumus un atiestata lapošanu, kad mainās kārtošanas opcija
      */
     public function updatedSortOption()
     {
@@ -160,8 +148,8 @@ class UserManagement extends Component
     }
 
     /**
-     * Convert user-friendly sort option to actual field and direction
-     * This method translates options like "newest" to the appropriate database fields
+     * Pārveido lietotājam draudzīgu kārtošanas opciju par faktisko lauku un virzienu
+     * Šī metode pārvērš opcijas, piemēram, "newest" uz atbilstošiem datu bāzes laukiem
      */
     private function updateSortFieldAndDirection()
     {
@@ -178,11 +166,7 @@ class UserManagement extends Component
                 $this->sortField = 'name';
                 $this->sortDirection = 'desc';
                 break;
-            case 'lastOnline':
-                $this->sortField = 'last_online';
-                $this->sortDirection = 'desc';
-                break;
-            default: // newest
+            default:
                 $this->sortField = 'created_at';
                 $this->sortDirection = 'desc';
                 break;
@@ -190,8 +174,7 @@ class UserManagement extends Component
     }
 
     /**
-     * Clear all filters and reset to default values
-     * This method is called when the user clicks the "Clear Filters" button
+     * Notīra visus filtrus un atiestata uz noklusējuma vērtībām
      */
     public function clearFilters()
     {
@@ -202,13 +185,11 @@ class UserManagement extends Component
         $this->filterBanStatus = '';
         $this->resetPage();
         
-        // Emit an event to notify JavaScript that filters were cleared
         $this->dispatch('filtersCleared');
     }
 
     /**
-     * Check if there are any active filters
-     * Returns true if any filter is applied
+     * Pārbauda, vai ir kādi aktīvi filtri
      */
     public function hasActiveFilters()
     {
@@ -219,8 +200,7 @@ class UserManagement extends Component
     }
 
     /**
-     * Check if the filter info row should be displayed
-     * Returns true if there are active filters or users to display
+     * Pārbauda, vai jāattēlo filtru informācijas rinda
      */
     public function showFilterInfo()
     {

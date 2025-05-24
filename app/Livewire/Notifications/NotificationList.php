@@ -90,35 +90,29 @@ class NotificationList extends Component
       return;
     }
 
-    try {
-      $sentNotification = SentNotification::findOrFail($this->currentNotificationId);
+    $sentNotification = SentNotification::findOrFail($this->currentNotificationId);
 
-      // Delete all related notifications
-      DB::table('notifications')
-        ->where('data->sent_notification_id', $this->currentNotificationId)
-        ->delete();
+    // Delete all related notifications
+    DB::table('notifications')
+      ->where('data->sent_notification_id', $this->currentNotificationId)
+      ->delete();
 
-      // Delete the sent notification
-      $sentNotification->delete();
+    // Delete the sent notification
+    $sentNotification->delete();
 
-      // Update counts
-      $this->totalCount = SentNotification::count();
+    // Update counts
+    $this->totalCount = SentNotification::count();
 
-      // Close modal
-      $this->closeDeleteModal();
+    // Close modal
+    $this->closeDeleteModal();
 
-      // Show success message
-      session()->flash('success', 'Notification deleted successfully!');
+    // Show success message
+    session()->flash('success', 'Notification deleted successfully!');
 
-      // Dispatch event for JavaScript alert
-      $this->dispatch('notificationDeleted');
-      // Dispatch a global event for other components to refresh
-      $this->dispatch('refreshNotificationsGlobal');
-
-    } catch (\Exception $e) {
-      \Log::error('Error deleting sent notification: ' . $e->getMessage());
-      session()->flash('error', 'Failed to delete notification. Please try again.');
-    }
+    // Dispatch event for JavaScript alert
+    $this->dispatch('notificationDeleted');
+    // Dispatch a global event for other components to refresh
+    $this->dispatch('refreshNotificationsGlobal');
   }
 
   /**

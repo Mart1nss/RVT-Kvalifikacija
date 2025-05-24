@@ -7,29 +7,37 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Bibliotēkas komponente, kas attēlo publiski pieejamās grāmatas
+ * Nodrošina grāmatu meklēšanu, filtrēšanu un kārtošanu
+ */
 class Library extends Component
 {
   use WithPagination;
 
-  // Filter properties
   public $search = '';
   public $selectedGenres = [];
   public $sort = 'newest';
 
-  // Listeners for events from child components
   protected $listeners = [
     'refreshBooks' => '$refresh',
     'filterUpdated' => 'updateFilters'
   ];
 
+  /**
+   * Inicializē komponenti ar sākotnējiem datiem
+   */
   public function mount()
   {
-    // Initialize from query parameters if they exist
     $this->search = request()->query('query', '');
     $this->selectedGenres = request()->query('genres') ? explode(',', request()->query('genres')) : [];
     $this->sort = request()->query('sort', 'newest');
   }
 
+  /**
+   * Atjaunina filtrus no filtru komponentes
+   * @param array
+   */
   public function updateFilters($filters)
   {
     $this->search = $filters['search'] ?? '';
@@ -38,6 +46,10 @@ class Library extends Component
     $this->resetPage();
   }
 
+  /**
+   * Pārslēdz grāmatas statusu "Lasīt vēlāk" sarakstā
+   * @param int
+   */
   public function toggleReadLater($bookId)
   {
     if (!Auth::check()) {
@@ -56,11 +68,9 @@ class Library extends Component
     $isInReadLater = $book->isInReadLaterOf($user);
 
     if ($isInReadLater) {
-      // Remove from read later
       $book->readLater()->where('user_id', $user->id)->delete();
       $message = 'Book removed from read later list';
     } else {
-      // Add to read later
       $book->readLater()->create(['user_id' => $user->id]);
       $message = 'Book added to read later list';
     }
@@ -71,6 +81,10 @@ class Library extends Component
     ]);
   }
 
+  /**
+   * Iegūst filtrētas un kārtotas grāmatas
+   * @return \Illuminate\Pagination\LengthAwarePaginator
+   */
   public function getBooks()
   {
     $query = Product::query()
@@ -79,19 +93,17 @@ class Library extends Component
       })
       ->withAvg('reviews', 'review_score');
 
-    // Apply search filter
     if ($this->search) {
       $query->where('title', 'like', '%' . $this->search . '%');
     }
 
-    // Apply genre filter
     if (!empty($this->selectedGenres)) {
       $query->whereHas('category', function ($q) {
         $q->whereIn('name', $this->selectedGenres);
       });
     }
 
-    // Apply sorting
+    // Pielieto kārtošanu
     switch ($this->sort) {
       case 'oldest':
         $query->orderBy('created_at', 'asc');
@@ -114,13 +126,12 @@ class Library extends Component
       case 'rating_desc':
         $query->orderBy('reviews_avg_review_score', 'desc');
         break;
-      default: // 'newest'
+      default:
         $query->orderBy('created_at', 'desc');
     }
 
     $books = $query->paginate(15);
 
-    // Calculate rating for each book
     $books->each(function ($book) {
       $book->rating = $book->reviews_avg_review_score ?? 0;
     });
@@ -128,12 +139,15 @@ class Library extends Component
     return $books;
   }
 
+  /**
+   * Renderē komponentes skatu
+   * @return \Illuminate\View\View
+   */
   public function render()
   {
     $books = $this->getBooks();
     $totalBooks = $books->total();
 
-    // Dispatch the updated count to the filter section
     $this->dispatch('updateTotalBooks', $totalBooks);
 
     return view('livewire.books.library', [

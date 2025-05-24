@@ -15,8 +15,8 @@ use App\Http\Controllers\Controller;
 class BookController extends Controller
 {
   /**
-   * Display the book management page.
-   * This page allows admins to manage and upload books.
+   * Parāda grāmatu pārvaldības lapu.
+   * Šī lapa ļauj administratoriem pārvaldīt un augšupielādēt grāmatas.
    *
    * @return \Illuminate\View\View
    */
@@ -26,15 +26,15 @@ class BookController extends Controller
   }
 
   /**
-   * Store a newly uploaded book in the database.
-   * Handles file upload, validation, and creates a new book record.
+   * Saglabā jaunu augšupielādētu grāmatu datubāzē.
+   * Apstrādā faila augšupielādi, validāciju un izveido jaunu grāmatas ierakstu.
    *
    * @param Request $request
    * @return \Illuminate\Http\RedirectResponse
    */
   public function store(Request $request)
   {
-    // Check if book already exists
+    // Pārbauda, vai grāmata jau pastāv
     $existingBook = Product::where('title', $request->title)
                              ->where('author', $request->author)
                              ->first();
@@ -65,10 +65,10 @@ class BookController extends Controller
       $file->storeAs('books', $filename);
       $product->file = $filename;
 
-      // Save the product first to get an ID
+      // Vispirms saglabā grāmatu, lai iegūtu ID
       $product->save();
 
-      // Generate thumbnail
+      // Ģenerē sīktēlu
       $this->generateThumbnail($filename);
     } else {
       $product->save();
@@ -86,35 +86,35 @@ class BookController extends Controller
   }
 
   /**
-   * Generate a thumbnail for a PDF file using Ghostscript
+   * Ģenerē PDF faila sīktēlu, izmantojot Ghostscript
    *
    * @param string $filename
    * @return bool
    */
   private function generateThumbnail($filename)
   {
-    // Create the thumbnails directory if it doesn't exist
+    // Izveido sīktēlu direktoriju, ja tā nepastāv
     $thumbnailDir = public_path('book-thumbnails');
     if (!file_exists($thumbnailDir)) {
       mkdir($thumbnailDir, 0755, true);
     }
 
-    // Generate the thumbnail filename (change .pdf to .jpg)
+    // Ģenerē sīktēla faila nosaukumu (nomaina .pdf uz .jpg)
     $thumbnailFilename = str_replace('.pdf', '.jpg', $filename);
     $thumbnailPath = $thumbnailDir . '/' . $thumbnailFilename;
 
-    // Check if thumbnail already exists
+    // Pārbauda, vai sīktēls jau pastāv
     if (file_exists($thumbnailPath)) {
       return true;
     }
 
-    // Get PDF file path
+    // Iegūst PDF faila ceļu
     $pdfPath = storage_path('app/books/' . $filename);
     if (!file_exists($pdfPath)) {
       return false;
     }
 
-    // get gs exe
+    // iegūst ghostscript 
     $gsExecutable = 'C:\\Program Files\\gs\\gs10.05.1\\bin\\gswin64c.exe';
 
     if (file_exists($gsExecutable)) {
@@ -127,8 +127,6 @@ class BookController extends Controller
       exec($command, $output, $return_var);
 
       if ($return_var === 0 && file_exists($thumbnailPath)) {
-        // Optimize the thumbnail size if needed
-        $this->resizeThumbnail($thumbnailPath);
         return true;
       }
     }
@@ -137,53 +135,11 @@ class BookController extends Controller
   }
 
   /**
-   * Resize a thumbnail image to standard dimensions
-   *
-   * @param string $thumbnailPath
-   * @return bool
-   */
-  private function resizeThumbnail($thumbnailPath)
-  {
-    if (!extension_loaded('imagick')) {
-      return false;
-    }
-
-    $maxWidth = 400;
-    $maxHeight = 566;
-
-    $imagick = new \Imagick($thumbnailPath);
-    $imagick->setImageFormat('jpg');
-    $imagick->setImageCompression(\Imagick::COMPRESSION_JPEG);
-    $imagick->setImageCompressionQuality(85);
-
-    $width = $imagick->getImageWidth();
-    $height = $imagick->getImageHeight();
-
-    if ($width > $maxWidth || $height > $maxHeight) {
-      // Resize while maintaining aspect ratio
-      $ratioWidth = $maxWidth / $width;
-      $ratioHeight = $maxHeight / $height;
-      $ratio = min($ratioWidth, $ratioHeight);
-
-      $newWidth = $width * $ratio;
-      $newHeight = $height * $ratio;
-
-      $imagick->resizeImage($newWidth, $newHeight, \Imagick::FILTER_LANCZOS, 1);
-    }
-
-    $imagick->writeImage($thumbnailPath);
-    $imagick->clear();
-    $imagick->destroy();
-
-    return true;
-  }
-
-  /**
-   * Display detailed view of a specific book.
-   * Shows book information and reviews.
-   * Handles visibility permissions:
-   * - Books visible if category is public
-   * - Books in private categories only visible to admins
+   * Parāda konkrētas grāmatas detalizētu skatu.
+   * Rāda grāmatas informāciju un atsauksmes.
+   * Apstrādā redzamības atļaujas:
+   * - Grāmatas ir redzamas, ja kategorija ir publiska
+   * - Grāmatas privātās kategorijās ir redzamas tikai administratoriem
    *
    * @param int $id
    * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
@@ -193,12 +149,12 @@ class BookController extends Controller
     $product = Product::findOrFail($id);
     $category = $product->category;
 
-    // Check if category is private and user is not admin
+    // Pārbauda, vai kategorija ir privāta un lietotājs nav administrators
     if (!$category->is_public && (!Auth::check() || Auth::user()->usertype !== 'admin')) {
       return redirect()->route('library')->with('error', 'You do not have permission to view this book.');
     }
 
-    // Track last read book for authenticated users
+    // Seko līdzi pēdējai lasītajai grāmatai autentificētiem lietotājiem
     if (Auth::check()) {
       Auth::user()->update([
         'last_read_book_id' => $product->id
@@ -212,7 +168,7 @@ class BookController extends Controller
   }
 
   /**
-   * Download a book's PDF file.
+   * Lejupielādē grāmatas PDF failu.
    *
    * @param Request $request
    * @param string $file
@@ -228,7 +184,7 @@ class BookController extends Controller
   }
 
   /**
-   * Serve a PDF file for thumbnail generation.
+   * Pasniedz PDF failu sīktēlu ģenerēšanai.
    *
    * @param string $file
    * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
@@ -243,7 +199,7 @@ class BookController extends Controller
   }
 
   /**
-   * Serve thumbnail images
+   * Pasniedz sīktēlu attēlus
    *
    * @param string $filename
    * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
@@ -252,13 +208,13 @@ class BookController extends Controller
   {
     $path = public_path('book-thumbnails/' . $filename);
 
-    // If thumbnail doesn't exist, try to generate it
+    // Ja sīktēls nepastāv, mēģina to ģenerēt
     if (!file_exists($path)) {
       $pdfFilename = str_replace('.jpg', '.pdf', $filename);
       $this->generateThumbnail($pdfFilename);
     }
 
-    // Check again after possible generation
+    // Pārbauda vēlreiz pēc iespējamās ģenerēšanas
     if (!file_exists($path)) {
       abort(404);
     }

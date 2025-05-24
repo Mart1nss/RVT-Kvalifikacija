@@ -12,13 +12,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\RateLimiter; // Added
-use Illuminate\Validation\ValidationException; // Added
+use Illuminate\Support\Facades\RateLimiter; // Pievienots
+use Illuminate\Validation\ValidationException; // Pievienots
 
 class RegisteredUserController extends Controller
 {
     /**
-     * Display the registration view.
+     * Parāda reģistrācijas skatu.
      */
     public function create(): View
     {
@@ -26,19 +26,18 @@ class RegisteredUserController extends Controller
     }
 
     /**
-     * Handle an incoming registration request.
+     * Apstrādā ienākošo reģistrācijas pieprasījumu.
      *
      * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request): RedirectResponse
     {
-        // Honeypot check
         if (!empty($request->input('middle_name'))) {
             return redirect()->route('login')
                              ->with('success', 'Registration successful! Please login to continue.');
         }
 
-        // Rate limiting
+        // Ātruma ierobežošana
         $throttleKey = strtolower($request->input('email')) . '|' . $request->ip();
         $maxAttempts = 5;
         $decayInMinutes = 1;
@@ -61,7 +60,7 @@ class RegisteredUserController extends Controller
                 'string',
                 'min:3',
                 'max:10',
-                'regex:/^[a-zA-Z0-9]+$/', // Only letters and numbers, no spaces or symbols
+                'regex:/^[a-zA-Z0-9]+$/', // Tikai burti un cipari, bez atstarpēm vai simboliem
                 'unique:'.User::class
             ],
             'email' => [
@@ -70,7 +69,7 @@ class RegisteredUserController extends Controller
                 'lowercase',
                 'email',
                 'max:255',
-                'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/', // Proper email format with @ and domain
+                'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/', // Pareizs e-pasta formāts ar @ un domēnu
                 'unique:' . User::class
             ],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
@@ -90,10 +89,10 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
+        Auth::login($user); // Automātiski pieslēdz jauno lietotāju
+
         RateLimiter::clear($throttleKey);
 
-        return redirect()->route('login')
-            ->with('success', 'Registration successful! Please login to continue.')
-            ->with('registered_email', $request->email);
+        return redirect()->route('preferences.show')->with('success', 'Registered successfully!');
     }
 }

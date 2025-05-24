@@ -12,11 +12,11 @@ return new class extends Migration {
   {
     Schema::create('products', function (Blueprint $table) {
       $table->bigIncrements('id');
-      $table->string('title', 255);
-      $table->string('author', 255);
-      $table->bigInteger('category_id')->unsigned()->nullable(); // Foreign key, nullable
+      $table->string('title', 100);
+      $table->string('author', 50);
+      $table->bigInteger('category_id')->unsigned()->nullable();
       $table->string('file', 255)->nullable();
-      $table->timestamps(); // created_at and updated_at, nullable by default
+      $table->timestamps();
 
       // Foreign key constraint
       $table->foreign('category_id')->references('id')->on('categories')->onDelete('set null');

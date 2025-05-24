@@ -70,7 +70,7 @@ class Product extends Model
     {
         return $this->hasMany(ReadBook::class);
     }
-    
+
     /**
      * Check if this book has been read by a specific user.
      *
@@ -84,5 +84,15 @@ class Product extends Model
         }
         
         return $this->readBooks()->where('user_id', $user->id)->exists();
+    }
+
+    /**
+     * Get the average rating for the product.
+     *
+     * @return float
+     */
+    public function getAverageRatingAttribute()
+    {
+        return $this->reviews()->avg('review_score');
     }
 }

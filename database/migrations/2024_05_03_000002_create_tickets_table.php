@@ -13,11 +13,11 @@ return new class extends Migration {
     Schema::create('tickets', function (Blueprint $table) {
       $table->bigIncrements('id');
       $table->bigInteger('user_id')->unsigned()->nullable();
-      $table->string('title', 255);
+      $table->string('title', 50);
       $table->string('category', 255);
-      $table->text('description');
+      $table->text('description', 1000);
       $table->enum('status', ['open', 'in_progress', 'closed'])->default('open'); // ENUM
-      $table->timestamps(); // created_at and updated_at (nullable)
+      $table->timestamps();
       $table->bigInteger('assigned_admin_id')->unsigned()->nullable();
       $table->bigInteger('resolved_by')->unsigned()->nullable();
       $table->timestamp('resolved_at')->nullable();
@@ -25,8 +25,8 @@ return new class extends Migration {
 
       // Foreign Key Constraints
       $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
-      $table->foreign('assigned_admin_id')->references('id')->on('users')->onDelete('set null'); // Assuming admins are also users
-      $table->foreign('resolved_by')->references('id')->on('users')->onDelete('set null'); // Assuming resolvers are also users
+      $table->foreign('assigned_admin_id')->references('id')->on('users')->onDelete('set null');
+      $table->foreign('resolved_by')->references('id')->on('users')->onDelete('set null');
 
     });
   }

@@ -58,8 +58,36 @@
 
     <div class="logs-container">
       @foreach ($logs as $log)
+        @php
+            $isAssignedTicket = ($log->action_type === 'ticket' && $log->action === 'Assigned ticket');
+            $parsedTicketId = null;
+            $parsedTicketUser = null;
+
+            if ($isAssignedTicket) {
+                // Try to get Ticket ID from affected_item_id first as it's more reliable
+                if ($log->affected_item_id) {
+                    $parsedTicketId = $log->affected_item_id;
+                }
+                // Fallback to parsing from description if not found in affected_item_id
+                if (!$parsedTicketId) {
+                    if (preg_match('/Ticket #(\d+)/i', $log->description, $matchesId)) {
+                        $parsedTicketId = $matchesId[1];
+                    } elseif (preg_match('/Ticket ID: (\d+)/i', $log->description, $matchesId)) {
+                        $parsedTicketId = $matchesId[1];
+                    }
+                }
+
+                // Try to parse username from description
+                // Regex tries to capture username before " for " or " assigned" or end of string or comma
+                if (preg_match('/from user ([\w\s.-]+?)(?: for | assigned| to admin|,|$)/i', $log->description, $matchesUser)) {
+                    $parsedTicketUser = trim($matchesUser[1]);
+                } elseif (preg_match('/User: ([\w\s.-]+?)(?: for | assigned| to admin|,|$)/i', $log->description, $matchesUser)) {
+                    $parsedTicketUser = trim($matchesUser[1]);
+                }
+            }
+        @endphp
         <div
-          class="log-entry {{ str_contains(strtolower($log->description), 'changed') || str_contains($log->action_type, 'notification') || ($log->action_type === 'book' && $log->action === 'Updated book') ? 'expandable' : '' }}"
+          class="log-entry {{ str_contains(strtolower($log->description), 'changed') || str_contains($log->action_type, 'notification') || ($log->action_type === 'book' && $log->action === 'Updated book') || $isAssignedTicket ? 'expandable' : '' }}"
           x-data="{ expanded: false }" @click="expanded = !expanded">
           <div class="log-header">
             <div class="log-content">
@@ -78,47 +106,62 @@
                   @endif
                 </span>
                 <span class="admin-name">{{ $log->admin ? $log->admin->name : 'Unknown Admin' }}</span>
-                <span class="action">{{ $log->action }}</span>
-                @if ($log->affected_item_name && $log->action_type === 'book')
-                  @php
-                    // Extract book title and author if available
-                    $bookInfo = $log->affected_item_name;
-                    $description = $log->description;
-                    $authorInfo = '';
-                    
-                    // Try to extract author from description for edited books
-                    if ($log->action === 'Updated book') {
-                      // First check if author was changed in this update
-                      preg_match('/Author changed from \'(.*?)\' to \'(.*?)\'/', $description, $authorMatches);
-                      if (!empty($authorMatches)) {
-                        $authorInfo = " by " . $authorMatches[2];
-                      }
-                    }
-                    // For deleted books
-                    else if ($log->action === 'Deleted book') {
-                      // Author might be directly stored in the affected_item_name with format "title by author"
-                      if (strpos($bookInfo, ' by ') !== false) {
-                        list($title, $author) = explode(' by ', $bookInfo, 2);
-                        $bookInfo = $title;
-                        $authorInfo = " by " . $author;
-                      }
-                    }
-                    // For uploaded books, we currently don't have the author in the log
-                    // We would need to modify the AuditLogService to include the author when uploading
-                  @endphp
-                  <span class="affected-item">"{{ $bookInfo }}{{ $authorInfo }}"</span>
-                @elseif ($log->affected_item_name)
-                  <span class="affected-item">"{{ $log->affected_item_name }}"</span>
+                
+                @if ($isAssignedTicket)
+                    <span class="action">accepted ticket</span>
+                    @if($parsedTicketId)
+                        <span class="affected-item">#{{ $parsedTicketId }}</span>
+                    @else
+                        {{-- Fallback to original display if ID not found in description or affected_item_id --}}
+                        <span class="action" style="margin-left: 4px;">{{ $log->action }}</span>
+                        <span class="affected-item">"{{ $log->affected_item_name }}"</span>
+                    @endif
+                    @if($parsedTicketUser)
+                        <span class="description-text" style="margin-left: 4px;">from user {{ $parsedTicketUser }}</span>
+                    @endif
+                @else
+                    <span class="action">{{ $log->action }}</span>
+                    @if ($log->affected_item_name && $log->action_type === 'book')
+                        @php
+                            // Extract book title and author if available
+                            $bookInfo = $log->affected_item_name;
+                            $description = $log->description;
+                            $authorInfo = '';
+                            
+                            // Try to extract author from description for edited books
+                            if ($log->action === 'Updated book') {
+                            // First check if author was changed in this update
+                            preg_match('/Author changed from \'(.*?)\' to \'(.*?)\'/', $description, $authorMatches);
+                            if (!empty($authorMatches)) {
+                                $authorInfo = " by " . $authorMatches[2];
+                            }
+                            }
+                            // For deleted books
+                            else if ($log->action === 'Deleted book') {
+                            // Author might be directly stored in the affected_item_name with format "title by author"
+                            if (strpos($bookInfo, ' by ') !== false) {
+                                list($title, $author) = explode(' by ', $bookInfo, 2);
+                                $bookInfo = $title;
+                                $authorInfo = " by " . $author;
+                            }
+                            }
+                            // For uploaded books, we currently don't have the author in the log
+                            // We would need to modify the AuditLogService to include the author when uploading
+                        @endphp
+                        <span class="affected-item">"{{ $bookInfo }}{{ $authorInfo }}"</span>
+                    @elseif ($log->affected_item_name)
+                        <span class="affected-item">"{{ $log->affected_item_name }}"</span>
+                    @endif
                 @endif
               </div>
               <span class="timestamp">{{ $log->created_at->format('M d, Y H:i:s') }}</span>
             </div>
-            @if (str_contains(strtolower($log->description), 'changed') || str_contains($log->action_type, 'notification') || ($log->action_type === 'book' && $log->action === 'Updated book'))
+            @if (str_contains(strtolower($log->description), 'changed') || str_contains($log->action_type, 'notification') || ($log->action_type === 'book' && $log->action === 'Updated book') || $isAssignedTicket)
               <i class='bx bx-chevron-down accordion-icon' :style="expanded ? 'transform: rotate(180deg)' : ''"></i>
             @endif
           </div>
 
-          @if (str_contains(strtolower($log->description), 'changed'))
+          @if (str_contains(strtolower($log->description), 'changed') && !$isAssignedTicket)
             <div class="log-details" x-cloak x-show="expanded" x-transition style="max-height: none;">
               <div class="changes-list">
                 @foreach (explode(', ', $log->description) as $change)
@@ -132,7 +175,7 @@
                 @endforeach
               </div>
             </div>
-          @elseif($log->action_type === 'book' && $log->action === 'Updated book')
+          @elseif($log->action_type === 'book' && $log->action === 'Updated book' && !$isAssignedTicket)
             <div class="log-details" x-cloak x-show="expanded" x-transition style="max-height: none;">
               <div class="changes-list">
                 @foreach (explode(', ', $log->description) as $change)
@@ -143,12 +186,25 @@
                 @endforeach
               </div>
             </div>
-          @elseif($log->action_type === 'notification')
+          @elseif($log->action_type === 'notification' && !$isAssignedTicket)
             <div class="log-details" x-cloak x-show="expanded" x-transition style="max-height: none;">
               <div class="changes-list">
                 <div class="change-item">
                   <i class='bx bx-message-rounded-detail'></i>
                   <span>{{ $log->description }}</span>
+                </div>
+              </div>
+            </div>
+          @elseif ($isAssignedTicket)
+            <div class="log-details" x-cloak x-show="expanded" x-transition style="max-height: none;">
+              <div class="changes-list">
+                <div class="change-item">
+                  <i class='bx bx-purchase-tag-alt'></i> 
+                  @if($parsedTicketId)
+                    <span>Ticket ID: #{{ $parsedTicketId }}</span>
+                  @else
+                    <span>Ticket ID: (Not found in log details)</span>
+                  @endif
                 </div>
               </div>
             </div>
