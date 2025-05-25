@@ -15,6 +15,17 @@ use App\Http\Controllers\Controller;
 class BookController extends Controller
 {
   /**
+   * Parāda jaunas grāmatas augšupielādes formu.
+   *
+   * @return \Illuminate\View\View
+   */
+  public function create()
+  {
+    $categories = Category::orderBy('name')->get();
+    return view('books.create', compact('categories'));
+  }
+
+  /**
    * Parāda grāmatu pārvaldības lapu.
    * Šī lapa ļauj administratoriem pārvaldīt un augšupielādēt grāmatas.
    *
@@ -82,7 +93,7 @@ class BookController extends Controller
       $product->title
     );
 
-    return redirect()->back()->with('success', 'Book uploaded successfully!');
+    return redirect()->route('book-manage')->with('success', 'Book uploaded successfully!');
   }
 
   /**
@@ -214,7 +225,6 @@ class BookController extends Controller
       $this->generateThumbnail($pdfFilename);
     }
 
-    // Pārbauda vēlreiz pēc iespējamās ģenerēšanas
     if (!file_exists($path)) {
       abort(404);
     }

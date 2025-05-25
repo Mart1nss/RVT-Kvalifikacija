@@ -77,8 +77,6 @@
                     }
                 }
 
-                // Try to parse username from description
-                // Regex tries to capture username before " for " or " assigned" or end of string or comma
                 if (preg_match('/from user ([\w\s.-]+?)(?: for | assigned| to admin|,|$)/i', $log->description, $matchesUser)) {
                     $parsedTicketUser = trim($matchesUser[1]);
                 } elseif (preg_match('/User: ([\w\s.-]+?)(?: for | assigned| to admin|,|$)/i', $log->description, $matchesUser)) {

@@ -252,10 +252,22 @@ class BookManagement extends Component
   public function updateBook()
   {
     $this->validate([
-      'title' => 'required|string|max:255',
-      'author' => 'required|string|max:255',
+      'title' => 'required|string|max:100',
+      'author' => 'required|string|max:50',
       'category_id' => 'required|exists:categories,id',
     ]);
+
+    // Check if a book with the same title and author already exists (excluding the current book)
+    $existingBook = Product::where('title', $this->title)
+                             ->where('author', $this->author)
+                             ->where('id', '!=', $this->editingBookId)
+                             ->first();
+
+    if ($existingBook) {
+        $this->addError('title', 'A book with this title and author already exists.');
+        $this->addError('author', 'A book with this title and author already exists.');
+        return;
+    }
 
     $book = Product::find($this->editingBookId);
     if ($book) {

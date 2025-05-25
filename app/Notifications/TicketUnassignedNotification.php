@@ -14,14 +14,14 @@ class TicketUnassignedNotification extends Notification implements ShouldQueue
 
     public User $adminUser;
     public int $ticketCount;
-    public string $reason; // 'role_changed' or 'account_deleted'
+    public string $reason;
 
     /**
      * Create a new notification instance.
      *
-     * @param User $adminUser The admin user whose tickets were unassigned.
-     * @param int $ticketCount The number of tickets unassigned.
-     * @param string $reason The reason for unassignment ('role_changed' or 'account_deleted').
+     * @param User The admin user whose tickets were unassigned.
+     * @param int The number of tickets unassigned.
+     * @param string The reason for unassignment ('role_changed' or 'account_deleted').
      */
     public function __construct(User $adminUser, int $ticketCount, string $reason)
     {
@@ -33,7 +33,7 @@ class TicketUnassignedNotification extends Notification implements ShouldQueue
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
+     * @param  mixed
      * @return array
      */
     public function via($notifiable): array

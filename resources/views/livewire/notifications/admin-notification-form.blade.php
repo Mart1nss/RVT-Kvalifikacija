@@ -52,17 +52,14 @@
         textarea.style.height = (textarea.scrollHeight) + 'px';
       }
 
-      // Add event listeners
       textarea.addEventListener('input', function() {
         updateCharCount();
         adjustHeight();
       });
 
-      // Initialize on load
       updateCharCount();
       adjustHeight();
 
-      // Re-initialize when Livewire updates the DOM
       document.addEventListener('livewire:initialized', function() {
         updateCharCount();
         adjustHeight();

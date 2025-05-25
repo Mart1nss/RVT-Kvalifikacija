@@ -48,7 +48,7 @@
         function closeDrawer() {
           filterDrawer.classList.remove('open');
           overlay.classList.remove('active');
-          document.body.style.overflow = ''; // scrolling
+          document.body.style.overflow = '';
         }
       });
     </script>

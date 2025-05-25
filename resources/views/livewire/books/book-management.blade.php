@@ -1,13 +1,9 @@
 <div>
-  <div class="text-container">
-    <h1 class="text-container-title">Upload Book</h1>
+  <div class="text-container" style="display: flex; justify-content: space-between; align-items: center;">
+    <h1 class="text-container-title" style="margin-bottom: 0;">Manage Books</h1>
+    <a href="{{ route('books.create') }}" class="btn-add-book">Add Book</a>
   </div>
-  <div class="item-container3">
-    @include('books.upload-form', ['categories' => $categories])
-  </div>
-
-  <div class="text-container">
-    <h1 class="text-container-title">Manage Books</h1>
+  <div class="text-container" style="margin-top: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px;">
     @livewire('books.filter-section', [
         'sort' => $this->sort,
         'isAdmin' => true,
@@ -56,7 +52,10 @@
         @if ($editingBookId) wire:key="edit-form-{{ $editingBookId }}" @endif>
         <div class="form-group">
           <label for="title" class="form-label">Title:</label>
-          <input type="text" id="title" wire:model.live="title" value="{{ $title }}" required>
+          <input type="text" id="title" wire:model.live="title" value="{{ $title }}" required maxlength="100">
+          <div style="text-align: right; font-size: 0.8em; color: #ccc;">
+            <span x-text="$wire.title ? $wire.title.length : 0"></span>/100
+          </div>
           @error('title')
             <span class="error">{{ $message }}</span>
           @enderror
@@ -64,7 +63,10 @@
 
         <div class="form-group">
           <label for="author" class="form-label">Author:</label>
-          <input type="text" id="author" wire:model.live="author" value="{{ $author }}" required>
+          <input type="text" id="author" wire:model.live="author" value="{{ $author }}" required maxlength="50">
+          <div style="text-align: right; font-size: 0.8em; color: #ccc;">
+            <span x-text="$wire.author ? $wire.author.length : 0"></span>/50
+          </div>
           @error('author')
             <span class="error">{{ $message }}</span>
           @enderror
@@ -117,7 +119,26 @@
   </div>
 
   <style>
-    /* Override any potentially conflicting modal styles */
+
+    .btn-add-book {
+      text-decoration: none;
+      background-color: white;
+      color: black;
+      padding: 10px;
+      border-radius: 8px;
+      text-transform: uppercase;
+      font-weight: 800;
+      text-align: center;
+      font-size: 14px;
+      width: 160px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .btn-add-book:hover {
+      opacity: 0.5;
+    }
+
     .edit-book-modal,
     .delete-confirmation-modal {
       position: fixed;

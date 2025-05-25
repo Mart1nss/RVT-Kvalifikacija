@@ -4,7 +4,7 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <link rel="stylesheet" href="{{ asset('css/components/alert.css') }}">
-  {{-- <link rel="stylesheet" href="{{ asset('css/adminhome-style.css') }}"> --}} {{-- Potentially remove if styles are inlined or in user-dashboard.css --}}
+  <link rel="stylesheet" href="{{ asset('css/adminhome-style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/components/buttons.css') }}">
   <link rel="stylesheet" href="{{ asset('css/dashboard/user-dashboard.css') }}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf_viewer.min.css">
@@ -133,13 +133,13 @@
 
   <!-- Row 1: Welcome Actions & Continue Reading -->
   <div class="dashboard-row dashboard-row-one">
-    <div class="welcome-actions-container"> {{-- Was .item-container --}}
-      <h1 class="dashboard-title">Dashboard</h1> {{-- Was .dashboard-text-container-title --}}
-      <h2 class="welcome-message"> {{-- Was h1 with inline styles --}}
+    <div class="welcome-actions-container">
+      <h1 class="dashboard-title">Dashboard</h1>
+      <h2 class="welcome-message">
         Welcome, {{ auth()->user()->name }}!
       </h2>
 
-      <div class="user-navigation-links"> {{-- For user navigation buttons --}}
+      <div class="user-navigation-links">
         <button class="btn" onclick="window.location.href='{{ '/library' }}'">
           <i class='bx bx-library'></i> Library
         </button>
@@ -149,12 +149,9 @@
         <button style="margin-top: 10px;" class="btn" onclick="window.location.href='{{ route('my-collection') }}'">
           <i class='bx bxs-collection'></i> My Collection
         </button>
-        {{-- Add other user-specific buttons here if any, e.g., My Profile, Settings --}}
-        {{-- Example:
         <button style="margin-top: 10px;" class="btn" onclick="window.location.href='{{ route('profile.show') }}'">
           <i class='bx bx-user-circle'></i> My Profile
         </button>
-        --}}
       </div>
     </div>
 
@@ -166,7 +163,7 @@
   </div>
 
   <!-- Book Carousels -->
-  <div class="dashboard-row"> {{-- Carousels in their own row for full width --}}
+  <div class="dashboard-row">
     <div style="width: 100%; background-color: transparent !important; padding: 0 !important; box-shadow: none !important;">
         @include('components.book-carousels')
     </div>

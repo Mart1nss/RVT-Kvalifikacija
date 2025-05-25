@@ -26,26 +26,26 @@ class UserRoleChangedNotification extends Notification implements ShouldQueue
     public function __construct(User $affectedUser, string $oldRole, string $newRole)
     {
         $this->affectedUser = $affectedUser;
-        $this->oldRole = ucfirst($oldRole); // Capitalize for display
-        $this->newRole = ucfirst($newRole); // Capitalize for display
+        $this->oldRole = ucfirst($oldRole);
+        $this->newRole = ucfirst($newRole);
     }
 
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
+     * @param  mixed
      * @return array
      */
     public function via($notifiable): array
     {
-        return ['database']; // For display in the notification dropdown
+        return ['database'];
     }
 
     /**
      * Get the array representation of the notification.
      * (For database storage)
      *
-     * @param  mixed  $notifiable
+     * @param  mixed 
      * @return array
      */
     public function toArray($notifiable): array
@@ -57,7 +57,7 @@ class UserRoleChangedNotification extends Notification implements ShouldQueue
             'old_role' => $this->oldRole,
             'new_role' => $this->newRole,
             'message' => $message,
-            'link' => null, // No specific link for now, could be profile page: route('profile.show')
+            'link' => null,
             'type' => 'user_role_changed', 
         ];
     }
@@ -71,14 +71,6 @@ class UserRoleChangedNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable): ?MailMessage
     {
-        // You can enable this if you want to send an email too.
-        // return (new MailMessage)
-        //             ->subject('Your User Role Has Been Updated')
-        //             ->greeting("Hello {$notifiable->name},")
-        //             ->line("This is to inform you that your user role has been changed from '{$this->oldRole}' to '{$this->newRole}'.")
-        //             ->lineIf($this->newRole === 'Admin', 'You now have administrator privileges.')
-        //             ->lineIf($this->oldRole === 'Admin' && $this->newRole !== 'Admin', 'Your administrator privileges have been revoked.')
-        //             ->action('View Your Profile', route('profile.show')); // Adjust route as needed
         return null;
     }
 }

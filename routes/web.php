@@ -30,7 +30,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Redirect to the 'dashboard' method instead of 'index'
 Route::get('/home', [HomeController::class, 'dashboard'])->middleware('auth')->name('home');
 
 
@@ -38,13 +37,11 @@ Route::get('/myprogress', [App\Http\Controllers\ProgressController::class, 'inde
 
 Route::get('/', [HomeController::class, 'carousel']);
 
-// Get all categories/genres for the filter dropdown
 Route::get('/get-genres', function () {
     $genres = App\Models\Category::pluck('name');
     return response()->json($genres);
 });
 
-// Book Routes - Using Livewire Components
 Route::get('/library', function () {
     return view('books.library');
 })->middleware('auth')->name('library');
@@ -56,15 +53,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/book-thumbnails/{filename}', [BookController::class, 'serveThumbnail'])->name('book.thumbnail.image');
 });
 
-// Admin Book Management Routes - Using Livewire Components
+// Book Management Routes 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/book-manage', function () {
         return view('books.book-manage');
     })->name('book-manage');
+    Route::get('/admin/books/create', [BookController::class, 'create'])->name('books.create'); // New route for upload form
     Route::post('/uploadbook', [BookController::class, 'store'])->name('uploadbook');
 });
 
-// User Management Routes - Using Livewire Components
+// User Management Routes
 Route::get('/user-management', function () {
     return view('admin.users.user-management');
 })->name('user.management.livewire')->middleware(['auth', 'admin']);
@@ -91,6 +89,7 @@ Route::post('/notes', [NoteController::class, 'store']);
 Route::get('/notes/{productId}', [NoteController::class, 'show']);
 Route::put('/notes/{productId}', [NoteController::class, 'store']);
 Route::get('/viewnotes', [NoteController::class, 'index'])->name('viewnotes')->middleware('auth');
+Route::delete('/notes/{note}', [NoteController::class, 'destroy'])->name('notes.destroy')->middleware('auth');
 
 //Profile Routes
 Route::middleware('auth')->group(function () {
@@ -126,6 +125,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/tickets/{ticket}/assign', [TicketController::class, 'assignTicket'])->middleware('admin')->name('tickets.assign');
 });
 
+// Preferences Routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/preferences', [PreferenceController::class, 'show'])->name('preferences.show');
     Route::post('/preferences', [PreferenceController::class, 'store'])->name('preferences.store');
@@ -133,7 +133,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/preferences/edit', [PreferenceController::class, 'edit'])->name('preferences.edit');
 });
 
-// Audit Logs Route - Using Livewire Component
+// Audit Logs Routes
 Route::get('/audit-logs', function () {
     return view('audit-logs-page');
 })->name('audit.logs')->middleware(['auth', 'admin']);

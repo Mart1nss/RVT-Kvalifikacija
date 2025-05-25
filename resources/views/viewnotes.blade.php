@@ -141,9 +141,18 @@
               </div>
               <div class="note-actions">
                 @if ($note->product)
-                  <a href="{{ route('view', ['id' => $note->product_id]) }}" class="goto-note-btn" @click.stop>
+                  <a href="{{ route('view', ['id' => $note->product_id]) }}" class="goto-note-btn" @click.stop title="Go to book">
                     <i class='bx bx-book-open'></i>
                   </a>
+                @else
+                  <form method="POST" action="{{ route('notes.destroy', $note) }}" @click.stop
+                    onsubmit="return confirm('Are you sure you want to delete this note?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="delete-note-btn" title="Delete note">
+                      <i class='bx bx-trash'></i>
+                    </button>
+                  </form>
                 @endif
                 <i class='bx bx-chevron-down accordion-icon' :class="{ 'rotate': expanded }"></i>
               </div>

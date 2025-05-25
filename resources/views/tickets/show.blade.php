@@ -65,7 +65,6 @@
           @elseif (is_null($ticket->assigned_admin_id))
             <span style="color: red;">unassigned</span>
           @else 
-            {{-- This case implies assigned_admin_id has a value, but the user model is gone, or our new logic hasn't run on this old ticket yet --}}
             <span style="color: orange;">Assigned to deleted/unknown admin (ID: {{ $ticket->assigned_admin_id }})</span>
           @endif
         </span>

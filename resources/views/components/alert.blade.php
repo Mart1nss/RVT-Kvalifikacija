@@ -88,14 +88,13 @@
 
     const alertContainer = document.getElementById('alertContainer');
     const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type || 'success'}`; // Default to success if type is undefined
+    alertDiv.className = `alert alert-${type || 'success'}`;
     alertDiv.textContent = message;
 
     // Clear existing alerts
     alertContainer.innerHTML = '';
     alertContainer.appendChild(alertDiv);
 
-    // Show and hide
     alertContainer.style.display = 'block';
     setTimeout(() => {
       alertContainer.style.display = 'none';

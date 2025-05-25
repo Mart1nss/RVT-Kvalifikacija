@@ -17,7 +17,7 @@ class AdminTicketsUnassigned
 
     public User $adminUser;
     public int $ticketCount;
-    public string $reason; // 'role_changed' or 'account_deleted'
+    public string $reason;
 
     /**
      * Create a new event instance.

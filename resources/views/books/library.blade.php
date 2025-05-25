@@ -50,7 +50,6 @@
         if (pdfItem && window.innerWidth <= 768) {
           const bookId = pdfItem.dataset.bookId;
           if (bookId) {
-            // Dispatch event to open the modal
             window.dispatchEvent(new CustomEvent('open-modal', {
               detail: {
                 bookId: parseInt(bookId)

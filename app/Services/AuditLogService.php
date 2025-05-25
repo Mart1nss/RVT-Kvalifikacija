@@ -11,11 +11,11 @@ class AuditLogService
   /**
    * Create an audit log entry
    *
-   * @param string $action The action performed (e.g. "Updated book", "Deleted user")
-   * @param string $actionType The type of action (e.g. "book", "user", "category")
-   * @param string $description Detailed description of changes
-   * @param string|int|null $itemId ID of the affected item
-   * @param string|null $itemName Name of the affected item
+   * @param string The action performed (e.g. "Updated book", "Deleted user")
+   * @param string The type of action (e.g. "book", "user", "category")
+   * @param string Detailed description of changes
+   * @param string|int|null ID of the affected item
+   * @param string|null Name of the affected item
    * @return AuditLog|null
    */
   public static function log($action, $actionType, $description, $itemId = null, $itemName = null)
