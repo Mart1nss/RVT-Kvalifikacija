@@ -229,7 +229,7 @@ p {
 
 <div class="main-container">
 
-    <h1 class="stat-title">My Progress</h1>
+    <h1 class="stat-title">My Stats</h1>
 
     <div class="stat-card-container">
 
@@ -348,7 +348,7 @@ p {
             </div>
             <p>Based on your reading history</p>
         @else
-            <div style="background-color: #353535; border-radius: 8px; padding: 15px; margin-top: 10px;">
+            <div style="background-color: #252525; border-radius: 8px; padding: 15px; margin-top: 10px;">
                 <p style="font-size: 14px; color: #ddd; margin: 0;">
                     No reading data available yet. Start reading and reviewing books to see your top genres!
                 </p>

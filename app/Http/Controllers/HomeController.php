@@ -25,9 +25,14 @@ class HomeController extends Controller
         $recentBooks = Product::whereHas('category', function ($query) {
                 $query->where('is_public', true);
             })
+            ->withAvg('reviews', 'review_score')
             ->orderBy('created_at', 'desc')
             ->take(10)
             ->get();
+            
+        $recentBooks->each(function ($book) {
+            $book->rating = $book->reviews_avg_review_score ?? 0;
+        });
 
         $preferredBooks = [];
         $user = Auth::user();
@@ -39,9 +44,15 @@ class HomeController extends Controller
 
         foreach ($userPreferences as $category) {
             $books = Product::where('category_id', $category->id)
+                ->withAvg('reviews', 'review_score')
                 ->orderBy('created_at', 'desc')
                 ->take(10)
                 ->get();
+                
+            $books->each(function ($book) {
+                $book->rating = $book->reviews_avg_review_score ?? 0;
+            });
+            
             if ($books->count() > 0) {
                 $preferredBooks[$category->name] = $books;
             }
@@ -80,9 +91,15 @@ class HomeController extends Controller
     {
         $data = Product::whereHas('category', function ($query) {
             $query->where('is_public', true);
-        })->with('category')->get();
+        })
+        ->with('category')
+        ->withAvg('reviews', 'review_score')
+        ->get();
         
-
+        $data->each(function ($book) {
+            $book->rating = $book->reviews_avg_review_score ?? 0;
+        });
+        
         return view('welcome', compact('data'));
     }
 }

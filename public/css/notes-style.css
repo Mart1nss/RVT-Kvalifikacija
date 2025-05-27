@@ -290,3 +290,21 @@
 [x-cloak] {
     display: none !important;
 }
+
+
+.delete-note-btn{
+    background-color: transparent;
+    color: #dc2626;
+    border: none;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 40px;
+    height: 40px;
+}
+
+.delete-note-btn:hover{
+    background-color: #353535;
+}

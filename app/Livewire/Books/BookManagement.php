@@ -87,7 +87,10 @@ class BookManagement extends Component
       ->withAvg('reviews', 'review_score');
 
     if ($this->search) {
-      $query->where('title', 'like', '%' . $this->search . '%');
+      $query->where(function ($q) {
+        $q->where('title', 'like', '%' . $this->search . '%')
+          ->orWhere('author', 'like', '%' . $this->search . '%');
+      });
     }
 
     if (!empty($this->selectedGenres)) {

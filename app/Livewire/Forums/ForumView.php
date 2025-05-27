@@ -18,7 +18,7 @@ class ForumView extends Component
     public $sortRepliesBy = 'latest';
 
     protected $rules = [
-        'newReply' => 'required|min:3|max:250'
+        'newReply' => 'required|min:3|max:500'
     ];
 
     public function mount(Forum $forum)
@@ -37,6 +37,7 @@ class ForumView extends Component
 
         if ($reply) {
             $this->reset('newReply');
+            $this->dispatch('show-alert', type: 'success', message: 'reply successfully added');
             $this->dispatch('reply-added');
         } else {
             $this->dispatch('show-alert', type: 'error', message: 'Failed to add reply. Please try again.');

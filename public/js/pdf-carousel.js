@@ -7,46 +7,105 @@ document.addEventListener('DOMContentLoaded', function() {
         const carouselInnerContainer = carouselContainerElement.querySelector('.carousel-container');
 
         if (!wrapper || items.length === 0 || !prevButton || !nextButton || !carouselInnerContainer) {
-            // console.warn('Carousel elements not found in:', carouselContainerElement);
-            return; // Skip if essential elements are missing
+            return;
         }
 
         let currentPosition = 0;
-        let itemWidth = items[0].offsetWidth + parseInt(getComputedStyle(items[0]).marginRight || '0', 10); // Include margin
         const totalItems = items.length;
+        let itemWidthWithGap = 0;
 
-        function getVisibleItems() {
-            if (items.length === 0) return 0;
-            itemWidth = items[0].offsetWidth + parseInt(getComputedStyle(items[0]).marginRight || '0', 10); // Recalculate itemWidth
+        function calculateDimensions() {
+            if (items.length === 0) return;
+            const itemStyle = getComputedStyle(items[0]);
+            const itemOffsetWidth = items[0].offsetWidth;
+            const gap = parseInt(getComputedStyle(wrapper).gap || '0', 10);
+            itemWidthWithGap = itemOffsetWidth + gap;
+        }
+
+        // Initial calculation
+        calculateDimensions();
+
+        function getVisibleItemsCount() {
+            if (items.length === 0 || itemWidthWithGap === 0) return 0;
             const containerWidth = carouselInnerContainer.offsetWidth;
-            return Math.floor(containerWidth / itemWidth);
+            const gap = parseInt(getComputedStyle(wrapper).gap || '0', 10);
+            return Math.floor((containerWidth + gap) / itemWidthWithGap);
         }
 
         function updateCarousel() {
+            const visibleItems = getVisibleItemsCount();
+            if (totalItems <= visibleItems) { 
+                currentPosition = 0;
+            } else {
+                if (itemWidthWithGap > 0) {
+                    const maxScroll = (totalItems - visibleItems) * itemWidthWithGap;
+                    const maxPositionValue = -maxScroll;
+                    if (currentPosition < maxPositionValue) currentPosition = maxPositionValue;
+                }
+                if (currentPosition > 0) currentPosition = 0;
+            }
             wrapper.style.transform = `translateX(${currentPosition}px)`;
         }
 
         function moveNext() {
-            const visibleItems = getVisibleItems();
-            if (totalItems <= visibleItems) return; // No scroll if all items are visible
+            calculateDimensions();
+            const visibleItems = getVisibleItemsCount();
 
-            const maxPosition = -(totalItems - visibleItems) * itemWidth;
+            if (totalItems <= visibleItems || itemWidthWithGap === 0) {
+                currentPosition = 0;
+                updateCarousel();
+                return;
+            }
+
+            const itemsToScroll = 2;
+            const scrollUnit = itemWidthWithGap;
+            const maxScrollablePosition = -((totalItems - visibleItems) * scrollUnit);
             
-            if (currentPosition > maxPosition) {
-                currentPosition -= itemWidth;
+            const itemsScrolled = Math.round(Math.abs(currentPosition / scrollUnit));
+            const remainingItemsToRight = (totalItems - visibleItems) - itemsScrolled;
+
+            let actualItemsToScroll = itemsToScroll;
+            if (remainingItemsToRight < itemsToScroll && remainingItemsToRight > 0) {
+                actualItemsToScroll = remainingItemsToRight;
+            } else if (remainingItemsToRight <= 0) {
+                currentPosition = maxScrollablePosition;
+                updateCarousel();
+                return;
             }
             
-            if (currentPosition < maxPosition) {
-                currentPosition = maxPosition;
+            currentPosition -= actualItemsToScroll * scrollUnit;
+
+            if (currentPosition < maxScrollablePosition) {
+                currentPosition = maxScrollablePosition;
             }
             updateCarousel();
         }
 
         function movePrev() {
-            if (currentPosition < 0) {
-                currentPosition += itemWidth;
+            calculateDimensions();
+            const visibleItems = getVisibleItemsCount();
+
+            if (totalItems <= visibleItems || itemWidthWithGap === 0) {
+                currentPosition = 0;
+                updateCarousel();
+                return;
             }
+
+            const itemsToScroll = 2;
+            const scrollUnit = itemWidthWithGap;
             
+            const itemsScrolledToLeft = Math.round(Math.abs(currentPosition / scrollUnit));
+            let actualItemsToScroll = itemsToScroll;
+            if (itemsScrolledToLeft < itemsToScroll && itemsScrolledToLeft > 0) {
+                actualItemsToScroll = itemsScrolledToLeft;
+            } else if (itemsScrolledToLeft <= 0) {
+                currentPosition = 0;
+                updateCarousel();
+                return;
+            }
+
+            currentPosition += actualItemsToScroll * scrollUnit;
+
             if (currentPosition > 0) {
                 currentPosition = 0;
             }
@@ -64,22 +123,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
         wrapper.addEventListener('touchend', e => {
             const touchEndX = e.changedTouches[0].screenX;
-            if (touchStartX - touchEndX > 50) { // Swipe left
+            if (touchStartX - touchEndX > 50) {
                 moveNext();
-            } else if (touchEndX - touchStartX > 50) { // Swipe right
+            } else if (touchEndX - touchStartX > 50) {
                 movePrev();
             }
         });
 
-        // Add click listener for modals on mobile
         items.forEach(item => {
             item.addEventListener('click', function(event) {
-                // Check if the click is on a button inside the item, if so, don't open modal
                 if (event.target.closest('button') || event.target.closest('a')) {
                     return;
                 }
 
-                if (window.innerWidth < 768) { // Mobile breakpoint from CSS
+                if (window.innerWidth < 768) {
                     const bookId = this.dataset.bookId;
                     if (bookId) {
                         window.dispatchEvent(new CustomEvent('open-modal', {
@@ -92,43 +149,32 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Recalculate on resize
         window.addEventListener('resize', () => {
-            currentPosition = 0; // Reset position on resize
+            const firstVisibleItemIndexBeforeResize = (itemWidthWithGap > 0) ? Math.round(Math.abs(currentPosition) / itemWidthWithGap) : 0;
+            
+            calculateDimensions();
+            
+            const visibleItems = getVisibleItemsCount();
+            if (totalItems <= visibleItems || itemWidthWithGap === 0) {
+                currentPosition = 0;
+            } else {
+                currentPosition = -(firstVisibleItemIndexBeforeResize * itemWidthWithGap);
+                const maxScroll = (totalItems - visibleItems) * itemWidthWithGap;
+                const maxPositionValue = -maxScroll;
+
+                if (currentPosition < maxPositionValue) {
+                    currentPosition = maxPositionValue;
+                }
+                if (currentPosition > 0) { 
+                    currentPosition = 0;
+                }
+            }
             updateCarousel();
         });
     }
 
-    // Initialize all carousels on the page
-    const allCarousels = document.querySelectorAll('.newest-books-container'); // Assuming this is the main container for each carousel
+    const allCarousels = document.querySelectorAll('.newest-books-container');
     allCarousels.forEach(carousel => {
         initializeCarousel(carousel);
     });
 
-    // Note: The toggleFavorite function was present in the original script.
-    // It seems unrelated to the current carousel's "Read Later" (bookmark) functionality.
-    // I'm keeping it here commented out in case it's used elsewhere or was for a different feature.
-    /*
-    function toggleFavorite(bookId) {
-        const button = event.currentTarget;
-        fetch(`/favorites/${bookId}`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'added') {
-                button.classList.add('active');
-                button.querySelector('i').classList.remove('bx-heart');
-                button.querySelector('i').classList.add('bxs-heart');
-            } else {
-                button.classList.remove('active');
-                button.querySelector('i').classList.remove('bxs-heart');
-                button.querySelector('i').classList.add('bx-heart');
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    }
-    */
 });

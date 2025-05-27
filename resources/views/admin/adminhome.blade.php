@@ -3,11 +3,14 @@
 <link rel="stylesheet" href="{{ asset('css/adminhome-style.css') }}">
 <link rel="stylesheet" href="{{ asset('css/pdf-carousel.css') }}">
 <link rel="stylesheet" href="{{ asset('css/components/buttons.css') }}">
+<link rel="stylesheet" href="{{ asset('css/components/alert.css') }}">
 <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 <script src="{{ asset('js/pdf-carousel.js') }}" defer></script>
 <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.mjs"></script>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <title>Dashboard</title>
+
+@include('components.alert')
 
 <style>
   body {
@@ -49,6 +52,7 @@
   .dashboard-row-two > .top-genres-container {
     flex: 1; 
     min-width: 280px;
+    margin-bottom: 0px;
   }
   .dashboard-row-two > .stats-section-wrapper { 
     flex: 1; 
@@ -56,10 +60,6 @@
     background-color: transparent !important; 
     padding: 0 !important; 
     box-shadow: none !important;
-  }
-  
-
-  .welcome-actions-container {
   }
 
   .dashboard-title {
@@ -204,6 +204,9 @@
   }
 
   @media (max-width: 992px) { 
+    .dashboard-title {
+      font-size: 24px;
+    }
     .dashboard-row {
       flex-direction: column;
     }
@@ -214,15 +217,31 @@
     .dashboard-row > div:last-child {
       margin-bottom: 0;
     }
+    .dashboard-row-one > .welcome-actions-container {
+      margin-bottom: 0px;
+    }
   }
 
   @media (max-width: 768px) {
-    .welcome-actions-container {
+    .dashboard-title {
+      font-size: 20px;
+    }
+    .welcome-message {
+      font-size: 1.2em;
+    }
+    .dashboard-row-one > .welcome-actions-container {
       padding: 8px; 
+      margin-bottom: 0px;
+    }
+    .dashboard-row-two > .top-genres-container {
+      padding: 8px;
     }
     .admin-actions-grid {
       grid-template-columns: repeat(2, 1fr); 
       gap: 10px; 
+    }
+    .top-genres-container{
+      padding: 8px;
     }
     .stats-section {
         grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
@@ -279,7 +298,7 @@
       </div>
     </div>
     @if (auth()->user()->lastReadBook)
-    <div class="continue-reading-wrapper"> {{-- Wrapper for continue reading --}}
+    <div class="continue-reading-wrapper">
         @include('components.continue-reading')
     </div>
     @endif
@@ -304,10 +323,10 @@
       @endif
     </div>
     @else
-    <div class="top-genres-container" style="display: none;"></div> {{-- Placeholder to maintain layout if no topGenres --}}
+    <div class="top-genres-container" style="display: none;"></div>
     @endif
 
-    <div class="stats-section-wrapper"> {{-- Wrapper for stats section --}}
+    <div class="stats-section-wrapper">
         <div class="stats-section">
             <div class="stat-card">
             <i class='bx bxs-book'></i>
@@ -325,7 +344,7 @@
             <p class="stat-label">Total Categories</p>
             </div>
             <div class="stat-card">
-            <i class='bx bxs-chat'></i> {{-- Icon for forums --}}
+            <i class='bx bxs-chat'></i>
             <p class="stat-number">{{ $forumCount }}</p>
             <p class="stat-label">Total Forums</p>
             </div>

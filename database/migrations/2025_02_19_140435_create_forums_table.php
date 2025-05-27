@@ -14,7 +14,12 @@ return new class extends Migration {
             $table->id();
             $table->string('title', 50);
             $table->text('description', 1000);
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+
+            $table->foreignId('user_id')
+                  ->nullable()
+                  ->constrained('users')
+                  ->onDelete('set null');
+
             $table->timestamps();
         });
     }

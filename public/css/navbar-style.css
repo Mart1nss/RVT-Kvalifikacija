@@ -10,7 +10,7 @@
 }
 
 .logo {
-    display: none; /* Reverted: Logo hidden by default, shown by page logic */
+    display: none;
     justify-content: center;
     align-items: center;
     font-size: 24px;

@@ -1,4 +1,5 @@
-<div class="item-container" style="border-radius: 8px;" wire:poll.30s>
+<div class="item-container" style="border-radius: 8px;">
+  <x-alert /> <!-- Add the alert component here -->
   <!-- Forum Details -->
   <div class="forum-details">
     <div class="forum-header">
@@ -13,7 +14,7 @@
             <button type="button" wire:click="deleteForum">
               <i class='bx bx-trash'></i>
               Delete<span
-                x-show="'{{ auth()->user()->usertype }}' === 'admin' && {{ $forum->user_id }} !== {{ auth()->id() }}"></span>
+                x-show="'{{ auth()->user()->usertype }}' === 'admin' && {{ $forum->user_id ?? 'null' }} !== {{ auth()->id() }}"></span>
             </button>
           </div>
         </div>
@@ -78,7 +79,7 @@
                     <button type="button" wire:click="deleteReply({{ $reply->id }})">
                       <i class='bx bx-trash'></i>
                       Delete<span
-                        x-show="'{{ auth()->user()->usertype }}' === 'admin' && {{ $reply->user_id }} !== {{ auth()->id() }}"></span>
+                        x-show="'{{ auth()->user()->usertype }}' === 'admin' && {{ $reply->user_id ?? 'null' }} !== {{ auth()->id() }}"></span>
                     </button>
                   </div>
                 </div>

@@ -83,11 +83,11 @@ class NoteController extends Controller
     {
         // Pārbauda, vai autentificētais lietotājs ir piezīmes īpašnieks
         if (Auth::id() !== $note->user_id) {
-            return redirect()->route('notes.index')->with('error', 'You are not authorized to delete this note.');
+            return redirect()->route('viewnotes')->with('error', 'You are not authorized to delete this note.');
         }
 
         $note->delete();
 
-        return redirect()->route('notes.index')->with('success', 'Note deleted successfully.');
+        return redirect()->route('viewnotes')->with('success', 'Note deleted successfully.');
     }
 }

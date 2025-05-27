@@ -149,9 +149,6 @@
         <button style="margin-top: 10px;" class="btn" onclick="window.location.href='{{ route('my-collection') }}'">
           <i class='bx bxs-collection'></i> My Collection
         </button>
-        <button style="margin-top: 10px;" class="btn" onclick="window.location.href='{{ route('profile.show') }}'">
-          <i class='bx bx-user-circle'></i> My Profile
-        </button>
       </div>
     </div>
 

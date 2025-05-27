@@ -4,7 +4,7 @@
 
   <div class="search-filter-container">
     <div class="search-container">
-      <input type="text" id="search-input" placeholder="Search books..." wire:model.live.debounce.300ms="search">
+      <input type="text" id="search-input" placeholder="Search by title or author..." wire:model.live.debounce.300ms="search">
     </div>
 
     <div class="filter-container">
@@ -125,14 +125,31 @@
     }
 
     @media (max-width: 768px) {
-      .filter-container {
-        flex-direction: column;
+      .search-container {
         width: 100%;
+      }
+      #search-input {
+        width: 100%;
+      }
+      .filter-container {
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-between;
       }
 
       .filter-select,
       .genre-dropdown {
-        width: 100%;
+        flex-grow: 1;
+        width: auto;
+        flex-basis: calc(50% - 5px);
+      }
+      .filter-container > .filter-select {
+         flex-grow: 1;
+         flex-basis: calc(50% - 5px);
+      }
+      .filter-container > .genre-dropdown {
+         flex-grow: 1;
+         flex-basis: calc(50% - 5px);
       }
     }
   </style>

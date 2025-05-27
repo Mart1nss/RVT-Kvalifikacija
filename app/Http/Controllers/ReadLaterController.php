@@ -29,6 +29,10 @@ class ReadLaterController extends Controller
     $readLater->product_id = $id;
     $readLater->save();
 
+    if (request()->wantsJson() || request()->ajax()) {
+        return response()->json(['message' => 'Book added to read later list!']);
+    }
+
     return redirect()->back()->with('success', 'Book added to read later list!');
   }
 
@@ -45,6 +49,10 @@ class ReadLaterController extends Controller
       ->firstOrFail();
 
     $readLater->delete();
+
+    if (request()->wantsJson() || request()->ajax()) {
+        return response()->json(['message' => 'Book removed from read later list!']);
+    }
 
     return redirect()->back()->with('success', 'Book removed from read later list!')
       ->withInput(['tab' => request('current_tab', 'readlater')]);

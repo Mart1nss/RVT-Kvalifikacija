@@ -11,7 +11,6 @@
 
 @php
     $currentRouteName = Route::currentRouteName();
-    // Show logo on 'home' (admin/user dashboards) and on the root '/' (welcome page)
     $isHomePage = $currentRouteName === 'home';
     $isWelcomePage = Request::is('/'); 
     $shouldShowLogo = $isHomePage || $isWelcomePage;
@@ -53,7 +52,7 @@
           </a>
             <a href="{{ route('myprogress') }}" class="menu-item {{ Request::is('myprogress') ? 'active' : '' }}">
               <i class='bx bx-bar-chart-alt-2'></i>
-              <span>MY PROGRESS</span>
+              <span>MY STATS</span>
             </a>
         </div>
 

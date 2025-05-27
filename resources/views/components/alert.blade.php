@@ -60,7 +60,7 @@
           type,
           message
         } = event.detail;
-        console.log('Alert received:', type, message);
+        // console.log('Alert received:', type, message); // Removed for cleaner console
         window.showAlert(message, type);
       });
     });

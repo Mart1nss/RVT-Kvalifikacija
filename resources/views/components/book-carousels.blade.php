@@ -1,4 +1,3 @@
- {{-- Newest Books Carousel --}}
 
  <link rel="stylesheet" href="{{ asset('css/components/pdf-item.css') }}">
  <link rel="stylesheet" href="{{ asset('css/pdf-carousel.css') }}">
@@ -37,6 +36,8 @@
                  <i class='bx bx-book-reader'></i> View
                </a>
                <form
+                 class="read-later-form"
+                 data-book-title="{{ $book->title }}"
                  action="{{ $book->isInReadLaterOf(auth()->user()) ? route('readlater.delete', $book->id) : route('readlater.add', $book->id) }}"
                  method="POST" style="display: contents;">
                  @csrf
@@ -90,20 +91,22 @@
                  <a class="view-btn" href="{{ route('view', $book->id) }}">
                    <i class='bx bx-book-reader'></i> View
                  </a>
-                 <form
-                   action="{{ $book->isInReadLaterOf(auth()->user()) ? route('readlater.delete', $book->id) : route('readlater.add', $book->id) }}"
-                   method="POST" style="display: contents;">
-                   @csrf
-                   @if ($book->isInReadLaterOf(auth()->user()))
-                     @method('DELETE')
-                   @endif
-                   <button type="submit" class="favorite-btn">
-                     <i class='bx {{ $book->isInReadLaterOf(auth()->user()) ? 'bxs-bookmark' : 'bx-bookmark' }}'></i>
-                   </button>
-                 </form>
-               </div>
+               <form
+                 class="read-later-form"
+                 data-book-title="{{ $book->title }}"
+                 action="{{ $book->isInReadLaterOf(auth()->user()) ? route('readlater.delete', $book->id) : route('readlater.add', $book->id) }}"
+                 method="POST" style="display: contents;">
+                 @csrf
+                 @if ($book->isInReadLaterOf(auth()->user()))
+                   @method('DELETE')
+                 @endif
+                 <button type="submit" class="favorite-btn">
+                   <i class='bx {{ $book->isInReadLaterOf(auth()->user()) ? 'bxs-bookmark' : 'bx-bookmark' }}'></i>
+                 </button>
+               </form>
              </div>
            </div>
+         </div>
          @endforeach
        </div>
      </div>
@@ -111,14 +114,68 @@
  @endforeach
 
  {{-- Mobile Modals --}}
+ @php
+   $allBooksForModals = collect($recentBooks);
+   foreach ($preferredBooks as $genreBooks) {
+       $allBooksForModals = $allBooksForModals->merge($genreBooks);
+   }
+   $uniqueBooksForModals = $allBooksForModals->unique('id');
+ @endphp
  <div class="mobile-modals-container">
-   @foreach ($recentBooks as $book)
+   @foreach ($uniqueBooksForModals as $book)
      @include('components.book-modal', ['book' => $book, 'showAdminActions' => false])
    @endforeach
-
-   @foreach ($preferredBooks as $books)
-     @foreach ($books as $book)
-       @include('components.book-modal', ['book' => $book, 'showAdminActions' => false])
-     @endforeach
-   @endforeach
  </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Handle read later form submissions
+    const readLaterForms = document.querySelectorAll('.read-later-form');
+    
+    readLaterForms.forEach(form => {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const bookTitle = this.getAttribute('data-book-title');
+        const formData = new FormData(this);
+        const isRemoving = this.querySelector('input[name="_method"]') !== null;
+        const button = this.querySelector('.favorite-btn');
+        const icon = button.querySelector('i');
+        
+        fetch(this.action, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          },
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          // Toggle bookmark icon
+          if (isRemoving) {
+            icon.classList.remove('bxs-bookmark');
+            icon.classList.add('bx-bookmark');
+            this.querySelector('input[name="_method"]').remove();
+            this.action = this.action.replace('delete', 'add');
+            window.showAlert('Book removed from read later list', 'success');
+          } else {
+            icon.classList.remove('bx-bookmark');
+            icon.classList.add('bxs-bookmark');
+            const methodInput = document.createElement('input');
+            methodInput.type = 'hidden';
+            methodInput.name = '_method';
+            methodInput.value = 'DELETE';
+            this.appendChild(methodInput);
+            this.action = this.action.replace('add', 'delete');
+            window.showAlert('Book added to read later list', 'success');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          window.showAlert('An error occurred. Please try again.', 'error');
+        });
+      });
+    });
+  });
+</script>

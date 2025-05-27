@@ -6,6 +6,7 @@
     color: #ccc; 
 }
 
+
 .continue-reading-text-container {
     margin-bottom: 15px; 
     text-align: left; 
@@ -128,23 +129,15 @@
 }
 
 @media (max-width: 768px) {
-    .book-display-area {
-        flex-direction: column; 
-        align-items: center; 
+    #item-continue {
+        padding: 8px;
     }
-    .thumbnail-container {
-        width: 100px; 
+    .thumbnail-container{
+        width: 100px;
         height: 150px;
-        margin-bottom: 10px;
     }
-    .book-details-container {
-        align-items: center; 
-        text-align: center;
+    .book-details-container{
+        width: 100%;
     }
-    .book-details-container h4,
-    .book-details-container p.author {
-        white-space: normal; 
-        overflow: visible;
-        text-overflow: clip;
-    }
+    .book-details-container h4{}
 }
