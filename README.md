@@ -1,7 +1,4 @@
-# Digitālā Grāmatu Bibliotēka (Digital Book Library)
-
-![Laravel](https://img.shields.io/badge/Laravel-10.x-red)
-![PHP](https://img.shields.io/badge/PHP-8.2-purple)
+# Digitālā Grāmatu Bibliotēka (E-Book Library Website)
 
 A specialized web platform for self-improvement book organization, reading, and sharing. The platform offers books in categories such as health, finance, psychology, and other personal development areas.
 
@@ -46,13 +43,10 @@ A specialized web platform for self-improvement book organization, reading, and 
    DB_PASSWORD=your_password
    ```
 
-6. Import the database structure:
+6. Database structure:
    ```
-   # Option 1: Import the SQL file directly
-   # Import datubaze.sql into your MySQL database
-   
-   # Option 2: Use Laravel migrations
    php artisan migrate
+   php artisan seed
    ```
 
 7. Generate application key:
@@ -80,7 +74,4 @@ A specialized web platform for self-improvement book organization, reading, and 
 - **Alpine.js** (minimalist JavaScript framework)
 - **PDF.js** (for online book reading)
 - **Ghostscript** (for PDF to image conversion)
-
-## Project Structure
-
 
