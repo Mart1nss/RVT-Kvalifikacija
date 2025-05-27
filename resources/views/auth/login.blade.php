@@ -75,10 +75,10 @@
       </div>
       <div style="display: flex; justify-content: space-between; gap: 10px;">
         @if (Route::has('password.request'))
-          <button class="btn-secondary" onclick="window.location.href='{{ route('password.request') }}'">Reset
+          <button type="button" class="btn-secondary" onclick="window.location.href='{{ route('password.request') }}'">Reset
             Password</button>
         @endif
-        <button class="btn-secondary" onclick="window.location.href='{{ route('register') }}'">Sign Up</button>
+        <button type="button" class="btn-secondary" onclick="window.location.href='{{ route('register') }}'">Sign Up</button>
       </div>
 
     </form>

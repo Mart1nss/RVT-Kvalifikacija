@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('reviews', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('review_score', 5)->unsigned();
+            $table->integer('review_score')->unsigned();
             $table->string('review_text', 250);
             $table->timestamps();
             $table->bigInteger('user_id')->unsigned()->nullable();
