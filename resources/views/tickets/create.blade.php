@@ -57,10 +57,10 @@
         <div class="form-group">
           <label for="description">Description</label>
           <div class="input-container">
-            <textarea id="description" name="description" rows="6" required maxlength="500"
+            <textarea id="description" name="description" rows="6" required maxlength="1000"
               placeholder="Please provide detailed information about your issue..."
-              oninput="updateCharCount('description', 'descriptionCount', 500)"></textarea>
-            <div class="char-count" id="descriptionCount">0 / 500</div>
+              oninput="updateCharCount('description', 'descriptionCount', 1000)"></textarea>
+            <div class="char-count" id="descriptionCount">0 / 1000</div>
           </div>
         </div>
 
@@ -221,7 +221,7 @@
     // Initialize counters
     document.addEventListener('DOMContentLoaded', function() {
       updateCharCount('subject', 'subjectCount', 50);
-      updateCharCount('description', 'descriptionCount', 500);
+      updateCharCount('description', 'descriptionCount', 1000);
     });
   </script>
 </body>

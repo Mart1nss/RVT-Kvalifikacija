@@ -40,7 +40,7 @@ class TicketController extends Controller
         $validatedData = $request->validate([
             'subject' => 'required|max:50',
             'category' => 'required',
-            'description' => 'required|max:500'
+            'description' => 'required|max:1000'
         ]);
 
         $ticket = Ticket::create([
